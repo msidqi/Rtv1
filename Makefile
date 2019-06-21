@@ -17,7 +17,7 @@ GLIB = libgl.a
 LIBMLXL = src/minilibx_macos/libmlx.a
 NAME = RTv1
 SRC_PATH = src/
-SRC = connect_dots.c drawline.c ft_event_system_mlx.c ft_events_keyboard.c ft_multi_thread.c ft_utils_func.c interface.c drawsquares.c ft_image_setup_mlx.c ft_palette.c ft_vector_operations.c
+SRC = connect_dots.c drawline.c ft_event_system_mlx.c ft_events_keyboard.c ft_multi_thread.c ft_utils_func.c interface.c drawsquares.c ft_image_setup_mlx.c ft_palette.c ft_vector_operations.c ft_matrix_operations.c
 INCLUDE = include
 OBJ = $(SRC:.c=.o)
 GLIB = libgl.a

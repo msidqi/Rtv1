@@ -14,9 +14,9 @@
 
 int     mouse_move(int x, int y, t_data *data)
 {
-    data->worldpos.x = x;
-    data->worldpos.y = y;
-    printf("x == %d\ny == %d\n----------\n", (int)ft_get_world_pos((double)x, 800, 1), (int)ft_get_world_pos((double)y, 800, 1));
+    data->worldpos.v[X] = x;
+    data->worldpos.v[Y] = y;
+   // printf("x == %d\ny == %d\n----------\n", (int)ft_get_world_pos((double)x, 800, 1), (int)ft_get_world_pos((double)y, 800, 1));
     return (0);
 }
 

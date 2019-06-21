@@ -38,7 +38,14 @@
 # define RED_BUTTON_CODE 17
 # define MAX_ITER 30
 # define ABS(Value) (Value >= 0) ? (Value) : -(Value)
-
+# define VERTEX 0
+# define VECTOR 1
+# define DIRECTION 2
+# define MATRIX 3
+# define X 0
+# define Y 1
+# define Z 2
+# define W 3
 
 typedef struct		t_vector2
 {
@@ -52,6 +59,36 @@ typedef struct		s_vector3
 	double			y;
 	double			z;
 }					t_vector3;
+
+typedef struct		s_matrix
+{
+	unsigned int	cols;
+	unsigned int	rows;
+	double			**v;
+}					t_matrix;
+
+typedef struct		s_vector4
+{
+	short			type;
+	double			v[4];
+}					t_vector4;
+
+
+/*
+** Homogenous Coordinates
+**   F U R  T   (Forward/Up/Right/Translation Vector)
+** [[1 0 0] 0]
+** [[0 1 0] 0]
+** [[0 0 1] 0]
+** [ 0 0 0  1] 0 Direction Vector 1 Position Vector
+** FUR == unit vectors describing object orientation. aka vector basis
+**
+*/
+typedef struct		s_matrix4
+{
+	short			type;
+	double			v[4][4];
+}					t_matrix4;
 
 typedef struct		s_startend
 {
@@ -70,10 +107,24 @@ typedef enum		e_bool
 {
 	false, true
 }					t_bool;
+ 
+typedef struct		s_ray // P(t) = origin + t * dir
+{
+	t_vector4		origin; // vector to origin point
+	t_vector4		dir; // direction vector
+	double			t; // distance
+}					t_ray;
+
+// typedef struct		s_camera
+// {
+// 	t_vector4		pos;
+
+// }					t_camera;
 
 typedef	struct		s_data
 {
-	t_vector2		worldpos;
+	// t_camera		cam;
+	t_vector4		worldpos;
 	t_color			color;
 	t_startend		thread_range;
 	int				winwidth;
@@ -131,5 +182,20 @@ double				vec2_dot_product(t_vector2 a, t_vector2 b);
 double				vec3_dot_product(t_vector3 a, t_vector3 b);
 t_vector2			vec2_rotate_byangle(t_vector2 a, double angle);
 t_vector2			vec2_rotate_byaxis(t_vector2 a, t_vector2 x_axis, t_vector2 y_axis);
+t_matrix			*ft_create_matrix(unsigned int rows, unsigned int cols);
+t_matrix4			ft_create_matrix4();
+int					ft_destroy_matrix(t_matrix *mat);
+void				ft_putmatrix(t_matrix *mat);
+void				ft_putmatrix4(t_matrix4 *mat);
+t_matrix4			ft_get_translation_matrix4(double x, double y, double z);
+t_vector4			ft_create_vector4(double x, double y, double z, double w) ;
+void				ft_putvector4(t_vector4 *vec);
+t_vector4			ft_matrix_x_vector(t_matrix4 *mat, t_vector4 *vec);
+void				ft_printvector4(t_vector4 *vec);//don't forget to remove this
+t_vector4		    ft_vec4_sub(t_vector4 *vec1, t_vector4 *vec2);
+t_vector4    		ft_vec4_normalize(t_vector4 *a);
+double    			ft_vec4_magnitude(t_vector4 *a);
+double				ft_vec4_dot_product(t_vector4 *a, t_vector4 *b);
+int					ft_sphere_intersection(t_ray *ray);
 
 #endif

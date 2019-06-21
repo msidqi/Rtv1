@@ -135,6 +135,9 @@ double    vec2_dot_product(t_vector2 a, t_vector2 b)
 ** For normalized vectors Dot returns 1 if they point in exactly 
 ** the same direction, -1 if they point in completely opposite directions
 ** and zero if the vectors are perpendicular.
+** Angle between them θ = acos([A•B]/[|A||B|]) && if A B are normalized θ = acos(AB).
+**  A • B = |A||B|cos(θ) ==> (|B|cos(θ) how much do they move together).
+** ==> the extent to which the vectors are pointing in the same direction.
 */
 
 double    vec3_dot_product(t_vector3 a, t_vector3 b)
