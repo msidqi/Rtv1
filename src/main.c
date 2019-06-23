@@ -16,15 +16,30 @@
 
 double		ft_map(int x_or_y, double size, int width_or_height)
 {
-	return ((x_or_y * size) / width_or_height - (size / 2));
+	return (x_or_y * size / width_or_height - (size / 2));
 }
-void		ft_explane(t_data *data)
+
+
+t_ray		ft_get_ray(t_data *data, t_vector4 *view_window_pos)
+{
+	// ft_printmatrix4(&data->cam.mx);
+
+	// t_matrix4 translation = ft_get_translation_matrix4(0, 0, 0);
+	// t_vector4 view_window_pos = ft_create_vector4(xm, ym, data->cam.focal_length, 1);
+	t_vector4 k = ft_vec4_sub(&(*view_window_pos), &data->cam.position);
+
+	t_ray ray;
+	ray.dir = ft_vec4_normalize(&k);
+	ray.origin = ft_create_vector4(data->cam.position.v[X], data->cam.position.v[Y], data->cam.position.v[Z], 0);
+	return (ray);
+}
+
+void		ft_draw(t_data *data)
 {
 	int x;
 	int y;
 	double xm;
 	double ym;
-	double size = 1;
 	// double	fow;
 
 	y = 0;
@@ -33,21 +48,18 @@ void		ft_explane(t_data *data)
 		x = 0;
 		while (x < WIDTH)
 		{
-			xm = ft_map(x, size, WIDTH);
-			ym = ft_map(y, size, HEIGHT);
-			t_vector4 camera_pos = ft_create_vector4(0, 0, -10, 1);
-			t_vector4 sub = ft_create_vector4(xm, ym, 0, 1);
-			t_ray ray;
-			t_vector4 k = ft_vec4_sub(&sub, &camera_pos);
-			ray.dir = ft_vec4_normalize(&k);//ft_create_vector4(xm - camera_pos.v[X], ym - camera_pos.v[Y], 0 - camera_pos.v[Z], 0);
-			ray.origin = ft_create_vector4(0, 0, -10, 0);
+			xm = ft_map(x, data->cam.size, WIDTH) /*+ data->cam.position.v[X]*/;
+			ym = ft_map(y, data->cam.size, HEIGHT) /*+ data->cam.position.v[Y]*/;
+			t_vector4 view_window_pos = ft_create_vector4(xm, ym, 0/*data->cam.focal_length*/, 1);
+
+			t_ray ray = ft_get_ray(data, &view_window_pos);
 			if (ft_sphere_intersection(&ray))
 				ft_image_fill(data, x, y, 0xFF0000);
+			
 
 			// ft_printvector4(&ray);
 			// printf("mag == %.14f\n", ft_vec4_magnitude(&ray));
 			// printf("x: %d , y: %d | xm: %f , ym: %f\n", x, y, xm, ym);
-			// usleep(10000);
 			x++;
 		}
 		y++;
@@ -58,15 +70,6 @@ int		main(void)
 	t_data  data;
 	int i;
 	int j;
-	// t_vector2	a;
-	// t_vector2	b;
-	// t_vector2	x_axis;
-	// t_vector2	y_axis;
-
-	// vec2_init(&x_axis, 1, 0);
-	// vec2_init(&y_axis, 0, 1);
-	// vec2_init(&a, 400, 400);
-	// vec2_init(&b, 460, 350);
 	data.movex = 90;
 	j = -1;
 	i = -1;
@@ -79,42 +82,57 @@ int		main(void)
 		ft_image_fill(&data, i , data.winwidth / 2, 0xdd0011);
 	while (++j < data.winheight)
 		ft_image_fill(&data, data.winheight / 2, j, 0xdd0011);
+
+	data.cam.mx = ft_create_matrix4();
+	// ft_printmatrix4(&data.cam.mx);
+	data.cam.size = 1;
+	data.cam.focal_length = 2;
+	data.cam.position = ft_create_vector4(0, 0, 0, 1);
+	data.cam.to = ft_create_vector4(0, 3, -3, 1);
+	t_vector4 forward = ft_vec4_sub(&data.cam.to, &data.cam.position); // lookAtPoint - eyePoint;
+	t_vector4 forward_normalized = ft_vec4_normalize(&forward);
+
 	
-	// connect_dots(&data, a, b, 0x00AA11);
-	// a = vec2_rotate_byangle(a, data.movex * M_PI/180);
-	// b = vec2_rotate_byangle(b, data.movex * M_PI/180);
-	// connect_dots(&data, a, b, 0xAAAA11);
 
-	// x_axis = vec2_rotate_byangle(x_axis, 49 * M_PI/180);
-	// y_axis = vec2_rotate_byangle(y_axis, 49 * M_PI/180);
-	//printf("x_axis x == %f\nx_axis y == %f\n", x_axis.x,x_axis.y);
-	// a = vec2_rotate_byaxis(a, x_axis, y_axis);
-	// b = vec2_rotate_byaxis(a, x_axis, y_axis);
-	// connect_dots(&data, a, b, 0xAAAA11);
+	t_vector4 up = ft_create_vector4(0,1,0,0);
+	t_vector4 camera_left = ft_vec4_cross_product(&up, &forward_normalized);
+	t_vector4 camera_up = ft_vec4_cross_product(&forward_normalized, &camera_left);
 
-	ft_explane(&data);
 
-	t_matrix4 mat;
-	t_matrix4 trans;
-	mat = ft_create_matrix4();
-	ft_putmatrix4(&mat);
-	trans = ft_get_translation_matrix4(10, 10, 10);
-	ft_putmatrix4(&trans);
-	
-	
-	t_vector4 vec = ft_create_vector4(10 , 11, 12, 1);
-	ft_putvector4(&vec);
-	vec = ft_matrix_x_vector(&trans, &vec);
-	ft_putvector4(&vec);
+	camera_left = ft_vec4_normalize(&camera_left);
+	camera_up = ft_vec4_normalize(&camera_up);
+	ft_printvector4(&camera_up); // cameraUPPPP
+	ft_printvector4(&camera_left); // LEFT
+	ft_printvector4(&forward_normalized); // FORWARD
 
-/*
-	macro up : 1;
-	macro down  : 2;
-	macro left : 4;
-	macro right  : 8;
-	(left | up | left | right )
-*/
+	data.cam.mx.v[0][2] = forward_normalized.v[X]; // Forward dir
+	data.cam.mx.v[1][2] = forward_normalized.v[Y];
+	data.cam.mx.v[2][2] = forward_normalized.v[Z];
+	data.cam.mx.v[3][2] = forward_normalized.v[W];
 
+	data.cam.mx.v[0][1] = camera_up.v[X]; // Up dir
+	data.cam.mx.v[1][1] = camera_up.v[Y];
+	data.cam.mx.v[2][1] = camera_up.v[Z];
+	data.cam.mx.v[3][1] = camera_up.v[W];
+
+	data.cam.mx.v[0][0] = camera_left.v[X]; // Right dir
+	data.cam.mx.v[1][0] = camera_left.v[Y];
+	data.cam.mx.v[2][0] = camera_left.v[Z];
+	data.cam.mx.v[3][0] = camera_left.v[W];
+	ft_printmatrix4(&data.cam.mx);
+	ft_draw(&data);
+
+	// t_matrix4 mat;
+	// t_matrix4 trans;
+	// mat = ft_create_matrix4();
+	// ft_putmatrix4(&mat);
+	// trans = ft_get_translation_matrix4(10, 10, 10);
+	// ft_putmatrix4(&trans);
+
+	// t_vector4 vec = ft_create_vector4(10 , 11, 12, 1);
+	// ft_putvector4(&vec);
+	// vec = ft_matrix_x_vector(&trans, &vec);
+	// ft_putvector4(&vec);
 
 
 	mlx_put_image_to_window(data.mlx, data.win, data.img_ptr, 0, 0);
@@ -123,6 +141,13 @@ int		main(void)
 }
 
 
+/*
+	macro up : 1;
+	macro down  : 2;
+	macro left : 4;
+	macro right  : 8;
+	(left | up | left | right)
+*/
 
 
 /*

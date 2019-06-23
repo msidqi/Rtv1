@@ -115,15 +115,19 @@ typedef struct		s_ray // P(t) = origin + t * dir
 	double			t; // distance
 }					t_ray;
 
-// typedef struct		s_camera
-// {
-// 	t_vector4		pos;
-
-// }					t_camera;
+typedef struct		s_camera
+{
+	t_vector4		to;
+	t_vector4		position;
+	double			field_of_view;
+	double			size;
+	double			focal_length;
+	t_matrix4		mx;
+}					t_camera;
 
 typedef	struct		s_data
 {
-	// t_camera		cam;
+	t_camera		cam;
 	t_vector4		worldpos;
 	t_color			color;
 	t_startend		thread_range;
@@ -197,5 +201,8 @@ t_vector4    		ft_vec4_normalize(t_vector4 *a);
 double    			ft_vec4_magnitude(t_vector4 *a);
 double				ft_vec4_dot_product(t_vector4 *a, t_vector4 *b);
 int					ft_sphere_intersection(t_ray *ray);
+void				ft_draw(t_data *data);
+void				ft_printmatrix4(t_matrix4 *mat);
+t_vector4 	   ft_vec4_cross_product(t_vector4 *vec1, t_vector4 *vec2);
 
 #endif

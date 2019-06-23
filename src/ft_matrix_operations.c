@@ -132,6 +132,27 @@ void		ft_printvector4(t_vector4 *vec)
 	printf("Vector(%f, %f, %f, %f)\n", vec->v[0], vec->v[1], vec->v[2], vec->v[3]);
 }
 
+void		ft_printmatrix4(t_matrix4 *mat)
+{
+	unsigned int	i;
+	unsigned int	j;
+
+	i = -1;
+	write (1, "\n", 1);
+	while (++i < 4)
+	{
+		j = -1;
+		while (++j < 4)
+		{
+			if (j == 3)
+				printf("% .2f|\n", mat->v[i][j]);
+			else
+				printf("% .2f ", mat->v[i][j]);
+		}
+	}
+	write (1, "\n", 1);
+}
+
 void		ft_putmatrix4(t_matrix4 *mat)
 {
 	unsigned int	i;
@@ -180,6 +201,17 @@ t_vector4    ft_vec4_normalize(t_vector4 *a)
 double    ft_vec4_dot_product(t_vector4 *a, t_vector4 *b)
 {
     return (a->v[X] * b->v[X] + a->v[Y] * b->v[Y] + a->v[Z] * b->v[Z] + a->v[W] * b->v[W]);
+}
+
+t_vector4    ft_vec4_cross_product(t_vector4 *vec1, t_vector4 *vec2)
+{
+	t_vector4 ret;
+
+    ret.v[X] = vec1->v[Y] * vec2->v[Z] - vec1->v[Z] * vec2->v[Y];
+    ret.v[Y] = vec1->v[Z] * vec2->v[X] - vec1->v[X] * vec2->v[Z];
+    ret.v[Z] = vec1->v[X] * vec2->v[Y] - vec1->v[Y] * vec2->v[X];
+	ret.v[W] = 0;
+    return (ret);
 }
 
 t_vector4    ft_vec4_sub(t_vector4 *vec1, t_vector4 *vec2)
@@ -267,6 +299,5 @@ t= (−b±b2−4ac) / (√2a)
 	t0 = (-b + sqrt(discr)) / (2 * a);
 	t1 = (-b - sqrt(discr)) / (2 * a);
 	ray->t = t0 > t1 ? t1 : t0;
-	printf("t == %f\n", ray->t);
 	return (1);
 }

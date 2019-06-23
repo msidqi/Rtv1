@@ -30,6 +30,17 @@ int     key_press(int key_code, t_data *data)
         // data = NULL;
         exit(0);
     }
+    ft_refresh_image(data);
+    if (key_code == LEFT_ARROW)
+        data->cam.position.v[X] -= 0.02;
+    else if (key_code == RIGHT_ARROW)
+        data->cam.position.v[X] += 0.02;
+    else if (key_code == UP_ARROW)
+        data->cam.position.v[Y] -= 0.02;
+    else if (key_code == DOWN_ARROW)
+        data->cam.position.v[Y] += 0.02;
+    ft_draw(data);
+	mlx_put_image_to_window(data->mlx, data->win, data->img_ptr, 0, 0);
     return (0);
 }
 
@@ -39,9 +50,17 @@ int     mouse_press(int button, int x, int y, t_data *data)
     (void)x;
     (void)y;
 	if (button == LEFT_CLICK)
-		data->movex++;
+    {
+        // data->cam.focal_length -= 1;
+		// data->cam.position.v[Z] -= 1;
+    }
 	if (button == RIGHT_CLICK)
-		data->movex--;
+    {
+        // data->cam.focal_length += 1;
+		// data->cam.position.v[Z] += 1;
+    }
+    ft_printvector4(&data->cam.position);
+    ft_draw(data);
 	mlx_put_image_to_window(data->mlx, data->win, data->img_ptr, 0, 0);
 
     return (0);
