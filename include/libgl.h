@@ -42,6 +42,9 @@
 # define VECTOR 1
 # define DIRECTION 2
 # define MATRIX 3
+# define TRANSLATION_MATRIX 0
+# define ROTATION_MATRIX 1
+# define SCALING_MATRIX 2
 # define X 0
 # define Y 1
 # define Z 2
@@ -121,7 +124,12 @@ typedef struct		s_camera
 	t_vector4		position;
 	double			field_of_view;
 	double			size;
+	double			l;
+	double			bigl;
 	double			focal_length;
+	t_vector4		up;
+	t_vector4		forward;
+	t_vector4		left;
 	t_matrix4		mx;
 }					t_camera;
 
@@ -203,6 +211,9 @@ double				ft_vec4_dot_product(t_vector4 *a, t_vector4 *b);
 int					ft_sphere_intersection(t_ray *ray);
 void				ft_draw(t_data *data);
 void				ft_printmatrix4(t_matrix4 *mat);
-t_vector4 	   ft_vec4_cross_product(t_vector4 *vec1, t_vector4 *vec2);
+t_vector4 	   		ft_vec4_cross_product(t_vector4 *vec1, t_vector4 *vec2);
+t_vector4			ft_vec4_add(t_vector4 *vec1, t_vector4 *vec2);
+t_vector4			ft_vec4_scalar(t_vector4 *a, double factor);
+int					ft_plane_intersection(t_ray *ray);
 
 #endif

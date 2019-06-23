@@ -19,6 +19,50 @@ double		ft_map(int x_or_y, double size, int width_or_height)
 	return (x_or_y * size / width_or_height - (size / 2));
 }
 
+void		ft_camera(t_data *data, t_vector4 position , t_vector4 lookat, double focal_length)
+{
+	data->cam.mx = ft_create_matrix4();
+	data->cam.l = 1;
+	data->cam.bigl = 1;
+	data->cam.focal_length = focal_length;
+	data->cam.position = position;
+	data->cam.to = lookat;
+
+	t_vector4 forward = ft_vec4_sub(&data->cam.to, &data->cam.position); // lookAtPoint - eyePoint;
+	ft_printvector4(&forward);
+	forward = ft_vec4_normalize(&forward);
+
+
+	
+
+	t_vector4 up = ft_create_vector4(0,1,0,0);
+	t_vector4 camera_left = ft_vec4_cross_product(&up, &forward);
+	t_vector4 camera_up = ft_vec4_cross_product(&forward, &camera_left);
+
+
+	camera_left = ft_vec4_normalize(&camera_left);
+	camera_up = ft_vec4_normalize(&camera_up);
+
+	data->cam.up = camera_up;
+	data->cam.left = camera_left;
+	data->cam.forward = forward;
+
+	data->cam.mx.v[0][2] = forward.v[X]; // Forward dir
+	data->cam.mx.v[1][2] = forward.v[Y];
+	data->cam.mx.v[2][2] = forward.v[Z];
+	data->cam.mx.v[3][2] = forward.v[W];
+
+	data->cam.mx.v[0][1] = camera_up.v[X]; // Up dir
+	data->cam.mx.v[1][1] = camera_up.v[Y];
+	data->cam.mx.v[2][1] = camera_up.v[Z];
+	data->cam.mx.v[3][1] = camera_up.v[W];
+
+	data->cam.mx.v[0][0] = camera_left.v[X]; // Right dir
+	data->cam.mx.v[1][0] = camera_left.v[Y];
+	data->cam.mx.v[2][0] = camera_left.v[Z];
+	data->cam.mx.v[3][0] = camera_left.v[W];
+	ft_printmatrix4(&data->cam.mx);
+}
 
 t_ray		ft_get_ray(t_data *data, t_vector4 *view_window_pos)
 {
@@ -48,14 +92,28 @@ void		ft_draw(t_data *data)
 		x = 0;
 		while (x < WIDTH)
 		{
-			xm = ft_map(x, data->cam.size, WIDTH) /*+ data->cam.position.v[X]*/;
-			ym = ft_map(y, data->cam.size, HEIGHT) /*+ data->cam.position.v[Y]*/;
-			t_vector4 view_window_pos = ft_create_vector4(xm, ym, 0/*data->cam.focal_length*/, 1);
-
-			t_ray ray = ft_get_ray(data, &view_window_pos);
-			if (ft_sphere_intersection(&ray))
-				ft_image_fill(data, x, y, 0xFF0000);
+			xm = ft_map(x, data->cam.bigl, WIDTH) /*+ data->cam.position.v[X]*/;
+			ym = ft_map(y, data->cam.l, HEIGHT) /*+ data->cam.position.v[Y]*/;
+	
+			t_vector4 new_left = ft_vec4_scalar(&data->cam.left, xm);
+			t_vector4 new_up = ft_vec4_scalar(&data->cam.up, ym);
+			t_vector4 new_forw = ft_vec4_scalar(&data->cam.forward, data->cam.focal_length);
+			t_vector4 left_up =  ft_vec4_add(&new_up , &new_left);
+			t_vector4 res = ft_vec4_add(&left_up, &new_forw);
 			
+			//t_vector4 view_window_pos = ft_create_vector4(xm, ym, 0/*data->cam.focal_length*/, 1);
+
+			// t_ray ray = ft_get_ray(data, &res);
+			t_ray ray;
+			ray.dir = ft_vec4_normalize(&res);
+			
+			ray.origin = ft_create_vector4(data->cam.position.v[X], data->cam.position.v[Y], data->cam.position.v[Z], 0);
+
+			/*if (ft_sphere_intersection(&ray))
+				ft_image_fill(data, x, y, 0xFF0000);*/
+
+			if (ft_plane_intersection(&ray))
+				ft_image_fill(data, x, y, 0x00FF00);
 
 			// ft_printvector4(&ray);
 			// printf("mag == %.14f\n", ft_vec4_magnitude(&ray));
@@ -65,6 +123,7 @@ void		ft_draw(t_data *data)
 		y++;
 	}
 }
+
 int		main(void)
 {
 	t_data  data;
@@ -83,43 +142,10 @@ int		main(void)
 	while (++j < data.winheight)
 		ft_image_fill(&data, data.winheight / 2, j, 0xdd0011);
 
-	data.cam.mx = ft_create_matrix4();
-	// ft_printmatrix4(&data.cam.mx);
-	data.cam.size = 1;
-	data.cam.focal_length = 2;
-	data.cam.position = ft_create_vector4(0, 0, 0, 1);
-	data.cam.to = ft_create_vector4(0, 3, -3, 1);
-	t_vector4 forward = ft_vec4_sub(&data.cam.to, &data.cam.position); // lookAtPoint - eyePoint;
-	t_vector4 forward_normalized = ft_vec4_normalize(&forward);
+	t_vector4 cam_pos = ft_create_vector4(8, 47, 5, 1);
+	t_vector4 look_at_pos = ft_create_vector4(2, 30, -20, 1);
 
-	
-
-	t_vector4 up = ft_create_vector4(0,1,0,0);
-	t_vector4 camera_left = ft_vec4_cross_product(&up, &forward_normalized);
-	t_vector4 camera_up = ft_vec4_cross_product(&forward_normalized, &camera_left);
-
-
-	camera_left = ft_vec4_normalize(&camera_left);
-	camera_up = ft_vec4_normalize(&camera_up);
-	ft_printvector4(&camera_up); // cameraUPPPP
-	ft_printvector4(&camera_left); // LEFT
-	ft_printvector4(&forward_normalized); // FORWARD
-
-	data.cam.mx.v[0][2] = forward_normalized.v[X]; // Forward dir
-	data.cam.mx.v[1][2] = forward_normalized.v[Y];
-	data.cam.mx.v[2][2] = forward_normalized.v[Z];
-	data.cam.mx.v[3][2] = forward_normalized.v[W];
-
-	data.cam.mx.v[0][1] = camera_up.v[X]; // Up dir
-	data.cam.mx.v[1][1] = camera_up.v[Y];
-	data.cam.mx.v[2][1] = camera_up.v[Z];
-	data.cam.mx.v[3][1] = camera_up.v[W];
-
-	data.cam.mx.v[0][0] = camera_left.v[X]; // Right dir
-	data.cam.mx.v[1][0] = camera_left.v[Y];
-	data.cam.mx.v[2][0] = camera_left.v[Z];
-	data.cam.mx.v[3][0] = camera_left.v[W];
-	ft_printmatrix4(&data.cam.mx);
+	ft_camera(&data, cam_pos, look_at_pos, 2);
 	ft_draw(&data);
 
 	// t_matrix4 mat;

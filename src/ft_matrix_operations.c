@@ -214,6 +214,28 @@ t_vector4    ft_vec4_cross_product(t_vector4 *vec1, t_vector4 *vec2)
     return (ret);
 }
 
+t_vector4    ft_vec4_scalar(t_vector4 *a, double factor)
+{
+    t_vector4 ret;
+
+    ret.v[X] = a->v[X] * factor;
+    ret.v[Y] = a->v[Y] * factor;
+    ret.v[Z] = a->v[Z] * factor;
+	ret.v[W] = 0;
+    return (ret);
+}
+
+t_vector4    ft_vec4_add(t_vector4 *vec1, t_vector4 *vec2)
+{
+    t_vector4 ret;
+
+    ret.v[X] = vec1->v[X] + vec2->v[X];
+    ret.v[Y] = vec1->v[Y] + vec2->v[Y];
+    ret.v[Z] = vec1->v[Z] + vec2->v[Z];
+	ret.v[W] = vec1->v[W] + vec2->v[W];
+    return (ret);
+}
+
 t_vector4    ft_vec4_sub(t_vector4 *vec1, t_vector4 *vec2)
 {
     t_vector4 ret;
@@ -270,12 +292,24 @@ t_vector4		ft_translate_vector4(t_vector4 *vec, double x, double y, double z)
 	return (ft_matrix_x_vector(&tr_mat, vec));
 }
 
-
-
+int	ft_plane_intersection(t_ray *ray)
+{
+	t_vector4 n = ft_create_vector4(1, 0, 0, 0);
+	t_vector4 p1 = ft_create_vector4(1, 1 ,0, 1);
+	t_vector4 p = ft_vec4_sub(&p1, &ray->origin);
+	p = ft_vec4_sub(&ray->dir, &p);
+	printf("%f\n", ft_vec4_dot_product(&n, &p));
+	if (ft_vec4_dot_product(&n, &p) == 0)
+	{
+		ray->t = 5;
+		return (1);		
+	}
+	return (0);	
+}
 
 int	ft_sphere_intersection(t_ray *ray)
 {
-	t_vector4	c = ft_create_vector4(0, 0, 20, 0);
+	t_vector4	c = ft_create_vector4(2, 30, -20, 0);
 	double		r = 0.5;
 	double t0;
 	double t1;
