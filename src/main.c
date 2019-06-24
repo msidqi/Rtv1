@@ -102,19 +102,29 @@ void		ft_draw(t_data *data)
 			t_vector4 res = ft_vec4_add(&left_up, &new_forw);
 			
 			//t_vector4 view_window_pos = ft_create_vector4(xm, ym, 0/*data->cam.focal_length*/, 1);
-
 			// t_ray ray = ft_get_ray(data, &res);
 			t_ray ray;
 			ray.dir = ft_vec4_normalize(&res);
 			
 			ray.origin = ft_create_vector4(data->cam.position.v[X], data->cam.position.v[Y], data->cam.position.v[Z], 0);
+			ray.t = 1e30;
 
-			/*if (ft_sphere_intersection(&ray))
-				ft_image_fill(data, x, y, 0xFF0000);*/
 
-			if (ft_plane_intersection(&ray))
-				ft_image_fill(data, x, y, 0x00FF00);
+			// if (ft_plane_intersection(&ray))
+			// 	ft_image_fill(data, x, y, 0x00FF00);
+			t_vector4 sphere1 = ft_create_vector4(0, 0, 0, 0);
+			t_vector4 sphere2 = ft_create_vector4(0, 0.5, 0, 0);
+			t_vector4 sphere3 = ft_create_vector4(0.5, 0, 0, 0);
 
+			if (ft_sphere_intersection(&ray, sphere1))
+				ft_image_fill(data, x, y, 0xFF0000);
+
+			if (ft_sphere_intersection(&ray, sphere2))
+				ft_image_fill(data, x, y, 0x0000AA);
+
+
+			if (ft_sphere_intersection(&ray, sphere3))
+				ft_image_fill(data, x, y, 0x00AA00);
 			// ft_printvector4(&ray);
 			// printf("mag == %.14f\n", ft_vec4_magnitude(&ray));
 			// printf("x: %d , y: %d | xm: %f , ym: %f\n", x, y, xm, ym);
@@ -142,8 +152,8 @@ int		main(void)
 	while (++j < data.winheight)
 		ft_image_fill(&data, data.winheight / 2, j, 0xdd0011);
 
-	t_vector4 cam_pos = ft_create_vector4(8, 47, 5, 1);
-	t_vector4 look_at_pos = ft_create_vector4(2, 30, -20, 1);
+	t_vector4 cam_pos = ft_create_vector4(0, 0, 10, 1);
+	t_vector4 look_at_pos = ft_create_vector4(0, 0, -1, 1);
 
 	ft_camera(&data, cam_pos, look_at_pos, 2);
 	ft_draw(&data);

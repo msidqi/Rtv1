@@ -208,7 +208,7 @@ t_vector4		    ft_vec4_sub(t_vector4 *vec1, t_vector4 *vec2);
 t_vector4    		ft_vec4_normalize(t_vector4 *a);
 double    			ft_vec4_magnitude(t_vector4 *a);
 double				ft_vec4_dot_product(t_vector4 *a, t_vector4 *b);
-int					ft_sphere_intersection(t_ray *ray);
+int					ft_sphere_intersection(t_ray *ray, t_vector4 center);
 void				ft_draw(t_data *data);
 void				ft_printmatrix4(t_matrix4 *mat);
 t_vector4 	   		ft_vec4_cross_product(t_vector4 *vec1, t_vector4 *vec2);

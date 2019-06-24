@@ -294,26 +294,51 @@ t_vector4		ft_translate_vector4(t_vector4 *vec, double x, double y, double z)
 
 int	ft_plane_intersection(t_ray *ray)
 {
-	t_vector4 n = ft_create_vector4(1, 0, 0, 0);
-	t_vector4 p1 = ft_create_vector4(1, 1 ,0, 1);
-	t_vector4 p = ft_vec4_sub(&p1, &ray->origin);
-	p = ft_vec4_sub(&ray->dir, &p);
-	printf("%f\n", ft_vec4_dot_product(&n, &p));
-	if (ft_vec4_dot_product(&n, &p) == 0)
-	{
-		ray->t = 5;
-		return (1);		
-	}
-	return (0);	
+	/*
+	a plane is defined by a normal and a point1.
+	if dot product between the vector(point1 - point2)
+	and the normal == 0 then that point2 is part of the plane.
+	(p1 − p2)⋅n=0
+
+	if we assume that a ray and the plane intersects in point2
+	((origin + t * dir) − p2)⋅n = 0
+	and calculate t(the distance from the ray's origin and point2)
+	we can calculate t for point2.
+	t = (p0 − origin)⋅n / (dir⋅n)
+	*/
+	t_vector4 n = ft_create_vector4(0, 1, 0, 0);
+	t_vector4 p0 = ft_create_vector4(0, -1 ,0, 0);
+
+
+	t_vector4 k = ft_vec4_sub(&p0, &ray->origin);
+	double dot_up = ft_vec4_dot_product(&k, &n);
+	double dot_bot = ft_vec4_dot_product(&ray->dir, &n);
+	
+	ray->t = dot_up / dot_bot;
+	// printf("%f\n", ray->t );
+
+
+	if (ray->t > 20 || ray->t < 2)
+		return (0);
+	return (1);
+	// printf("%f\n", ft_vec4_dot_product(&n, &p));
+	// if (ft_vec4_dot_product(&n, &p) == 0)
+	// {
+	// 	ray->t = 5;
+	// 	return (1);
+	// }
+	return (0);
 }
 
-int	ft_sphere_intersection(t_ray *ray)
+int	ft_sphere_intersection(t_ray *ray,t_vector4 center)
 {
-	t_vector4	c = ft_create_vector4(2, 30, -20, 0);
-	double		r = 0.5;
+	// t_vector4	center = ft_create_vector4(0, 0, 0, 0);
+	double		radius = 0.5;
 	double t0;
 	double t1;
 	double discr;
+	//double far = 1e30;
+	//double near = 1e-6;
 /*
 a=dot(B,B)
 b=2⋅dot(B,A−C)
@@ -322,16 +347,31 @@ With the above parameterization, the quadratic formula is:
 
 t= (−b±b2−4ac) / (√2a)
 */
-	t_vector4 k = ft_vec4_sub(&ray->origin, &c);
+	t_vector4 k = ft_vec4_sub(&ray->origin, &center);
 	double a = ft_vec4_dot_product(&ray->dir, &ray->dir);
 	double b = 2 * ft_vec4_dot_product(&ray->dir, &k);
 	
-	double m = ft_vec4_dot_product(&k, &k) - r * r;
+	double m = ft_vec4_dot_product(&k, &k) - radius * radius;
 	discr = b * b - 4 * a * m;
 	if (discr < 0)
 		return (0);
 	t0 = (-b + sqrt(discr)) / (2 * a);
 	t1 = (-b - sqrt(discr)) / (2 * a);
-	ray->t = t0 > t1 ? t1 : t0;
-	return (1);
+	
+	if (t0 > t1)
+			t0 = t1;
+	if (t0 > 1e-6 && t0 < ray->t)
+	{
+		ray->t = t0;
+		return 1;
+	}
+	else if (t1 > 1e-6 && t1 < ray->t)
+	{
+		ray->t = t1;
+		return 1;
+	}
+	else
+		return (0);
+	// ray->t = t0 > t1 ? t1 : t0;
+	// return (1);
 }
