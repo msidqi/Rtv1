@@ -49,6 +49,12 @@
 # define Y 1
 # define Z 2
 # define W 3
+# define NEAR 1e-6
+# define FAR 1e30
+# define POINT_LIGHT 0
+# define DIRECTIONAL_LIGHT 1
+# define SPOT_LIGHT 2
+# define AREA_LIGHT 3
 
 typedef struct		t_vector2
 {
@@ -116,12 +122,14 @@ typedef struct		s_ray // P(t) = origin + t * dir
 	t_vector4		origin; // vector to origin point
 	t_vector4		dir; // direction vector
 	double			t; // distance
+	t_vector4		intersect_point;
 }					t_ray;
 
 typedef struct		s_camera
 {
 	t_vector4		to;
 	t_vector4		position;
+	t_vector2		mousepos;
 	double			field_of_view;
 	double			size;
 	double			l;
@@ -154,6 +162,34 @@ typedef	struct		s_data
 	int				bpp;
 }					t_data;
 
+typedef	struct		s_sphere
+{
+	int				color;
+	double			radius;
+	t_vector4			center;
+}					t_sphere;
+
+typedef	struct		s_plane
+{
+	int				color;
+	t_vector4		normal;
+	t_vector4		point;
+}					t_plane;
+
+typedef	struct		s_light_source
+{
+	short			type;
+	double			size;
+	t_vector4		origin;
+}					t_light_source;
+
+typedef	struct		s_obj // list to store all objects in a scene
+{
+	void			*obj;
+	short			type;
+	struct s_obj	*next;
+}					t_obj;
+
 typedef struct		s_palette
 {
 	int				palette[8];
@@ -169,6 +205,7 @@ double				ft_get_world_pos(double screen_coord,
 								double widthheight, double zoom);
 void				ft_refresh_image(t_data *data);
 void				ft_mlx_hooks(t_data *data, t_bool ismove);
+int					no_event_mouse_move(int x, int y, t_data *data);
 int					key_press(int key_code, t_data *data);
 int					mouse_press(int button, int x, int y, t_data *data);
 int					mouse_move(int x, int y, t_data *data);
@@ -208,12 +245,12 @@ t_vector4		    ft_vec4_sub(t_vector4 *vec1, t_vector4 *vec2);
 t_vector4    		ft_vec4_normalize(t_vector4 *a);
 double    			ft_vec4_magnitude(t_vector4 *a);
 double				ft_vec4_dot_product(t_vector4 *a, t_vector4 *b);
-int					ft_sphere_intersection(t_ray *ray, t_vector4 center);
 void				ft_draw(t_data *data);
 void				ft_printmatrix4(t_matrix4 *mat);
 t_vector4 	   		ft_vec4_cross_product(t_vector4 *vec1, t_vector4 *vec2);
 t_vector4			ft_vec4_add(t_vector4 *vec1, t_vector4 *vec2);
 t_vector4			ft_vec4_scalar(t_vector4 *a, double factor);
-int					ft_plane_intersection(t_ray *ray);
-
+int					ft_plane_intersection(t_ray *ray, t_plane *plane);
+int					ft_sphere_intersection(t_ray *ray, t_sphere *sphere, t_light_source *lamp);
+void				ft_camera(t_data *data, t_vector4 position , t_vector4 lookat, double focal_length);
 #endif

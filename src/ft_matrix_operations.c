@@ -200,7 +200,7 @@ t_vector4    ft_vec4_normalize(t_vector4 *a)
 
 double    ft_vec4_dot_product(t_vector4 *a, t_vector4 *b)
 {
-    return (a->v[X] * b->v[X] + a->v[Y] * b->v[Y] + a->v[Z] * b->v[Z] + a->v[W] * b->v[W]);
+    return (a->v[X] * b->v[X] + a->v[Y] * b->v[Y] + a->v[Z] * b->v[Z]);
 }
 
 t_vector4    ft_vec4_cross_product(t_vector4 *vec1, t_vector4 *vec2)
@@ -292,7 +292,7 @@ t_vector4		ft_translate_vector4(t_vector4 *vec, double x, double y, double z)
 	return (ft_matrix_x_vector(&tr_mat, vec));
 }
 
-int	ft_plane_intersection(t_ray *ray)
+int	ft_plane_intersection(t_ray *ray, t_plane *plane)
 {
 	/*
 	a plane is defined by a normal and a point1.
@@ -306,39 +306,26 @@ int	ft_plane_intersection(t_ray *ray)
 	we can calculate t for point2.
 	t = (p0 − origin)⋅n / (dir⋅n)
 	*/
-	t_vector4 n = ft_create_vector4(0, 1, 0, 0);
-	t_vector4 p0 = ft_create_vector4(0, -1 ,0, 0);
 
+	t_vector4 k = ft_vec4_sub(&plane->point, &ray->origin);
 
-	t_vector4 k = ft_vec4_sub(&p0, &ray->origin);
-	double dot_up = ft_vec4_dot_product(&k, &n);
-	double dot_bot = ft_vec4_dot_product(&ray->dir, &n);
-	
-	ray->t = dot_up / dot_bot;
-	// printf("%f\n", ray->t );
+	double t0;
+	t0 = ft_vec4_dot_product(&k, &plane->normal) / ft_vec4_dot_product(&ray->dir, &plane->normal);
 
-
-	if (ray->t > 20 || ray->t < 2)
-		return (0);
-	return (1);
-	// printf("%f\n", ft_vec4_dot_product(&n, &p));
-	// if (ft_vec4_dot_product(&n, &p) == 0)
-	// {
-	// 	ray->t = 5;
-	// 	return (1);
-	// }
+	if (t0 > NEAR && t0 < ray->t)
+	{
+		ray->t = t0;
+		return (1);
+	}
 	return (0);
 }
 
-int	ft_sphere_intersection(t_ray *ray,t_vector4 center)
+int	ft_sphere_intersection(t_ray *ray, t_sphere *sphere, t_light_source *lamp)
 {
-	// t_vector4	center = ft_create_vector4(0, 0, 0, 0);
-	double		radius = 0.5;
 	double t0;
 	double t1;
 	double discr;
-	//double far = 1e30;
-	//double near = 1e-6;
+	(void)lamp;
 /*
 a=dot(B,B)
 b=2⋅dot(B,A−C)
@@ -347,31 +334,28 @@ With the above parameterization, the quadratic formula is:
 
 t= (−b±b2−4ac) / (√2a)
 */
-	t_vector4 k = ft_vec4_sub(&ray->origin, &center);
+	t_vector4 k = ft_vec4_sub(&ray->origin, &sphere->center);
 	double a = ft_vec4_dot_product(&ray->dir, &ray->dir);
 	double b = 2 * ft_vec4_dot_product(&ray->dir, &k);
 	
-	double m = ft_vec4_dot_product(&k, &k) - radius * radius;
+	double m = ft_vec4_dot_product(&k, &k) - sphere->radius * sphere->radius;
 	discr = b * b - 4 * a * m;
 	if (discr < 0)
 		return (0);
 	t0 = (-b + sqrt(discr)) / (2 * a);
 	t1 = (-b - sqrt(discr)) / (2 * a);
-	
-	if (t0 > t1)
-			t0 = t1;
-	if (t0 > 1e-6 && t0 < ray->t)
+
+	t0 = t0 < t1 ? t0 : t1;
+
+	if (t0 > NEAR && t0 < ray->t)
 	{
 		ray->t = t0;
-		return 1;
+		return (1);
 	}
-	else if (t1 > 1e-6 && t1 < ray->t)
-	{
-		ray->t = t1;
-		return 1;
-	}
-	else
-		return (0);
-	// ray->t = t0 > t1 ? t1 : t0;
-	// return (1);
+	return (0);
 }
+
+// int			ft_light_intersection(t_ray *ray, t_light_source *source)
+// {
+
+// }

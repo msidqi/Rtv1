@@ -14,6 +14,7 @@
 #define HEIGHT 800
 #define WIDTH 800
 
+
 double		ft_map(int x_or_y, double size, int width_or_height)
 {
 	return (x_or_y * size / width_or_height - (size / 2));
@@ -29,11 +30,8 @@ void		ft_camera(t_data *data, t_vector4 position , t_vector4 lookat, double foca
 	data->cam.to = lookat;
 
 	t_vector4 forward = ft_vec4_sub(&data->cam.to, &data->cam.position); // lookAtPoint - eyePoint;
-	ft_printvector4(&forward);
 	forward = ft_vec4_normalize(&forward);
 
-
-	
 
 	t_vector4 up = ft_create_vector4(0,1,0,0);
 	t_vector4 camera_left = ft_vec4_cross_product(&up, &forward);
@@ -84,7 +82,6 @@ void		ft_draw(t_data *data)
 	int y;
 	double xm;
 	double ym;
-	// double	fow;
 
 	y = 0;
 	while (y < HEIGHT)
@@ -101,33 +98,70 @@ void		ft_draw(t_data *data)
 			t_vector4 left_up =  ft_vec4_add(&new_up , &new_left);
 			t_vector4 res = ft_vec4_add(&left_up, &new_forw);
 			
-			//t_vector4 view_window_pos = ft_create_vector4(xm, ym, 0/*data->cam.focal_length*/, 1);
 			// t_ray ray = ft_get_ray(data, &res);
 			t_ray ray;
 			ray.dir = ft_vec4_normalize(&res);
 			
 			ray.origin = ft_create_vector4(data->cam.position.v[X], data->cam.position.v[Y], data->cam.position.v[Z], 0);
-			ray.t = 1e30;
+			ray.t = FAR;
+
+			t_light_source lamp;
+			lamp.type = POINT_LIGHT;
+			lamp.size = 0;
+			lamp.origin = ft_create_vector4(-2, -5, -5, 1);
 
 
-			// if (ft_plane_intersection(&ray))
-			// 	ft_image_fill(data, x, y, 0x00FF00);
-			t_vector4 sphere1 = ft_create_vector4(0, 0, 0, 0);
-			t_vector4 sphere2 = ft_create_vector4(0, 0.5, 0, 0);
-			t_vector4 sphere3 = ft_create_vector4(0.5, 0, 0, 0);
+			t_plane	plane1;
+			plane1.normal = ft_create_vector4(0, 1, 0, 0);
+			plane1.point = ft_create_vector4(0, 1 ,0, 0);
+			plane1.color = 0x8DEEEE ;
+			if (ft_plane_intersection(&ray, &plane1))
+				ft_image_fill(data, x, y, plane1.color);
 
-			if (ft_sphere_intersection(&ray, sphere1))
-				ft_image_fill(data, x, y, 0xFF0000);
+			t_sphere sphere1;
+			sphere1.center = ft_create_vector4(0, 0, 0, 1);
+			sphere1.radius = 0.8;
+			sphere1.color = 0xAA0000;
 
-			if (ft_sphere_intersection(&ray, sphere2))
-				ft_image_fill(data, x, y, 0x0000AA);
+			t_sphere sphere2;
+			sphere2.center = ft_create_vector4(0, 0.5, 0, 1);
+			sphere2.radius = 0.5;
+			sphere2.color = 0x0000AA;
 
+			t_sphere sphere3;
+			sphere3.center = ft_create_vector4(-2, 0, -5, 1);
+			sphere3.radius = 0.5;
+			sphere3.color = 0xA57982;
+			t_sphere sphere4;
+			sphere4.center = ft_create_vector4(2, 0, 0, 1);
+			sphere4.radius = 1;
+			sphere4.color = 0x449900;
+			t_sphere sphere5;
+			sphere5.center = ft_create_vector4(0.5, 0, 5, 1);
+			sphere5.radius = 0.3;
+			sphere5.color = 0xF7A072;
+			t_sphere sphere6;
+			sphere6.center = ft_create_vector4(-3, -1, 0, 1);
+			sphere6.radius = 0.6;
+			sphere6.color = 0x0FA3B1;
 
-			if (ft_sphere_intersection(&ray, sphere3))
-				ft_image_fill(data, x, y, 0x00AA00);
-			// ft_printvector4(&ray);
-			// printf("mag == %.14f\n", ft_vec4_magnitude(&ray));
-			// printf("x: %d , y: %d | xm: %f , ym: %f\n", x, y, xm, ym);
+			if (ft_sphere_intersection(&ray, &sphere1, &lamp))
+				ft_image_fill(data, x, y, sphere1.color);
+
+			if (ft_sphere_intersection(&ray, &sphere2, &lamp))
+				ft_image_fill(data, x, y, sphere2.color);
+
+			if (ft_sphere_intersection(&ray, &sphere3, &lamp))
+				ft_image_fill(data, x, y, sphere3.color);
+
+			if (ft_sphere_intersection(&ray, &sphere4, &lamp))
+				ft_image_fill(data, x, y, sphere4.color);
+			
+			if (ft_sphere_intersection(&ray, &sphere5, &lamp))
+				ft_image_fill(data, x, y, sphere5.color);
+
+			if (ft_sphere_intersection(&ray, &sphere6, &lamp))
+				ft_image_fill(data, x, y, sphere6.color);
 			x++;
 		}
 		y++;
@@ -147,34 +181,34 @@ int		main(void)
 	data.zoom = 1;
 	data.worldpos.v[X] = ft_get_world_pos(i, data.winwidth, data.zoom);
 	data.worldpos.v[Y] = ft_get_world_pos(i, data.winheight, data.zoom);
-	while (++i < data.winwidth)
-		ft_image_fill(&data, i , data.winwidth / 2, 0xdd0011);
-	while (++j < data.winheight)
-		ft_image_fill(&data, data.winheight / 2, j, 0xdd0011);
+	// while (++i < data.winwidth)
+	// 	ft_image_fill(&data, i , data.winwidth / 2, 0xdd0011);
+	// while (++j < data.winheight)
+	// 	ft_image_fill(&data, data.winheight / 2, j, 0xdd0011);
 
-	t_vector4 cam_pos = ft_create_vector4(0, 0, 10, 1);
+	t_vector4 cam_pos = ft_create_vector4(0, -2, 15, 1);
 	t_vector4 look_at_pos = ft_create_vector4(0, 0, -1, 1);
-
+	data.cam.mousepos.x = -900000;
+	data.cam.mousepos.y = -900000;
 	ft_camera(&data, cam_pos, look_at_pos, 2);
 	ft_draw(&data);
 
-	// t_matrix4 mat;
-	// t_matrix4 trans;
-	// mat = ft_create_matrix4();
-	// ft_putmatrix4(&mat);
-	// trans = ft_get_translation_matrix4(10, 10, 10);
-	// ft_putmatrix4(&trans);
-
-	// t_vector4 vec = ft_create_vector4(10 , 11, 12, 1);
-	// ft_putvector4(&vec);
-	// vec = ft_matrix_x_vector(&trans, &vec);
-	// ft_putvector4(&vec);
-
-
 	mlx_put_image_to_window(data.mlx, data.win, data.img_ptr, 0, 0);
-	ft_mlx_hooks(&data, false);
+	ft_mlx_hooks(&data, true);
 	return (0);
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /*
