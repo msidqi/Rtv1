@@ -221,6 +221,81 @@ void		ft_draw(t_data *data)
 	}
 }
 
+
+
+t_list		*ft_get_scene()
+{
+	unsigned int	obj_num;
+	unsigned int	i;
+	t_list			*node;
+	void			*content;
+	t_list			*head;
+	t_list			*tmp;
+	i = -1;
+	obj_num = 6;
+
+	t_sphere array[6];
+
+	array[0].center = ft_create_vector4(0, 0, 0, 1);
+	array[0].radius = 0.8;
+	array[0].color = 0xAA0000;
+
+	array[0].type = SPHERE;
+	array[1].type = SPHERE;
+	array[2].type = SPHERE;
+	array[3].type = SPHERE;
+	array[4].type = SPHERE;
+	array[5].type = SPHERE;
+	
+	array[1].center = ft_create_vector4(0.2, -2, 0, 1);
+	array[1].radius = 0.5;
+	array[1].color = 0x0000AA;
+
+	array[2].center = ft_create_vector4(-2, 0, -5, 1);
+	array[2].radius = 0.5;
+	array[2].color = 0xA57982;
+
+	array[3].center = ft_create_vector4(2, 0, 0, 1);
+	array[3].radius = 1;
+	array[3].color = 0x449900;
+
+	array[4].center = ft_create_vector4(0.5, 0, 5, 1);
+	array[4].radius = 0.3;
+	array[4].color = 0xF7A072;
+
+	array[5].center = ft_create_vector4(-3, -1, 0, 1);
+	array[5].radius = 0.6;
+	array[5].color = 0x0FA3B1;
+
+	while (++i < obj_num)// iterate for each object.
+	{
+		if (array[i].type == SPHERE)// type == sphere
+		{
+			content = (t_sphere *)malloc(sizeof(t_sphere));
+			// printf("node type == %d\n", ((t_sphere *)content)->type);
+			if (i == 0)
+			{
+				node = ft_lstnew(content, 5); // assign struct in content and type in SPHERE
+				tmp = node;
+			}
+			else
+				node = ft_lstnew(content, SPHERE); // assign struct in content and type in SPHERE
+			// printf("node type == %zu\n", (node)->content_size);
+		}
+		else if (array[i].type == PLANE) // type == plane
+		{
+			content = malloc(sizeof(t_plane));
+			node = ft_lstnew(content, PLANE);
+		}
+		ft_lstadd(&head, node);
+	}
+	tmp->next = NULL;
+	return (head);
+}
+
+
+
+
 int		main(void)
 {
 	t_data  data;
@@ -243,7 +318,22 @@ int		main(void)
 	t_vector4 look_at_pos = ft_create_vector4(0, 0, -1, 1);
 	data.cam.mousepos.x = -900000;
 	data.cam.mousepos.y = -900000;
-	// t_list *scene = ft_get_scene();
+
+	int k = 0;
+	t_list *scene = ft_get_scene();
+	t_sphere *tmp;
+	while (scene != NULL)
+	{
+		tmp = (t_sphere *)scene->content;
+		printf("type == %zu : radius == %f\n", scene->content_size, tmp->radius);
+		if (k == 5)
+			printf("%d\n",(int)scene->next);
+		scene = scene->next;
+		k++;
+	}
+	
+	
+	exit(1);
 	ft_camera(&data, cam_pos, look_at_pos, 2);
 	ft_draw(&data);
 
@@ -251,18 +341,6 @@ int		main(void)
 	ft_mlx_hooks(&data, true);
 	return (0);
 }
-
-
-
-// t_list		*ft_get_scene()
-// {
-// 	while ()
-// 	{
-
-// 		ft_lstnew();
-// 	}
-// }
-
 
 
 

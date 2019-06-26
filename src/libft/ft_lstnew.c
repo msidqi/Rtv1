@@ -11,23 +11,23 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-
+#include <stdio.h>
 t_list	*ft_lstnew(void	const *content, size_t content_size)
 {
-	t_list	*node1;
+	t_list	*node;
 
-	if (!(node1 = (t_list *)malloc(sizeof(t_list))))
+	if (!(node = (t_list *)malloc(sizeof(t_list))))
 		return (NULL);
 	if (content == NULL)
 	{
-		node1->content = NULL;
-		node1->content_size = 0;
+		node->content = NULL;
+		node->content_size = 0;
 	}
 	else
 	{
-		node1->content = (void *)content;
-		node1->content_size = content_size;
+		node->content = (void *)content;
+		node->content_size = content_size;
 	}
-	node1->next = NULL;
-	return (node1);
+	node->next = NULL;
+	return (node);
 }

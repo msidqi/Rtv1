@@ -168,9 +168,10 @@ typedef	struct		s_data
 
 typedef	struct		s_sphere
 {
+	short			type;
 	int				color;
 	double			radius;
-	t_vector4			center;
+	t_vector4		center;
 }					t_sphere;
 
 typedef	struct		s_plane
