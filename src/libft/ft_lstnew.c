@@ -22,17 +22,12 @@ t_list	*ft_lstnew(void	const *content, size_t content_size)
 	{
 		node1->content = NULL;
 		node1->content_size = 0;
-		node1->next = NULL;
 	}
 	else
 	{
-		if (!(node1->content = (void *)ft_strdup((char *)content)))
-		{
-			free(node1);
-			return (NULL);
-		}
+		node1->content = (void *)content;
 		node1->content_size = content_size;
-		node1->next = NULL;
 	}
+	node1->next = NULL;
 	return (node1);
 }

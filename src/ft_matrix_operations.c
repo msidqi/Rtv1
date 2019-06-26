@@ -320,24 +320,23 @@ int	ft_plane_intersection(t_ray *ray, t_plane *plane)
 	return (0);
 }
 
-int	ft_sphere_intersection(t_ray *ray, t_sphere *sphere, t_light_source *lamp)
+int	ft_sphere_intersection(t_ray *ray, t_sphere *sphere, short self)
 {
 	double t0;
 	double t1;
 	double discr;
-	(void)lamp;
 /*
 a=dot(B,B)
 b=2⋅dot(B,A−C)
 c=dot(A−C,A−C)−r2
 With the above parameterization, the quadratic formula is:
 
-t= (−b±b2−4ac) / (√2a)
+t = (−b±b2−4ac) / (√2a)
 */
 	t_vector4 k = ft_vec4_sub(&ray->origin, &sphere->center);
 	double a = ft_vec4_dot_product(&ray->dir, &ray->dir);
 	double b = 2 * ft_vec4_dot_product(&ray->dir, &k);
-	
+
 	double m = ft_vec4_dot_product(&k, &k) - sphere->radius * sphere->radius;
 	discr = b * b - 4 * a * m;
 	if (discr < 0)
@@ -346,16 +345,29 @@ t= (−b±b2−4ac) / (√2a)
 	t1 = (-b - sqrt(discr)) / (2 * a);
 
 	t0 = t0 < t1 ? t0 : t1;
-
-	if (t0 > NEAR && t0 < ray->t)
+	if (self == 1 && t0 < NEAR && t0 > -NEAR)
+		return (1);
+	else if (t0 > NEAR && t0 < ray->t)
 	{
+		// if (lamp == NULL)
+		// printf("t0 == %f : NEAR == %f : FAR == %f\n", t0, NEAR, ray->t);
 		ray->t = t0;
 		return (1);
 	}
 	return (0);
 }
 
-// int			ft_light_intersection(t_ray *ray, t_light_source *source)
-// {
+t_ray			ft_light_intersection(t_ray *ray, t_light_source *source)
+{
+	t_vector4 inter_point;
 
-// }
+	inter_point = ft_vec4_scalar(&ray->dir, ray->t); //tmp
+	
+	inter_point = ft_vec4_add(&ray->origin , &inter_point); // intersection point calculated
+	t_ray ray_to_light;
+	ray_to_light.origin = inter_point;
+	ray_to_light.dir = ft_vec4_sub( &source->origin, &ray_to_light.origin) ;
+	ray_to_light.dir = ft_vec4_normalize(&ray_to_light.dir);
+	//  ft_printvector4(&ray_to_light.dir);
+	return (ray_to_light);
+	}

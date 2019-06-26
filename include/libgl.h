@@ -55,6 +55,10 @@
 # define DIRECTIONAL_LIGHT 1
 # define SPOT_LIGHT 2
 # define AREA_LIGHT 3
+# define SPHERE 1
+# define PLANE 2
+# define CONE 4
+# define CYLINDRE 8
 
 typedef struct		t_vector2
 {
@@ -251,6 +255,8 @@ t_vector4 	   		ft_vec4_cross_product(t_vector4 *vec1, t_vector4 *vec2);
 t_vector4			ft_vec4_add(t_vector4 *vec1, t_vector4 *vec2);
 t_vector4			ft_vec4_scalar(t_vector4 *a, double factor);
 int					ft_plane_intersection(t_ray *ray, t_plane *plane);
-int					ft_sphere_intersection(t_ray *ray, t_sphere *sphere, t_light_source *lamp);
+int					ft_sphere_intersection(t_ray *ray, t_sphere *sphere, short self);
 void				ft_camera(t_data *data, t_vector4 position , t_vector4 lookat, double focal_length);
+t_ray				ft_light_intersection(t_ray *ray, t_light_source *source);
+
 #endif

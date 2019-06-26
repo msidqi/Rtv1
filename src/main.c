@@ -108,7 +108,7 @@ void		ft_draw(t_data *data)
 			t_light_source lamp;
 			lamp.type = POINT_LIGHT;
 			lamp.size = 0;
-			lamp.origin = ft_create_vector4(-2, -5, -5, 1);
+			lamp.origin = ft_create_vector4(0, -9, 0, 1);
 
 
 			t_plane	plane1;
@@ -117,14 +117,14 @@ void		ft_draw(t_data *data)
 			plane1.color = 0x8DEEEE ;
 			if (ft_plane_intersection(&ray, &plane1))
 				ft_image_fill(data, x, y, plane1.color);
-
+			
 			t_sphere sphere1;
 			sphere1.center = ft_create_vector4(0, 0, 0, 1);
 			sphere1.radius = 0.8;
 			sphere1.color = 0xAA0000;
 
 			t_sphere sphere2;
-			sphere2.center = ft_create_vector4(0, 0.5, 0, 1);
+			sphere2.center = ft_create_vector4(0.2, -2, 0, 1);
 			sphere2.radius = 0.5;
 			sphere2.color = 0x0000AA;
 
@@ -145,23 +145,76 @@ void		ft_draw(t_data *data)
 			sphere6.radius = 0.6;
 			sphere6.color = 0x0FA3B1;
 
-			if (ft_sphere_intersection(&ray, &sphere1, &lamp))
+			t_ray ray_to_light;
+
+
+			if (ft_sphere_intersection(&ray, &sphere1, 0))
+			{
 				ft_image_fill(data, x, y, sphere1.color);
+				ray_to_light = ft_light_intersection(&ray, &lamp);
+				ray_to_light.t = FAR;
+				if (ft_sphere_intersection(&ray_to_light, &sphere1, 1))
+					ft_image_fill(data, x, y, 0x0);
+				if (ft_sphere_intersection(&ray_to_light, &sphere2, 0))
+					ft_image_fill(data, x, y, 0x0);
+			}
 
-			if (ft_sphere_intersection(&ray, &sphere2, &lamp))
+			if (ft_sphere_intersection(&ray, &sphere2, 0))
+			{
 				ft_image_fill(data, x, y, sphere2.color);
+				ray_to_light = ft_light_intersection(&ray, &lamp);
+				ray_to_light.t = FAR;
+				if (ft_sphere_intersection(&ray_to_light, &sphere2, 1))
+					ft_image_fill(data, x, y, 0x0);
+			}
 
-			if (ft_sphere_intersection(&ray, &sphere3, &lamp))
+			if (ft_sphere_intersection(&ray, &sphere3, 0))
+			{
 				ft_image_fill(data, x, y, sphere3.color);
+				ray_to_light = ft_light_intersection(&ray, &lamp);
+				ray_to_light.t = FAR;
+				if (ft_sphere_intersection(&ray_to_light, &sphere3, 1))
+					ft_image_fill(data, x, y, 0x0);
+				if (ft_sphere_intersection(&ray_to_light, &sphere2, 0))
+					ft_image_fill(data, x, y, 0x0);
+			}
 
-			if (ft_sphere_intersection(&ray, &sphere4, &lamp))
+			if (ft_sphere_intersection(&ray, &sphere4, 0))
+			{
 				ft_image_fill(data, x, y, sphere4.color);
-			
-			if (ft_sphere_intersection(&ray, &sphere5, &lamp))
-				ft_image_fill(data, x, y, sphere5.color);
+				ray_to_light = ft_light_intersection(&ray, &lamp);
+				ray_to_light.t = FAR;
+				if (ft_sphere_intersection(&ray_to_light, &sphere4, 1))
+					ft_image_fill(data, x, y, 0x0);
+				if (ft_sphere_intersection(&ray_to_light, &sphere2, 0))
+					ft_image_fill(data, x, y, 0x0);
+			}
 
-			if (ft_sphere_intersection(&ray, &sphere6, &lamp))
-				ft_image_fill(data, x, y, sphere6.color);
+			if (ft_sphere_intersection(&ray, &sphere5, 0))
+			{
+				ft_image_fill(data, x, y, sphere5.color);
+				ray_to_light = ft_light_intersection(&ray, &lamp);
+				ray_to_light.t = FAR;
+				if (ft_sphere_intersection(&ray_to_light, &sphere5, 1))
+					ft_image_fill(data, x, y, 0x0);
+				if (ft_sphere_intersection(&ray_to_light, &sphere2, 0))
+					ft_image_fill(data, x, y, 0x0);
+			}
+			//  if (ft_sphere_intersection(&ray, &sphere2, 0))
+			// 	ft_image_fill(data, x, y, sphere2.color);
+				
+ 
+			// if (ft_sphere_intersection(&ray, &sphere3, 0))
+			// 	ft_image_fill(data, x, y, sphere3.color);
+
+			// if (ft_sphere_intersection(&ray, &sphere4, 0))
+			// 	ft_image_fill(data, x, y, sphere4.color);
+			
+			// if (ft_sphere_intersection(&ray, &sphere5, 0))
+			// 	ft_image_fill(data, x, y, sphere5.color);
+
+			// if (ft_sphere_intersection(&ray, &sphere6, 0))
+			// 	ft_image_fill(data, x, y, sphere6.color);
 			x++;
 		}
 		y++;
@@ -190,6 +243,7 @@ int		main(void)
 	t_vector4 look_at_pos = ft_create_vector4(0, 0, -1, 1);
 	data.cam.mousepos.x = -900000;
 	data.cam.mousepos.y = -900000;
+	// t_list *scene = ft_get_scene();
 	ft_camera(&data, cam_pos, look_at_pos, 2);
 	ft_draw(&data);
 
@@ -200,7 +254,14 @@ int		main(void)
 
 
 
+// t_list		*ft_get_scene()
+// {
+// 	while ()
+// 	{
 
+// 		ft_lstnew();
+// 	}
+// }
 
 
 
