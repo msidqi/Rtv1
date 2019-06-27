@@ -59,7 +59,7 @@ void		ft_camera(t_data *data, t_vector4 position , t_vector4 lookat, double foca
 	data->cam.mx.v[1][0] = camera_left.v[Y];
 	data->cam.mx.v[2][0] = camera_left.v[Z];
 	data->cam.mx.v[3][0] = camera_left.v[W];
-	ft_printmatrix4(&data->cam.mx);
+	// ft_printmatrix4(&data->cam.mx);
 }
 
 t_ray		ft_get_ray(t_data *data, t_vector4 *view_window_pos)
@@ -82,7 +82,8 @@ void		ft_draw(t_data *data)
 	int y;
 	double xm;
 	double ym;
-
+	t_list *scene;
+	t_list *tmp;
 	y = 0;
 	while (y < HEIGHT)
 	{
@@ -105,116 +106,122 @@ void		ft_draw(t_data *data)
 			ray.origin = ft_create_vector4(data->cam.position.v[X], data->cam.position.v[Y], data->cam.position.v[Z], 0);
 			ray.t = FAR;
 
-			t_light_source lamp;
-			lamp.type = POINT_LIGHT;
-			lamp.size = 0;
-			lamp.origin = ft_create_vector4(0, -9, 0, 1);
-
+			
 
 			t_plane	plane1;
 			plane1.normal = ft_create_vector4(0, 1, 0, 0);
 			plane1.point = ft_create_vector4(0, 1 ,0, 0);
-			plane1.color = 0x8DEEEE ;
+			plane1.color = 0x8DEEEE;
 			if (ft_plane_intersection(&ray, &plane1))
 				ft_image_fill(data, x, y, plane1.color);
 			
-			t_sphere sphere1;
-			sphere1.center = ft_create_vector4(0, 0, 0, 1);
-			sphere1.radius = 0.8;
-			sphere1.color = 0xAA0000;
+			// t_sphere sphere1;
+			// sphere1.center = ft_create_vector4(0, 0, 0, 1);
+			// sphere1.radius = 0.8;
+			// sphere1.color = 0xAA0000;
 
-			t_sphere sphere2;
-			sphere2.center = ft_create_vector4(0.2, -2, 0, 1);
-			sphere2.radius = 0.5;
-			sphere2.color = 0x0000AA;
+			// t_sphere sphere2;
+			// sphere2.center = ft_create_vector4(0.2, -2, 0, 1);
+			// sphere2.radius = 0.5;
+			// sphere2.color = 0x0000AA;
 
-			t_sphere sphere3;
-			sphere3.center = ft_create_vector4(-2, 0, -5, 1);
-			sphere3.radius = 0.5;
-			sphere3.color = 0xA57982;
-			t_sphere sphere4;
-			sphere4.center = ft_create_vector4(2, 0, 0, 1);
-			sphere4.radius = 1;
-			sphere4.color = 0x449900;
-			t_sphere sphere5;
-			sphere5.center = ft_create_vector4(0.5, 0, 5, 1);
-			sphere5.radius = 0.3;
-			sphere5.color = 0xF7A072;
-			t_sphere sphere6;
-			sphere6.center = ft_create_vector4(-3, -1, 0, 1);
-			sphere6.radius = 0.6;
-			sphere6.color = 0x0FA3B1;
+			// t_sphere sphere3;
+			// sphere3.center = ft_create_vector4(-2, 0, -5, 1);
+			// sphere3.radius = 0.5;
+			// sphere3.color = 0xA57982;
+			// t_sphere sphere4;
+			// sphere4.center = ft_create_vector4(2, 0, 0, 1);
+			// sphere4.radius = 1;
+			// sphere4.color = 0x449900;
+			// t_sphere sphere5;
+			// sphere5.center = ft_create_vector4(0.5, 0, 5, 1);
+			// sphere5.radius = 0.3;
+			// sphere5.color = 0xF7A072;
+			// t_sphere sphere6;
+			// sphere6.center = ft_create_vector4(-3, -1, 0, 1);
+			// sphere6.radius = 0.6;
+			// sphere6.color = 0x0FA3B1;
+
+		
+			// if (ft_sphere_intersection(&ray, &sphere1, 0))
+			// {
+			// 	ft_image_fill(data, x, y, sphere1.color);
+			// 	ray_to_light = ft_light_intersection(&ray, &lamp);
+			// 	ray_to_light.t = FAR;
+			// 	if (ft_sphere_intersection(&ray_to_light, &sphere1, 1))
+			// 		ft_image_fill(data, x, y, 0x0);
+			// 	if (ft_sphere_intersection(&ray_to_light, &sphere2, 0))
+			// 		ft_image_fill(data, x, y, 0x0);
+			// }
+
+			// if (ft_sphere_intersection(&ray, &sphere2, 0))
+			// {
+			// 	ft_image_fill(data, x, y, sphere2.color);
+			// 	ray_to_light = ft_light_intersection(&ray, &lamp);
+			// 	ray_to_light.t = FAR;
+			// 	if (ft_sphere_intersection(&ray_to_light, &sphere2, 1))
+			// 		ft_image_fill(data, x, y, 0x0);
+			// }
+
+			// if (ft_sphere_intersection(&ray, &sphere3, 0))
+			// {
+			// 	ft_image_fill(data, x, y, sphere3.color);
+			// 	ray_to_light = ft_light_intersection(&ray, &lamp);
+			// 	ray_to_light.t = FAR;
+			// 	if (ft_sphere_intersection(&ray_to_light, &sphere3, 1))
+			// 		ft_image_fill(data, x, y, 0x0);
+			// 	if (ft_sphere_intersection(&ray_to_light, &sphere2, 0))
+			// 		ft_image_fill(data, x, y, 0x0);
+			// }
+
+			// if (ft_sphere_intersection(&ray, &sphere4, 0))
+			// {
+			// 	ft_image_fill(data, x, y, sphere4.color);
+			// 	ray_to_light = ft_light_intersection(&ray, &lamp);
+			// 	ray_to_light.t = FAR;
+			// 	if (ft_sphere_intersection(&ray_to_light, &sphere4, 1))
+			// 		ft_image_fill(data, x, y, 0x0);
+			// 	if (ft_sphere_intersection(&ray_to_light, &sphere2, 0))
+			// 		ft_image_fill(data, x, y, 0x0);
+			// }
+
+			// if (ft_sphere_intersection(&ray, &sphere5, 0))
+			// {
+			// 	ft_image_fill(data, x, y, sphere5.color);
+			// 	ray_to_light = ft_light_intersection(&ray, &lamp);
+			// 	ray_to_light.t = FAR;
+			// 	if (ft_sphere_intersection(&ray_to_light, &sphere5, 1))
+			// 		ft_image_fill(data, x, y, 0x0);
+			// 	if (ft_sphere_intersection(&ray_to_light, &sphere2, 0))
+			// 		ft_image_fill(data, x, y, 0x0);
+			// }
+
 
 			t_ray ray_to_light;
 
-
-			if (ft_sphere_intersection(&ray, &sphere1, 0))
+			scene = data->scene;
+			while (scene != NULL)
 			{
-				ft_image_fill(data, x, y, sphere1.color);
-				ray_to_light = ft_light_intersection(&ray, &lamp);
-				ray_to_light.t = FAR;
-				if (ft_sphere_intersection(&ray_to_light, &sphere1, 1))
-					ft_image_fill(data, x, y, 0x0);
-				if (ft_sphere_intersection(&ray_to_light, &sphere2, 0))
-					ft_image_fill(data, x, y, 0x0);
+				if (scene->content_size == SPHERE)
+				{
+					if (ft_sphere_intersection(&ray, (t_sphere *)scene->content, 0))
+					{	
+						ft_image_fill(data, x, y, ((t_sphere *)scene->content)->color);
+						ray_to_light = ft_light_intersection(&ray, &data->light);
+						ray_to_light.t = FAR;
+						if (ft_sphere_intersection(&ray_to_light, (t_sphere *)scene->content, 1))
+							ft_image_fill(data, x, y, 0x0);
+						tmp = data->scene;
+						while (tmp != NULL)
+						{
+							if (ft_sphere_intersection(&ray_to_light, (t_sphere *)tmp->content, 0))
+							ft_image_fill(data, x, y, 0x0);
+							tmp = tmp->next;
+						}
+					}
+				}
+				scene = scene->next;
 			}
-
-			if (ft_sphere_intersection(&ray, &sphere2, 0))
-			{
-				ft_image_fill(data, x, y, sphere2.color);
-				ray_to_light = ft_light_intersection(&ray, &lamp);
-				ray_to_light.t = FAR;
-				if (ft_sphere_intersection(&ray_to_light, &sphere2, 1))
-					ft_image_fill(data, x, y, 0x0);
-			}
-
-			if (ft_sphere_intersection(&ray, &sphere3, 0))
-			{
-				ft_image_fill(data, x, y, sphere3.color);
-				ray_to_light = ft_light_intersection(&ray, &lamp);
-				ray_to_light.t = FAR;
-				if (ft_sphere_intersection(&ray_to_light, &sphere3, 1))
-					ft_image_fill(data, x, y, 0x0);
-				if (ft_sphere_intersection(&ray_to_light, &sphere2, 0))
-					ft_image_fill(data, x, y, 0x0);
-			}
-
-			if (ft_sphere_intersection(&ray, &sphere4, 0))
-			{
-				ft_image_fill(data, x, y, sphere4.color);
-				ray_to_light = ft_light_intersection(&ray, &lamp);
-				ray_to_light.t = FAR;
-				if (ft_sphere_intersection(&ray_to_light, &sphere4, 1))
-					ft_image_fill(data, x, y, 0x0);
-				if (ft_sphere_intersection(&ray_to_light, &sphere2, 0))
-					ft_image_fill(data, x, y, 0x0);
-			}
-
-			if (ft_sphere_intersection(&ray, &sphere5, 0))
-			{
-				ft_image_fill(data, x, y, sphere5.color);
-				ray_to_light = ft_light_intersection(&ray, &lamp);
-				ray_to_light.t = FAR;
-				if (ft_sphere_intersection(&ray_to_light, &sphere5, 1))
-					ft_image_fill(data, x, y, 0x0);
-				if (ft_sphere_intersection(&ray_to_light, &sphere2, 0))
-					ft_image_fill(data, x, y, 0x0);
-			}
-			//  if (ft_sphere_intersection(&ray, &sphere2, 0))
-			// 	ft_image_fill(data, x, y, sphere2.color);
-				
- 
-			// if (ft_sphere_intersection(&ray, &sphere3, 0))
-			// 	ft_image_fill(data, x, y, sphere3.color);
-
-			// if (ft_sphere_intersection(&ray, &sphere4, 0))
-			// 	ft_image_fill(data, x, y, sphere4.color);
-			
-			// if (ft_sphere_intersection(&ray, &sphere5, 0))
-			// 	ft_image_fill(data, x, y, sphere5.color);
-
-			// if (ft_sphere_intersection(&ray, &sphere6, 0))
-			// 	ft_image_fill(data, x, y, sphere6.color);
 			x++;
 		}
 		y++;
@@ -267,24 +274,34 @@ t_list		*ft_get_scene()
 	array[5].radius = 0.6;
 	array[5].color = 0x0FA3B1;
 
+
+
+
+
+
+
+
 	while (++i < obj_num)// iterate for each object.
 	{
 		if (array[i].type == SPHERE)// type == sphere
 		{
-			content = (t_sphere *)malloc(sizeof(t_sphere));
-			// printf("node type == %d\n", ((t_sphere *)content)->type);
+			if (!(content = (t_sphere *)malloc(sizeof(t_sphere))))
+				return (NULL);
+			((t_sphere*)content)->center = array[i].center;
+			((t_sphere*)content)->radius = array[i].radius;
+			((t_sphere*)content)->color = array[i].color;
+			node = ft_lstnew(content, SPHERE); // assign struct in content and type in SPHERE
 			if (i == 0)
-			{
-				node = ft_lstnew(content, 5); // assign struct in content and type in SPHERE
 				tmp = node;
-			}
-			else
-				node = ft_lstnew(content, SPHERE); // assign struct in content and type in SPHERE
-			// printf("node type == %zu\n", (node)->content_size);
 		}
 		else if (array[i].type == PLANE) // type == plane
 		{
-			content = malloc(sizeof(t_plane));
+			
+			if (!(content = malloc(sizeof(t_plane))))
+				return (NULL);
+			// ((t_plane *)content)->normal = array[i].normal;
+			// ((t_plane *)content)->point = array[i].point;
+			((t_plane *)content)->color = array[i].color;
 			node = ft_lstnew(content, PLANE);
 		}
 		ft_lstadd(&head, node);
@@ -309,31 +326,27 @@ int		main(void)
 	data.zoom = 1;
 	data.worldpos.v[X] = ft_get_world_pos(i, data.winwidth, data.zoom);
 	data.worldpos.v[Y] = ft_get_world_pos(i, data.winheight, data.zoom);
-	// while (++i < data.winwidth)
-	// 	ft_image_fill(&data, i , data.winwidth / 2, 0xdd0011);
-	// while (++j < data.winheight)
-	// 	ft_image_fill(&data, data.winheight / 2, j, 0xdd0011);
 
 	t_vector4 cam_pos = ft_create_vector4(0, -2, 15, 1);
 	t_vector4 look_at_pos = ft_create_vector4(0, 0, -1, 1);
 	data.cam.mousepos.x = -900000;
 	data.cam.mousepos.y = -900000;
 
-	int k = 0;
-	t_list *scene = ft_get_scene();
-	t_sphere *tmp;
-	while (scene != NULL)
-	{
-		tmp = (t_sphere *)scene->content;
-		printf("type == %zu : radius == %f\n", scene->content_size, tmp->radius);
-		if (k == 5)
-			printf("%d\n",(int)scene->next);
-		scene = scene->next;
-		k++;
-	}
-	
-	
-	exit(1);
+	t_light_source lamp;
+	lamp.type = POINT_LIGHT;
+	lamp.size = 0;
+	lamp.origin = ft_create_vector4(0, -9, 0, 1);
+	data.light = lamp;
+
+	data.scene = ft_get_scene();
+	// while (scene != NULL)
+	// {
+	// 	printf("type == %zu : radius == %x\n", scene->content_size, ((t_sphere *)scene->content)->color);
+	// 	ft_printvector4(&((t_sphere *)scene->content)->center);
+	// 	scene = scene->next;
+	// }
+
+
 	ft_camera(&data, cam_pos, look_at_pos, 2);
 	ft_draw(&data);
 

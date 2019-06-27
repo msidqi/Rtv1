@@ -65,13 +65,13 @@ int     key_press(int key_code, t_data *data)
     }
     ft_refresh_image(data);
     if (key_code == LEFT_ARROW)
-        data->cam.position.v[X] -= 0.5;
-    else if (key_code == RIGHT_ARROW)
         data->cam.position.v[X] += 0.5;
+    else if (key_code == RIGHT_ARROW)
+        data->cam.position.v[X] -= 0.5;
     else if (key_code == UP_ARROW)
-        data->cam.position.v[Y] += 0.5;
+        data->cam.position.v[Z] -= 0.5;
     else if (key_code == DOWN_ARROW)
-        data->cam.position.v[Y] -= 0.5;
+        data->cam.position.v[Z] += 0.5;
     t_vector4 cam_pos = ft_create_vector4(data->cam.position.v[X], data->cam.position.v[Y], data->cam.position.v[Z], 1);
 	t_vector4 look_at_pos = ft_create_vector4(0, 0, -1, 1);
 
@@ -89,12 +89,12 @@ int     mouse_press(int button, int x, int y, t_data *data)
 	if (button == LEFT_CLICK)
     {
         // data->cam.focal_length -= 1;
-		data->cam.position.v[Z] -= 1;
+		data->cam.position.v[Y] -= 1;
     }
 	if (button == RIGHT_CLICK)
     {
         // data->cam.focal_length += 1;
-		data->cam.position.v[Z] += 1;
+		data->cam.position.v[Y] += 1;
     }
     t_vector4 cam_pos = ft_create_vector4(data->cam.position.v[X], data->cam.position.v[Y], data->cam.position.v[Z], 1);
 	t_vector4 look_at_pos = ft_create_vector4(0, 0, -1, 1);

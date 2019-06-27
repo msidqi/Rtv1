@@ -129,6 +129,13 @@ typedef struct		s_ray // P(t) = origin + t * dir
 	t_vector4		intersect_point;
 }					t_ray;
 
+typedef	struct		s_light_source
+{
+	short			type;
+	double			size;
+	t_vector4		origin;
+}					t_light_source;
+
 typedef struct		s_camera
 {
 	t_vector4		to;
@@ -147,12 +154,14 @@ typedef struct		s_camera
 
 typedef	struct		s_data
 {
+	t_light_source	light;
+	t_list			*scene;
 	t_camera		cam;
 	t_vector4		worldpos;
 	t_color			color;
 	t_startend		thread_range;
-	int				winwidth;
-	int				winheight;
+	unsigned int	winwidth;
+	unsigned int	winheight;
 	void			*mlx;
 	void			*win;
 	void			*img_ptr;
@@ -180,13 +189,6 @@ typedef	struct		s_plane
 	t_vector4		normal;
 	t_vector4		point;
 }					t_plane;
-
-typedef	struct		s_light_source
-{
-	short			type;
-	double			size;
-	t_vector4		origin;
-}					t_light_source;
 
 typedef	struct		s_obj // list to store all objects in a scene
 {
@@ -216,7 +218,7 @@ int					mouse_press(int button, int x, int y, t_data *data);
 int					mouse_move(int x, int y, t_data *data);
 void				ft_multi_thread(t_data *data, int n_threads, void *(*f)(void *));
 void				drawline(t_data *data, int startline, int nlines, int color);
-void				drawnsquares(t_data *data, int onedlen);
+void				drawnsquares(t_data *data, unsigned int onedlen);
 void				connect_dots(t_data *data, t_vector2 a, t_vector2 b, int color);
 void				vec2_init(t_vector2 *a, double x, double y);
 void				vec3_init(t_vector3 *a, double x, double y, double z);
