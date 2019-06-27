@@ -200,25 +200,41 @@ void		ft_draw(t_data *data)
 			t_ray ray_to_light;
 
 			scene = data->scene;
-			while (scene != NULL)
+			while (scene != NULL) // foreach obj
 			{
-				if (scene->content_size == SPHERE)
+				if (scene->content_size == SPHERE) // for spheres
 				{
-					if (ft_sphere_intersection(&ray, (t_sphere *)scene->content, 0))
+					if (ft_sphere_intersection(&ray, (t_sphere *)scene->content, 0)) // 0- intersect ray from camera with a sphere
 					{	
 						ft_image_fill(data, x, y, ((t_sphere *)scene->content)->color);
-						ray_to_light = ft_light_intersection(&ray, &data->light);
+						ray_to_light = ft_light_intersection(&ray, &data->light); // 1-finding intersection point with a sphere(using distance t) in order to send a second ray towards the light
 						ray_to_light.t = FAR;
-						if (ft_sphere_intersection(&ray_to_light, (t_sphere *)scene->content, 1))
+						if (ft_sphere_intersection(&ray_to_light, (t_sphere *)scene->content, 1)) // 2-self shadow
 							ft_image_fill(data, x, y, 0x0);
+						
+						
+						
 						tmp = data->scene;
-						while (tmp != NULL)
+						while (tmp != NULL) // 3-loop to see if ray is blocked by any another object in scene, towards light source.
 						{
-							if (ft_sphere_intersection(&ray_to_light, (t_sphere *)tmp->content, 0))
-							ft_image_fill(data, x, y, 0x0);
+							if (tmp->content_size == SPHERE)
+							{
+								// check if ray_to_light intersects with the sphere (if the obj is a sphere)
+								ray_to_light.t = FAR;
+								if (ft_sphere_intersection(&ray_to_light, (t_sphere *)tmp->content, 0)) 
+									ft_image_fill(data, x, y, 0x0);
+							}
+							if (tmp->content_size == PLANE)
+							{
+								// check if ray_to_light intersects with the plane (if the obj is a plane)
+							}
 							tmp = tmp->next;
 						}
 					}
+				}
+				if (scene->content_size == PLANE) // for planes
+				{
+					// repeat same steps 
 				}
 				scene = scene->next;
 			}
