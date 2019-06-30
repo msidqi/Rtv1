@@ -232,7 +232,7 @@ t_vector4    ft_vec4_add(t_vector4 *vec1, t_vector4 *vec2)
     ret.v[X] = vec1->v[X] + vec2->v[X];
     ret.v[Y] = vec1->v[Y] + vec2->v[Y];
     ret.v[Z] = vec1->v[Z] + vec2->v[Z];
-	ret.v[W] = vec1->v[W] + vec2->v[W];
+	ret.v[W] = 0;
     return (ret);
 }
 
@@ -243,7 +243,7 @@ t_vector4    ft_vec4_sub(t_vector4 *vec1, t_vector4 *vec2)
     ret.v[X] = vec1->v[X] - vec2->v[X];
     ret.v[Y] = vec1->v[Y] - vec2->v[Y];
     ret.v[Z] = vec1->v[Z] - vec2->v[Z];
-	ret.v[W] = vec1->v[W] - vec2->v[W];
+	ret.v[W] = 0;
     return (ret);
 }
 
@@ -325,14 +325,14 @@ int	ft_sphere_intersection(t_ray *ray, t_sphere *sphere, short self)
 	double t0;
 	double t1;
 	double discr;
-/*
-a=dot(B,B)
-b=2⋅dot(B,A−C)
-c=dot(A−C,A−C)−r2
-With the above parameterization, the quadratic formula is:
+	/*
+	a=dot(B,B)
+	b=2⋅dot(B,A−C)
+	c=dot(A−C,A−C)−r2
+	With the above parameterization, the quadratic formula is:
 
-t = (−b±b2−4ac) / (√2a)
-*/
+	t = (−b±b2−4ac) / (√2a)
+	*/
 	t_vector4 k = ft_vec4_sub(&ray->origin, &sphere->center);
 	double a = ft_vec4_dot_product(&ray->dir, &ray->dir);
 	double b = 2 * ft_vec4_dot_product(&ray->dir, &k);
@@ -349,25 +349,23 @@ t = (−b±b2−4ac) / (√2a)
 		return (1);
 	else if (t0 > NEAR && t0 < ray->t)
 	{
-		// if (lamp == NULL)
-		// printf("t0 == %f : NEAR == %f : FAR == %f\n", t0, NEAR, ray->t);
 		ray->t = t0;
 		return (1);
 	}
 	return (0);
 }
 
-t_ray			ft_light_intersection(t_ray *ray, t_light_source *source)
+t_ray			ft_get_ray_to_light(t_ray *ray, t_light_source *light)
 {
 	t_vector4 inter_point;
 
-	inter_point = ft_vec4_scalar(&ray->dir, ray->t); //tmp
+	inter_point = ft_vec4_scalar(&ray->dir, ray->t); //tmp, calculating position vector from camera to inter_point
 	
-	inter_point = ft_vec4_add(&ray->origin , &inter_point); // intersection point calculated
+	inter_point = ft_vec4_add(&ray->origin , &inter_point); // intersection point calculated (pos vec of cam + cam_to_inter = inter_vec_pos)
+	
 	t_ray ray_to_light;
 	ray_to_light.origin = inter_point;
-	ray_to_light.dir = ft_vec4_sub( &source->origin, &ray_to_light.origin) ;
+	ray_to_light.dir = ft_vec4_sub(&light->origin, &ray_to_light.origin);
 	ray_to_light.dir = ft_vec4_normalize(&ray_to_light.dir);
-	//  ft_printvector4(&ray_to_light.dir);
 	return (ray_to_light);
 	}

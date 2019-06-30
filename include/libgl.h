@@ -141,6 +141,7 @@ typedef struct		s_ray // P(t) = origin + t * dir
 
 typedef	struct		s_light_source
 {
+	unsigned int	color;
 	short			type;
 	double			size;
 	t_vector4		origin;
@@ -188,14 +189,16 @@ typedef	struct		s_data
 typedef	struct		s_sphere
 {
 	short			type;
-	int				color;
+	double			diffuse;
+	double			specular;
+	unsigned int	color;
 	double			radius;
 	t_vector4		center;
 }					t_sphere;
 
 typedef	struct		s_plane
 {
-	int				color;
+	unsigned int	color;
 	t_vector4		normal;
 	t_vector4		point;
 }					t_plane;
@@ -270,6 +273,6 @@ t_vector4			ft_vec4_scalar(t_vector4 *a, double factor);
 int					ft_plane_intersection(t_ray *ray, t_plane *plane);
 int					ft_sphere_intersection(t_ray *ray, t_sphere *sphere, short self);
 void				ft_camera(t_data *data, t_vector4 position , t_vector4 lookat, double focal_length);
-t_ray				ft_light_intersection(t_ray *ray, t_light_source *source);
+t_ray				ft_get_ray_to_light(t_ray *ray, t_light_source *source);
 
 #endif
