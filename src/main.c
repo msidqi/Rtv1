@@ -13,7 +13,7 @@
 #include "libgl.h"
 #define HEIGHT 800
 #define WIDTH 800
-
+#define AMBIENT 0.3
 double		ft_map(int x_or_y, double size, int width_or_height)
 {
 	return (x_or_y * size / width_or_height - (size / 2));
@@ -105,37 +105,8 @@ void		ft_draw(t_data *data)
 			ray.origin = ft_create_vector4(data->cam.position.v[X], data->cam.position.v[Y], data->cam.position.v[Z], 0);
 			ray.t = FAR;
 
+
 			
-
-			t_plane	plane1;
-			plane1.normal = ft_create_vector4(0, 1, 0, 0);
-			plane1.point = ft_create_vector4(0, 1 ,0, 0);
-			plane1.color = 0x333333;
-			if (ft_plane_intersection(&ray, &plane1))
-				ft_image_fill(data, x, y, plane1.color);
-			
-			// t_sphere sphere1;
-			// sphere1.center = ft_create_vector4(0, 0, 0, 1);
-			// sphere1.radius = 0.8;
-			// sphere1.color = 0xAA0000;
-
-			// t_sphere sphere2;
-			// sphere2.center = ft_create_vector4(0.2, -2, 0, 1);
-			// sphere2.radius = 0.5;
-			// sphere2.color = 0x0000AA;
-		
-			// if (ft_sphere_intersection(&ray, &sphere1, 0))
-			// {
-			// 	ft_image_fill(data, x, y, sphere1.color);
-			// 	ray_to_light = ft_light_intersection(&ray, &lamp);
-			// 	ray_to_light.t = FAR;
-			// 	if (ft_sphere_intersection(&ray_to_light, &sphere1, 1))
-			// 		ft_image_fill(data, x, y, 0x0);
-			// 	if (ft_sphere_intersection(&ray_to_light, &sphere2, 0))
-			// 		ft_image_fill(data, x, y, 0x0);
-			// }
-
-
 			t_ray ray_to_light;
 
 			scene = data->scene;
@@ -143,10 +114,9 @@ void		ft_draw(t_data *data)
 			{
 				if (scene->content_size == SPHERE) // for spheres
 				{
-					if (ft_sphere_intersection(&ray, (t_sphere *)scene->content, 0)) // 0- intersect ray from camera with a sphere
+					if (ft_sphere_intersection(&ray, (t_sphere *)scene->content)) // 0- intersect ray from camera with a sphere
 					{
 						ray_to_light = ft_get_ray_to_light(&ray, &data->light); // 1-finding intersection point with a sphere(using distance t) in order to send a second ray towards the light
-						ray_to_light.t = FAR;
 						//______________________________________________________________________________________
 						t_vector4 sphere_normal = ft_vec4_sub(&ray_to_light.origin, &((t_sphere *)scene->content)->center);
 						sphere_normal = ft_vec4_normalize(&sphere_normal); // normal to sphere in intersection point.
@@ -154,47 +124,57 @@ void		ft_draw(t_data *data)
 						t_vector4 vec_to_light = ft_vec4_sub(&data->light.origin, &ray_to_light.origin);
 						double distance_to_light = ft_vec4_magnitude(&vec_to_light); // distance
 
-						vec_to_light = ft_vec4_normalize(&vec_to_light); // to_light vec dot normal 
+						vec_to_light = ft_vec4_normalize(&vec_to_light); // to_light vec dot normal
 						double dot_prod = ft_vec4_dot_product(&vec_to_light, &sphere_normal);
-						// ft_printvector4(&((t_sphere *)scene->content)->center);
-						// printf("---\n");
-						// ft_printvector4(&vec_to_light);
-						// printf("---\n%f\n", dot_prod);
+
 						dot_prod = dot_prod < 0 ? 0 : dot_prod;
-						// printf("dot_prod : %f | diffuse : %lf | light_color : %.6X | sphere_color %.6X\n", dot_prod, ((t_sphere *)scene->content)->diffuse, data->light.color,((t_sphere *)scene->content)->color);
-						// unsigned char	*ptr = (unsigned char *)&((t_sphere *)scene->content)->color;
-						// ptr[0] = dot_prod * ptr[0] * ((t_sphere *)scene->content)->diffuse;
-						// ptr[1] = dot_prod * ptr[1] * ((t_sphere *)scene->content)->diffuse;
-						// ptr[2] = dot_prod * ptr[2] * ((t_sphere *)scene->content)->diffuse;
-						
-						// unsigned int light_col = data->light.color;
+						//______________________________________________________________________________________
+						t_vector4 v =  ft_create_vector4(-ray.dir.v[X], -ray.dir.v[Y], -ray.dir.v[Z], -ray.dir.v[W]); // specular
+						v = ft_vec4_normalize(&v);
+						t_vector4 r =  ft_vec4_scalar(&sphere_normal, 2 * dot_prod);
+						r = ft_vec4_sub(&r, &vec_to_light);
+						unsigned int color_value_specular = ((t_sphere *)scene->content)->color;
 
-						// ptr = (unsigned char *)&light_col;
-						// ptr[0] = dot_prod * ptr[0] * ((t_sphere *)scene->content)->diffuse;
-						// ptr[1] = dot_prod * ptr[1] * ((t_sphere *)scene->content)->diffuse;
-						// ptr[2] = dot_prod * ptr[2] * ((t_sphere *)scene->content)->diffuse;
+						ft_color_rgb_scalar(&color_value_specular, ((t_sphere *)scene->content)->specular * pow(ft_vec4_dot_product(&r, &v), 30) * data->light.i_r,
+						((t_sphere *)scene->content)->specular * pow(ft_vec4_dot_product(&r, &v), 30) * data->light.i_g,
+						((t_sphere *)scene->content)->specular * pow(ft_vec4_dot_product(&r, &v), 30) * data->light.i_b);
+						//______________________________________________________________________________________
+						unsigned int color_value_diffuse = ((t_sphere *)scene->content)->color;
 
-						unsigned int tmp2 = (unsigned int)(dot_prod * ((t_sphere *)scene->content)->diffuse * ((t_sphere *)scene->content)->color);
-						// printf(" %#X\n", tmp2 );
-						// printf(" dot_prod %f\n", dot_prod );
-						if (dot_prod > 0) 
-							ft_image_fill(data, x, y, tmp2);
+						ft_color_rgb_scalar(&color_value_diffuse, dot_prod * ((t_sphere *)scene->content)->diffuse * data->light.i_r, // diffuse
+							dot_prod * ((t_sphere *)scene->content)->diffuse * data->light.i_g,
+							dot_prod * ((t_sphere *)scene->content)->diffuse * data->light.i_b);
+						//______________________________________________________________________________________
+						unsigned int color_value_ambient = ((t_sphere *)scene->content)->color; 
+
+						ft_color_rgb_scalar(&color_value_ambient, ((t_sphere *)scene->content)->diffuse * AMBIENT * data->light.i_r, // ambient
+						((t_sphere *)scene->content)->diffuse * AMBIENT * data->light.i_g,
+						((t_sphere *)scene->content)->diffuse * AMBIENT * data->light.i_b);
+						//______________________________________________________________________________________
+						if (dot_prod > 0)
+							ft_image_fill(data, x, y, (int)(color_value_specular + color_value_diffuse + color_value_ambient));
 						else 
-							ft_image_fill(data, x, y, 0x00DDDD); // 2-self shadow
+							ft_image_fill(data, x, y, color_value_ambient); // 2-self shadow
 						//______________________________________________________________________________________
 						tmp = data->scene;
 						while (tmp != NULL) // 3-loop to see if ray is blocked by any another object in scene, towards light source.
 						{
-							if (1 == 0/* sphere with itself */)
+							if (0/* sphere with itself */)
+							{
+								tmp = tmp->next;
 								continue ;
+							}
 							if (tmp->content_size == SPHERE)
 							{
-								// check if ray_to_light intersects with the sphere (if the obj is a sphere)
 								ray_to_light.t = FAR;
-								if (ft_sphere_intersection(&ray_to_light, (t_sphere *)tmp->content, 0) && distance_to_light > ray_to_light.t) // to cast shadow, distance to obj must be < distance_to_light
-									ft_image_fill(data, x, y, 0x0);
+
+								// check if ray_to_light intersects with the sphere (if the obj is a sphere)
+								if (ft_sphere_intersection(&ray_to_light, (t_sphere *)tmp->content) && dot_prod > 0 && distance_to_light > ray_to_light.t) // to cast shadow, distance to obj must be < distance_to_light
+								{
+									ft_image_fill(data, x, y, color_value_ambient);
+								}
 							}
-							if (tmp->content_size == PLANE)
+							else if (tmp->content_size == PLANE)
 							{
 								// check if ray_to_light intersects with the plane (if the obj is a plane)
 
@@ -207,6 +187,47 @@ void		ft_draw(t_data *data)
 				else if (scene->content_size == PLANE) // for planes
 				{
 					// repeat same steps 
+					
+					if (ft_plane_intersection(&ray, (t_plane *)scene->content))
+					{
+						ray_to_light = ft_get_ray_to_light(&ray, &data->light);
+
+						t_vector4 vec_to_light2 = ft_vec4_sub(&data->light.origin, &ray_to_light.origin);
+						double distance_to_light2 = ft_vec4_magnitude(&vec_to_light2); // distance
+						ft_image_fill(data, x, y, ((t_plane *)scene->content)->color);
+						//______________________________________________________________________________________
+						tmp = data->scene;
+						while (tmp != NULL) // 3-loop to see if ray is blocked by any another object in scene, towards light source.
+						{
+							if (0/* plane with itself */)
+							{
+								tmp = tmp->next;
+								continue ;
+							}
+							if (tmp->content_size == SPHERE)
+							{
+								ray_to_light.t = FAR;
+
+								// check if ray_to_light intersects with the plane (if the obj is a plane)
+								if (ft_sphere_intersection(&ray_to_light, (t_sphere *)tmp->content) /*&& dot_prod > 0*/ && distance_to_light2 > ray_to_light.t) // to cast shadow, distance to obj must be < distance_to_light
+								{
+									ft_image_fill(data, x, y, 0x00);
+								}
+							}
+							else if (tmp->content_size == PLANE)
+							{
+								ray_to_light.t = FAR;
+
+								// check if ray_to_light intersects with the plane (if the obj is a plane)
+								if (ft_plane_intersection(&ray_to_light, (t_plane *)tmp->content) && distance_to_light2 > ray_to_light.t)
+								{
+									// printf("dis_to_light %f | %f\n", distance_to_light2, ray_to_light.t);
+									// ft_image_fill(data, x, y, 0x00FF);
+								}
+							}
+							tmp = tmp->next;
+						}
+					}
 				}
 				scene = scene->next;
 			}
@@ -216,16 +237,55 @@ void		ft_draw(t_data *data)
 	}
 }
 
+void	ft_fill_sphere_content(t_sphere	**content, t_sphere *sphere)
+{
+	if (!(*content = (t_sphere *)malloc(sizeof(t_sphere))))
+		return ;
+	(*content)->center = (*sphere).center;
+	(*content)->radius = (*sphere).radius;
+	(*content)->color = (*sphere).color;
+	(*content)->diffuse = (*sphere).diffuse;
+	(*content)->specular = (*sphere).specular;
+}
 
+void	ft_fill_plane_content(t_plane **content, t_plane *plane)
+{
+	if (!(*content = malloc(sizeof(t_plane))))
+		return ;
+	(*content)->normal = (*plane).normal;
+	(*content)->point = (*plane).point;
+	(*content)->color = (*plane).color;
+}
+
+void	ft_object_to_list(t_list **head, int obj_num, void *array, short array_type)
+{
+	int i;
+	void			*content;
+	t_list			*node;
+
+	i = -1;
+	while (++i < obj_num) // iterate for each object.
+	{
+		if (array_type == SPHERE) // type == sphere
+		{
+			ft_fill_sphere_content((t_sphere **)&content, &((t_sphere *)array)[i]);
+			node = ft_lstnew(content, SPHERE); // assign struct in content and type in SPHERE
+		}
+		else if (array_type == PLANE) // type == plane
+		{
+			ft_fill_plane_content((t_plane **)&content, &((t_plane *)array)[i]);
+			node = ft_lstnew(content, PLANE);
+		}
+		ft_lstadd(head, node);
+	}
+}
 
 t_list		*ft_get_scene()
 {
 	unsigned int	obj_num;
 	unsigned int	i;
-	t_list			*node;
-	void			*content;
-	t_list			*head;
-	t_list			*tmp;
+	t_list			*head = NULL;
+	// t_list			*tmp;
 	i = -1;
 	obj_num = 6;
 
@@ -242,6 +302,13 @@ t_list		*ft_get_scene()
 	array[4].diffuse = 0.5;
 	array[5].diffuse = 0.5;
 	
+	array[0].specular = 0.3;
+	array[1].specular = 0.3;
+	array[2].specular = 0.3;
+	array[3].specular = 0.3;
+	array[4].specular = 0.3;
+	array[5].specular = 0.3;
+	
 	array[0].type = SPHERE;
 	array[1].type = SPHERE;
 	array[2].type = SPHERE;
@@ -250,8 +317,8 @@ t_list		*ft_get_scene()
 	array[5].type = SPHERE;
 
 	array[1].center = ft_create_vector4(0.2, -2, 0, 1);
-	array[1].radius = 0.5;
-	array[1].color = 0x0000AA;
+	array[1].radius = 0.56;
+	array[1].color = 0xFFFFFF;
 
 	array[2].center = ft_create_vector4(-2, 0, -5, 1);
 	array[2].radius = 0.5;
@@ -268,44 +335,74 @@ t_list		*ft_get_scene()
 	array[5].center = ft_create_vector4(-3, -1, 0, 1);
 	array[5].radius = 0.6;
 	array[5].color = 0x0FA3B1;
+// ____________________________________________
+	t_plane array_plane[6];
+	
+
+	array_plane[0].normal = ft_create_vector4(0, 1, 0, 0);
+	array_plane[0].point = ft_create_vector4(0, 3 ,0, 0);
+	array_plane[0].color = 0x333333;
+
+	array_plane[1].normal = ft_create_vector4(0, 0, -1, 0);
+	array_plane[1].point = ft_create_vector4(0, 0 ,-50, 0);
+	array_plane[1].color = 0x5533DD;
+
+	array_plane[2].normal = ft_create_vector4(0, 0, -1, 0);
+	array_plane[2].point = ft_create_vector4(0, 0 ,50, 0);
+	array_plane[2].color = 0x5533DD;
+
+	array_plane[3].normal = ft_create_vector4(0, 1, 0, 0);
+	array_plane[3].point = ft_create_vector4(0, -8 ,0, 0);
+	array_plane[3].color = 0x333333;
+
+	array_plane[4].normal = ft_create_vector4(1, 0, 0, 0);
+	array_plane[4].point = ft_create_vector4(-20, 0, 0, 0);
+	array_plane[4].color = 0x927DE9;
+
+	array_plane[5].normal = ft_create_vector4(1, 0, 0, 0);
+	array_plane[5].point = ft_create_vector4(20, 0, 0, 0);
+	array_plane[5].color = 0x775CE4;
 
 
+	// ft_link_two_lists();
+	// ft_array_to_list();
+	
 
+	// while (++i < obj_num) // iterate for each object.
+	// {
+	// 	if (array[i].type == SPHERE) // type == sphere
+	// 	{
+	// 		ft_fill_sphere_content((t_sphere **)&content, (t_sphere *)&array[i]);
+	// 		node = ft_lstnew(content, SPHERE); // assign struct in content and type in SPHERE
+	// 	}
+	// 	else if (array[i].type == PLANE) // type == plane
+	// 	{
+	// 		ft_fill_plane_content((t_plane **)&content, (t_plane *)&array[i]);
+	// 		node = ft_lstnew(content, PLANE);
+	// 	}
+	// 	ft_lstadd(&head, node);
+	// }
+	// return (head);
 
-
-
-
-	while (++i < obj_num)// iterate for each object.
-	{
-		if (array[i].type == SPHERE)// type == sphere
-		{
-			if (!(content = (t_sphere *)malloc(sizeof(t_sphere))))
-				return (NULL);
-			((t_sphere*)content)->center = array[i].center;
-			((t_sphere*)content)->radius = array[i].radius;
-			((t_sphere*)content)->color = array[i].color;
-			((t_sphere*)content)->diffuse = array[i].diffuse;
-			node = ft_lstnew(content, SPHERE); // assign struct in content and type in SPHERE
-			if (i == 0)
-				tmp = node;
-		}
-		else if (array[i].type == PLANE) // type == plane
-		{
-			if (!(content = malloc(sizeof(t_plane))))
-				return (NULL);
-			// ((t_plane *)content)->normal = array[i].normal;
-			// ((t_plane *)content)->point = array[i].point;
-			((t_plane *)content)->color = array[i].color;
-			node = ft_lstnew(content, PLANE);
-			if (i == 0)
-				tmp = node;
-		}
-		ft_lstadd(&head, node);
-	}
-	tmp->next = NULL;
+	ft_object_to_list((t_list **)&head, 6, array, SPHERE);
+	ft_object_to_list((t_list **)&head, 6, array_plane, PLANE);
 	return (head);
 }
 
+
+
+
+
+void	ft_link_two_lists(t_list *head_1, t_list *head_2)
+{
+	if (head_1 == NULL || head_2 == NULL)
+		return ;
+	while (head_1 != NULL)
+	{
+		head_1 = head_1->next;
+	}
+	head_1->next = head_2;
+}
 
 
 
@@ -329,10 +426,12 @@ int		main(void)
 	data.cam.mousepos.y = -900000;
 
 	t_light_source lamp;
-	lamp.color = 0x222222;
+	lamp.i_r = 0.8;
+	lamp.i_g = 0.8;
+	lamp.i_b = 0.8;
 	lamp.type = POINT_LIGHT;
 	lamp.size = 0;
-	lamp.origin = ft_create_vector4(0, -9, 0, 1);
+	lamp.origin = ft_create_vector4(1, -9, 0, 1);
 	data.light = lamp;
 
 	data.scene = ft_get_scene();

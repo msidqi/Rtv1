@@ -320,7 +320,7 @@ int	ft_plane_intersection(t_ray *ray, t_plane *plane)
 	return (0);
 }
 
-int	ft_sphere_intersection(t_ray *ray, t_sphere *sphere, short self)
+int	ft_sphere_intersection(t_ray *ray, t_sphere *sphere)
 {
 	double t0;
 	double t1;
@@ -345,9 +345,7 @@ int	ft_sphere_intersection(t_ray *ray, t_sphere *sphere, short self)
 	t1 = (-b - sqrt(discr)) / (2 * a);
 
 	t0 = t0 < t1 ? t0 : t1;
-	if (self == 1 && t0 < NEAR && t0 > -NEAR)
-		return (1);
-	else if (t0 > NEAR && t0 < ray->t)
+	if (t0 > NEAR && t0 < ray->t)
 	{
 		ray->t = t0;
 		return (1);
@@ -369,3 +367,13 @@ t_ray			ft_get_ray_to_light(t_ray *ray, t_light_source *light)
 	ray_to_light.dir = ft_vec4_normalize(&ray_to_light.dir);
 	return (ray_to_light);
 	}
+
+void	ft_color_rgb_scalar(unsigned int *color, double r, double g, double b)
+{
+	unsigned char	*ptr;
+	
+	ptr = (unsigned char *)color;
+	ptr[0] = ptr[0] * r;
+	ptr[1] = ptr[1] * g;
+	ptr[2] = ptr[2] * b;
+}

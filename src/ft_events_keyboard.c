@@ -18,19 +18,17 @@ int     no_event_mouse_move(int x, int y, t_data *data)
 {
     (void)y;
     // ft_refresh_image(data);
-    if (x > (0.8 * WIDTH))
+    if (x > (0.8 * WIDTH) && x < (WIDTH))
         data->cam.position.v[X] -= 0.5;
-    else if (x < (0.2 * WIDTH))
+    else if (x < (0.2 * WIDTH) && x > (0))
         data->cam.position.v[X] += 0.5;
 
-    
     t_vector4 cam_pos = ft_create_vector4(data->cam.position.v[X], data->cam.position.v[Y], data->cam.position.v[Z], 1);
 	t_vector4 look_at_pos = ft_create_vector4(0, 0, -1, 1);
 
     ft_camera(data, cam_pos, look_at_pos, 2);
     ft_draw(data);
 	mlx_put_image_to_window(data->mlx, data->win, data->img_ptr, 0, 0);
-    printf("here1\n");
     return (0);
 }
 
@@ -38,11 +36,12 @@ int     mouse_move(int x, int y, t_data *data)
 {
     (void)y;
     ft_refresh_image(data);
-    if (x > (0.8 * WIDTH))
+    if (x > (0.8 * WIDTH) && x < (WIDTH) && y > 0 && y < HEIGHT)
         data->cam.position.v[X] -= 0.5;
-    else if (x < (0.2 * WIDTH))
+    else if (x < (0.2 * WIDTH) && x > 0 && y > 0 && y < HEIGHT)
         data->cam.position.v[X] += 0.5;
 
+    // printf("x : %d y : %d\n", x, y);
 
     t_vector4 cam_pos = ft_create_vector4(data->cam.position.v[X], data->cam.position.v[Y], data->cam.position.v[Z], 1);
 	t_vector4 look_at_pos = ft_create_vector4(0, 0, -1, 1);

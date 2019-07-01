@@ -69,6 +69,11 @@
 # define PLANE 2
 # define CONE 4
 # define CYLINDRE 8
+# define RED 0xFF0000
+# define GREEN 0x00FF00
+# define BLUE 0xFF
+# define BLACK 0x0
+# define WHITE 0xFFFFFF
 
 typedef struct		t_vector2
 {
@@ -141,7 +146,9 @@ typedef struct		s_ray // P(t) = origin + t * dir
 
 typedef	struct		s_light_source
 {
-	unsigned int	color;
+	float	i_r; // intensity rgb(1.0, 0.0, 0.0) == red
+	float	i_g;
+	float	i_b;
 	short			type;
 	double			size;
 	t_vector4		origin;
@@ -189,8 +196,8 @@ typedef	struct		s_data
 typedef	struct		s_sphere
 {
 	short			type;
-	double			diffuse;
-	double			specular;
+	float			diffuse;
+	float			specular;
 	unsigned int	color;
 	double			radius;
 	t_vector4		center;
@@ -271,8 +278,9 @@ t_vector4 	   		ft_vec4_cross_product(t_vector4 *vec1, t_vector4 *vec2);
 t_vector4			ft_vec4_add(t_vector4 *vec1, t_vector4 *vec2);
 t_vector4			ft_vec4_scalar(t_vector4 *a, double factor);
 int					ft_plane_intersection(t_ray *ray, t_plane *plane);
-int					ft_sphere_intersection(t_ray *ray, t_sphere *sphere, short self);
+int					ft_sphere_intersection(t_ray *ray, t_sphere *sphere);
 void				ft_camera(t_data *data, t_vector4 position , t_vector4 lookat, double focal_length);
 t_ray				ft_get_ray_to_light(t_ray *ray, t_light_source *source);
+void				ft_color_rgb_scalar(unsigned int *color, double r, double g, double b);
 
 #endif
