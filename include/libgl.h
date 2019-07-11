@@ -60,7 +60,7 @@
 # define Z 2
 # define W 3
 # define NEAR 1e-6
-# define FAR 1e30
+# define FAR 1e2
 # define POINT_LIGHT 0
 # define DIRECTIONAL_LIGHT 1
 # define SPOT_LIGHT 2
@@ -68,12 +68,15 @@
 # define SPHERE 1
 # define PLANE 2
 # define CONE 4
-# define CYLINDRE 8
+# define CYLINDER 8
 # define RED 0xFF0000
 # define GREEN 0x00FF00
 # define BLUE 0xFF
 # define BLACK 0x0
 # define WHITE 0xFFFFFF
+# define AMBIENT_R 0.4
+# define AMBIENT_G 0.4
+# define AMBIENT_B 0.4
 
 typedef struct		t_vector2
 {
@@ -141,18 +144,15 @@ typedef struct		s_ray // P(t) = origin + t * dir
 	t_vector4		origin; // vector to origin point
 	t_vector4		dir; // direction vector
 	double			t; // distance
-	t_vector4		intersect_point;
 }					t_ray;
 
-typedef	struct		s_light_source
+typedef	struct		t_light
 {
-	float	i_r; // intensity rgb(1.0, 0.0, 0.0) == red
-	float	i_g;
-	float	i_b;
-	short			type;
-	double			size;
+	double			i_r; // intensity rgb(1.0, 0.0, 0.0) == red
+	double			i_g;
+	double			i_b;
 	t_vector4		origin;
-}					t_light_source;
+}					t_light;
 
 typedef struct		s_camera
 {
@@ -172,7 +172,7 @@ typedef struct		s_camera
 
 typedef	struct		s_data
 {
-	t_light_source	light;
+	t_list			*light_list;
 	t_list			*scene;
 	t_camera		cam;
 	t_vector4		worldpos;
@@ -195,20 +195,50 @@ typedef	struct		s_data
 
 typedef	struct		s_sphere
 {
-	short			type;
-	float			diffuse;
-	float			specular;
-	unsigned int	color;
-	double			radius;
+	double			diffuse_r;
+	double			diffuse_g;
+	double			diffuse_b;
+	double			specular;
 	t_vector4		center;
+	double			radius;
+	unsigned int	color;
+
 }					t_sphere;
 
 typedef	struct		s_plane
 {
-	unsigned int	color;
+	double			diffuse_r;
+	double			diffuse_g;
+	double			diffuse_b;
+	double			specular;
 	t_vector4		normal;
 	t_vector4		point;
+	unsigned int	color;
 }					t_plane;
+
+typedef	struct		s_cone
+{
+	double			diffuse_r;
+	double			diffuse_g;
+	double			diffuse_b;
+	double			specular;
+	t_vector4		axis;
+	t_vector4		center;
+	double			half_angle;
+	unsigned int	color;
+}					t_cone;
+
+typedef	struct		s_cylinder
+{
+	double			diffuse_r;
+	double			diffuse_g;
+	double			diffuse_b;
+	double			specular;
+	t_vector4		axis;
+	t_vector4		point;
+	double			radius;
+	unsigned int	color;
+}					t_cylinder;
 
 typedef	struct		s_obj // list to store all objects in a scene
 {
@@ -216,6 +246,23 @@ typedef	struct		s_obj // list to store all objects in a scene
 	short			type;
 	struct s_obj	*next;
 }					t_obj;
+
+typedef struct		s_shader_x
+{
+	double	diffuse_r;
+	double	diffuse_g;
+	double	diffuse_b;
+	double	specular_r;
+	double	specular_g;
+	double	specular_b;
+}					t_shader_x;
+
+typedef struct		s_shader
+{
+	unsigned int	diffuse;
+	unsigned int	specular;
+	unsigned int	ambient;
+}					t_shader;
 
 typedef struct		s_palette
 {
@@ -268,19 +315,26 @@ t_vector4			ft_create_vector4(double x, double y, double z, double w) ;
 void				ft_putvector4(t_vector4 *vec);
 t_vector4			ft_matrix_x_vector(t_matrix4 *mat, t_vector4 *vec);
 void				ft_printvector4(t_vector4 *vec);//don't forget to remove this
-t_vector4		    ft_vec4_sub(t_vector4 *vec1, t_vector4 *vec2);
-t_vector4    		ft_vec4_normalize(t_vector4 *a);
-double    			ft_vec4_magnitude(t_vector4 *a);
-double				ft_vec4_dot_product(t_vector4 *a, t_vector4 *b);
+t_vector4		    ft_vec4_sub(t_vector4 vec1, t_vector4 vec2);
+t_vector4    		ft_vec4_normalize(t_vector4 a);
+double    			ft_vec4_magnitude(t_vector4 a);
+double				ft_vec4_dot_product(t_vector4 a, t_vector4 b);
 void				ft_draw(t_data *data);
 void				ft_printmatrix4(t_matrix4 *mat);
-t_vector4 	   		ft_vec4_cross_product(t_vector4 *vec1, t_vector4 *vec2);
-t_vector4			ft_vec4_add(t_vector4 *vec1, t_vector4 *vec2);
-t_vector4			ft_vec4_scalar(t_vector4 *a, double factor);
+t_vector4 	   		ft_vec4_cross_product(t_vector4 vec1, t_vector4 vec2);
+t_vector4			ft_vec4_add(t_vector4 vec1, t_vector4 vec2);
+t_vector4			ft_vec4_scalar(t_vector4 a, double factor);
 int					ft_plane_intersection(t_ray *ray, t_plane *plane);
 int					ft_sphere_intersection(t_ray *ray, t_sphere *sphere);
-void				ft_camera(t_data *data, t_vector4 position , t_vector4 lookat, double focal_length);
-t_ray				ft_get_ray_to_light(t_ray *ray, t_light_source *source);
-void				ft_color_rgb_scalar(unsigned int *color, double r, double g, double b);
-
+int					ft_cone_intersection(t_ray *ray, t_cone *cone);
+int					ft_cylinder_intersection(t_ray *ray, t_cylinder *cylinder);
+void				ft_camera(t_data *data, t_vector4 position, t_vector4 lookat, double focal_length);
+t_ray				ft_get_ray_to_light(t_ray *ray, t_light *source);
+unsigned int 		ft_color_rgb_scalar(unsigned int color, double r, double g, double b);
+t_list				*ft_get_config(char *conf_file, t_data *rtv);
+int					ft_color_add(unsigned int color1, unsigned int color2);
+t_shader			ft_compute_sphere_shader(t_data *data, t_ray *ray, t_sphere *sphere);
+t_shader			ft_compute_plane_shader(t_data *data, t_ray *ray, t_plane *plane);
+t_shader			ft_compute_cylinder_shader(t_data *data, t_ray *ray, t_cylinder *cylinder);
+t_shader			ft_compute_cone_shader(t_data *data, t_ray *ray, t_cone *cone);
 #endif
