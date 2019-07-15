@@ -77,6 +77,9 @@
 # define AMBIENT_R 0.4
 # define AMBIENT_G 0.4
 # define AMBIENT_B 0.4
+# define HEIGHT 720
+# define WIDTH 1280
+# define ASPECT_RATIO HEIGHT / WIDTH
 
 typedef struct		t_vector2
 {
@@ -100,8 +103,10 @@ typedef struct		s_matrix
 
 typedef struct		s_vector4
 {
-	short			type;
-	double			v[4];
+	double			x;
+	double			y;
+	double			z;
+	double			w;
 }					t_vector4;
 
 
@@ -184,7 +189,7 @@ typedef	struct		s_data
 	void			*win;
 	void			*img_ptr;
 	int				*image;
-	double			zoom;
+	double			aspectratio;
 	double			movex;
 	double			movey;
 	double			movez;
@@ -310,10 +315,10 @@ t_matrix4			ft_create_matrix4();
 int					ft_destroy_matrix(t_matrix *mat);
 void				ft_putmatrix(t_matrix *mat);
 void				ft_putmatrix4(t_matrix4 *mat);
-t_matrix4			ft_get_translation_matrix4(double x, double y, double z);
+t_matrix4			ft_get_translation_matrix4(t_matrix4 mat, double x, double y, double z);
 t_vector4			ft_create_vector4(double x, double y, double z, double w) ;
 void				ft_putvector4(t_vector4 *vec);
-t_vector4			ft_matrix_x_vector(t_matrix4 *mat, t_vector4 *vec);
+t_vector4			ft_matrix_x_vector(t_matrix4 mat, t_vector4 vec);
 void				ft_printvector4(t_vector4 *vec);//don't forget to remove this
 t_vector4		    ft_vec4_sub(t_vector4 vec1, t_vector4 vec2);
 t_vector4    		ft_vec4_normalize(t_vector4 a);

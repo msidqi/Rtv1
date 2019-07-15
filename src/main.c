@@ -11,9 +11,7 @@
 /* ************************************************************************** */
 
 #include "libgl.h"
-#define HEIGHT 800
-#define WIDTH 800
-#define AMBIENT 0.4
+
 double		ft_map(int x_or_y, double size, int width_or_height)
 {
 	return (x_or_y * size / width_or_height - (size / 2));
@@ -44,34 +42,29 @@ void		ft_camera(t_data *data, t_vector4 position , t_vector4 lookat, double foca
 	data->cam.left = camera_left;
 	data->cam.forward = forward;
 
-	data->cam.mx.v[0][2] = forward.v[X]; // Forward dir
-	data->cam.mx.v[1][2] = forward.v[Y];
-	data->cam.mx.v[2][2] = forward.v[Z];
-	data->cam.mx.v[3][2] = forward.v[W];
+	data->cam.mx.v[0][2] = forward.x; // Forward dir
+	data->cam.mx.v[1][2] = forward.y;
+	data->cam.mx.v[2][2] = forward.z;
+	data->cam.mx.v[3][2] = forward.w;
 
-	data->cam.mx.v[0][1] = camera_up.v[X]; // Up dir
-	data->cam.mx.v[1][1] = camera_up.v[Y];
-	data->cam.mx.v[2][1] = camera_up.v[Z];
-	data->cam.mx.v[3][1] = camera_up.v[W];
+	data->cam.mx.v[0][1] = camera_up.x; // Up dir
+	data->cam.mx.v[1][1] = camera_up.y;
+	data->cam.mx.v[2][1] = camera_up.z;
+	data->cam.mx.v[3][1] = camera_up.w;
 
-	data->cam.mx.v[0][0] = camera_left.v[X]; // Right dir
-	data->cam.mx.v[1][0] = camera_left.v[Y];
-	data->cam.mx.v[2][0] = camera_left.v[Z];
-	data->cam.mx.v[3][0] = camera_left.v[W];
+	data->cam.mx.v[0][0] = camera_left.x; // Right dir
+	data->cam.mx.v[1][0] = camera_left.y;
+	data->cam.mx.v[2][0] = camera_left.z;
+	data->cam.mx.v[3][0] = camera_left.w;
 	// ft_printmatrix4(&data->cam.mx);
 }
 
 t_ray		ft_get_ray(t_data *data, t_vector4 *view_window_pos)
 {
-	// ft_printmatrix4(&data->cam.mx);
-
-	// t_matrix4 translation = ft_get_translation_matrix4(0, 0, 0);
-	// t_vector4 view_window_pos = ft_create_vector4(xm, ym, data->cam.focal_length, 1);
-	t_vector4 k = ft_vec4_sub((*view_window_pos), data->cam.position);
-
 	t_ray ray;
-	ray.dir = ft_vec4_normalize(k);
-	ray.origin = ft_create_vector4(data->cam.position.v[X], data->cam.position.v[Y], data->cam.position.v[Z], 0);
+
+	ray.dir = ft_vec4_normalize(ft_vec4_sub((*view_window_pos), data->cam.position));
+	ray.origin = ft_create_vector4(data->cam.position.x, data->cam.position.y, data->cam.position.z, 0);
 	return (ray);
 }
 
@@ -82,6 +75,8 @@ void		ft_draw(t_data *data)
 	double xm;
 	double ym;
 	t_list *scene;
+	t_ray ray;
+	t_shader pixel_shader;
 
 	y = 0;
 	while (y < HEIGHT)
@@ -89,22 +84,20 @@ void		ft_draw(t_data *data)
 		x = 0;
 		while (x < WIDTH)
 		{
-			xm = ft_map(x, data->cam.bigl, WIDTH);
-			ym = ft_map(y, data->cam.l, HEIGHT);
-	
+			xm = ft_map(x, data->cam.bigl, WIDTH * ASPECT_RATIO);
+			ym = ft_map(y, data->cam.l, HEIGHT );
+			// printf("xm : %f ym : %f\n", xm, ym);
+			// exit(1);
 			t_vector4 new_left = ft_vec4_scalar(data->cam.left, xm);
 			t_vector4 new_up = ft_vec4_scalar(data->cam.up, ym);
 			t_vector4 new_forw = ft_vec4_scalar(data->cam.forward, data->cam.focal_length);
 			t_vector4 left_up =  ft_vec4_add(new_up , new_left);
-			
-			t_ray ray;
+
 			ray.dir = ft_vec4_normalize(ft_vec4_add(left_up, new_forw));
-			
-			ray.origin = ft_create_vector4(data->cam.position.v[X], data->cam.position.v[Y], data->cam.position.v[Z], 0);
+			ray.origin = ft_create_vector4(data->cam.position.x, data->cam.position.y, data->cam.position.z, 0);
 			ray.t = FAR;
 
 
-			t_shader pixel_shader;
 			scene = data->scene;
 			while (scene != NULL) // foreach obj
 			{
@@ -152,19 +145,12 @@ void	ft_link_two_lists(t_list *head_1, t_list *head_2)
 int		main(int argc, char **argv)
 {
 	t_data  data;
-	int i;
-	int j;
 
-	j = -1;
-	i = -1;
 	if (argc != 2)
 		return (1);
-	ft_window_setup(&data, "ReTweet", 800, 800);
+	ft_window_setup(&data, "ReTweet", HEIGHT, WIDTH);
 	ft_image_setup(&data);
-	data.zoom = 1;
-	data.worldpos.v[X] = ft_get_world_pos(i, data.winwidth, data.zoom);
-	data.worldpos.v[Y] = ft_get_world_pos(i, data.winheight, data.zoom);
-
+	data.aspectratio = WIDTH / HEIGHT;
 	data.scene = ft_get_config(argv[1], &data);
 	ft_camera(&data, data.cam.position, data.cam.to, 2);
 	ft_draw(&data);

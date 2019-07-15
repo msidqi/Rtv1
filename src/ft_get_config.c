@@ -224,7 +224,6 @@ static void	ft_get_cylinder_config(char *line , t_list **list)
 	cylinder->color = (ft_atoi(tab[15] + 1) << 16) |  (ft_atoi(tab[16]) << 8) | (ft_atoi(tab[17]));
 	cylinder->radius = ft_atof(tab[19] + 1);
 	ft_lstadd(list, ft_lstnew((void *)cylinder, CYLINDER));
-	ft_printvector4(&cylinder->axis);
 	ft_free_table(&tab);
 }
 

@@ -13,7 +13,7 @@
 #include "libgl.h"
 
 
-#define SPECULAR_POW 70
+#define SPECULAR_POW 30
 
 // free matrix with ft_destroy_matrix
 t_matrix    *ft_create_matrix(unsigned int rows, unsigned int cols) 
@@ -110,29 +110,29 @@ t_vector4		ft_create_vector4(double x, double y, double z, double w)
 	t_vector4	vec;
 
 	// vec = malloc(sizeof(t_vector4));
-	vec.v[0] = x;
-    vec.v[1] = y;
-    vec.v[2] = z;
-	vec.v[3] = w;
+	vec.x = x;
+    vec.y = y;
+    vec.z = z;
+	vec.w = w;
 	return (vec);
 }
 
 void		ft_putvector4(t_vector4 *vec)
 {
 	write(1, "Vector( ", 8);
-	ft_putnbr(vec->v[0]);
+	ft_putnbr(vec->x);
 	write(1, ", ", 2);
-	ft_putnbr(vec->v[1]);
+	ft_putnbr(vec->y);
 	write(1, ", ", 2);
-	ft_putnbr(vec->v[2]);
+	ft_putnbr(vec->z);
 	write(1, ", ", 2);
-	ft_putnbr(vec->v[3]);
+	ft_putnbr(vec->w);
 	write(1, " )\n", 3);
 }
 
 void		ft_printvector4(t_vector4 *vec)
 {
-	printf("Vector(%f, %f, %f, %f)\n", vec->v[0], vec->v[1], vec->v[2], vec->v[3]);
+	printf("Vector(%f, %f, %f, %f)\n", vec->x, vec->y, vec->z, vec->w);
 }
 
 void		ft_printmatrix4(t_matrix4 *mat)
@@ -185,7 +185,7 @@ void		ft_putmatrix4(t_matrix4 *mat)
 
 double    ft_vec4_magnitude(t_vector4 a)
 {
-    return (sqrt(a.v[X] * a.v[X] + a.v[Y] * a.v[Y] + a.v[Z] * a.v[Z]));
+    return (sqrt(a.x * a.x + a.y * a.y + a.z * a.z));
 }
 
 t_vector4    ft_vec4_normalize(t_vector4 a)
@@ -194,26 +194,26 @@ t_vector4    ft_vec4_normalize(t_vector4 a)
     double      hold;
 
     hold = ft_vec4_magnitude(a);
-    ret.v[X] = a.v[X] / hold;
-    ret.v[Y] = a.v[Y] / hold;
-    ret.v[Z] = a.v[Z] / hold;
-	ret.v[W] = a.v[W] / hold;
+    ret.x = a.x / hold;
+    ret.y = a.y / hold;
+    ret.z = a.z / hold;
+	ret.w = a.w / hold;
     return (ret);
 }
 
 double    ft_vec4_dot_product(t_vector4 a, t_vector4 b)
 {
-    return (a.v[X] * b.v[X] + a.v[Y] * b.v[Y] + a.v[Z] * b.v[Z]);
+    return (a.x * b.x + a.y * b.y + a.z * b.z);
 }
 
 t_vector4    ft_vec4_cross_product(t_vector4 vec1, t_vector4 vec2)
 {
 	t_vector4 ret;
 
-    ret.v[X] = vec1.v[Y] * vec2.v[Z] - vec1.v[Z] * vec2.v[Y];
-    ret.v[Y] = vec1.v[Z] * vec2.v[X] - vec1.v[X] * vec2.v[Z];
-    ret.v[Z] = vec1.v[X] * vec2.v[Y] - vec1.v[Y] * vec2.v[X];
-	ret.v[W] = 0;
+    ret.x = vec1.y * vec2.z - vec1.z * vec2.y;
+    ret.y = vec1.z * vec2.x - vec1.x * vec2.z;
+    ret.z = vec1.x * vec2.y - vec1.y * vec2.x;
+	ret.w = 0;
     return (ret);
 }
 
@@ -221,10 +221,10 @@ t_vector4    ft_vec4_scalar(t_vector4 a, double factor)
 {
     t_vector4 ret;
 
-    ret.v[X] = a.v[X] * factor;
-    ret.v[Y] = a.v[Y] * factor;
-    ret.v[Z] = a.v[Z] * factor;
-	ret.v[W] = 0;
+    ret.x = a.x * factor;
+    ret.y = a.y * factor;
+    ret.z = a.z * factor;
+	ret.w = 0;
     return (ret);
 }
 
@@ -232,10 +232,10 @@ t_vector4    ft_vec4_add(t_vector4 vec1, t_vector4 vec2)
 {
     t_vector4 ret;
 
-    ret.v[X] = vec1.v[X] + vec2.v[X];
-    ret.v[Y] = vec1.v[Y] + vec2.v[Y];
-    ret.v[Z] = vec1.v[Z] + vec2.v[Z];
-	ret.v[W] = 0;
+    ret.x = vec1.x + vec2.x;
+    ret.y = vec1.y + vec2.y;
+    ret.z = vec1.z + vec2.z;
+	ret.w = 0;
     return (ret);
 }
 
@@ -243,48 +243,50 @@ t_vector4    ft_vec4_sub(t_vector4 vec1, t_vector4 vec2)
 {
     t_vector4 ret;
 
-    ret.v[X] = vec1.v[X] - vec2.v[X];
-    ret.v[Y] = vec1.v[Y] - vec2.v[Y];
-    ret.v[Z] = vec1.v[Z] - vec2.v[Z];
-	ret.v[W] = 0;
+    ret.x = vec1.x - vec2.x;
+    ret.y = vec1.y - vec2.y;
+    ret.z = vec1.z - vec2.z;
+	ret.w = 0;
     return (ret);
 }
 
-t_vector4		ft_matrix_x_vector(t_matrix4 *mat, t_vector4 *vec)
+t_vector4		ft_matrix_x_vector(t_matrix4 mat, t_vector4 vec)
 {
-	return(ft_create_vector4(mat->v[0][0] * vec->v[0] + mat->v[0][1] * vec->v[1]
-	+ mat->v[0][2] * vec->v[2] + mat->v[0][3] * vec->v[3],
-	mat->v[1][0] * vec->v[0] + mat->v[1][1] * vec->v[1] + mat->v[1][2] * vec->v[2]
-	+ mat->v[1][3] * vec->v[3],
-	mat->v[2][0] * vec->v[0] + mat->v[2][1] * vec->v[1] + mat->v[2][2] * vec->v[2]
-	+ mat->v[2][3] * vec->v[3],
-	mat->v[3][0] * vec->v[0] + mat->v[3][1] * vec->v[1] + mat->v[3][2] * vec->v[2]
-	+ mat->v[3][3] * vec->v[3]));
+	return(ft_create_vector4(mat.v[0][0] * vec.x + mat.v[0][1] * vec.y
+	+ mat.v[0][2] * vec.z + mat.v[0][3] * vec.w,
+	mat.v[1][0] * vec.x + mat.v[1][1] * vec.y + mat.v[1][2] * vec.z
+	+ mat.v[1][3] * vec.w,
+	mat.v[2][0] * vec.x + mat.v[2][1] * vec.y + mat.v[2][2] * vec.z
+	+ mat.v[2][3] * vec.w,
+	mat.v[3][0] * vec.x + mat.v[3][1] * vec.y + mat.v[3][2] * vec.z
+	+ mat.v[3][3] * vec.w));
 }
 
-t_matrix4		ft_get_translation_matrix4(double x, double y, double z)
+t_matrix4		ft_get_translation_matrix4(t_matrix4 mat, double x, double y, double z)
 {
-	t_matrix4 mat;
-
-	mat = ft_create_matrix4();
 	mat.v[0][3] = x;
 	mat.v[1][3] = y;
 	mat.v[2][3] = z;
 	return (mat);
 }
 
-t_matrix4		ft_get_scaling_matrix4(double x, double y, double z)
+t_matrix4		ft_get_scaling_matrix4(t_matrix4 mat, double x, double y, double z) // pass identity matrix in mat for default value
 {
-	t_matrix4 mat;
-
-	mat = ft_create_matrix4();
 	mat.v[0][0] *= x;
 	mat.v[1][1] *= y;
 	mat.v[2][2] *= z;
 	return (mat);
 }
 
-t_vector4		ft_translate_vector4(t_vector4 *vec, double x, double y, double z)
+t_matrix4		ft_get_rotation_matrix4(t_matrix4 mat, double x, double y, double z) // pass identity matrix in mat for default value
+{
+	mat.v[0][0] *= x;
+	mat.v[1][1] *= y;
+	mat.v[2][2] *= z;
+	return (mat);
+}
+
+t_vector4		ft_translate_vector4(t_vector4 vec, double x, double y, double z)
 {
 	t_matrix4 tr_mat;
 
@@ -292,7 +294,7 @@ t_vector4		ft_translate_vector4(t_vector4 *vec, double x, double y, double z)
 	tr_mat.v[0][3] = x;
 	tr_mat.v[1][3] = y;
 	tr_mat.v[2][3] = z;
-	return (ft_matrix_x_vector(&tr_mat, vec));
+	return (ft_matrix_x_vector(tr_mat, vec));
 }
 
 int	ft_plane_intersection(t_ray *ray, t_plane *plane)
@@ -323,19 +325,20 @@ int	ft_plane_intersection(t_ray *ray, t_plane *plane)
 	return (0);
 }
 
+/*
+** a=dot(B,B)
+** b=2⋅dot(B,A−C)
+** c=dot(A−C,A−C)−r2
+** With the above parameterization, the quadratic formula is:
+** 
+** t = (−b±b2−4ac) / (√2a)
+*/
 int	ft_sphere_intersection(t_ray *ray, t_sphere *sphere)
 {
 	double t0;
 	double t1;
 	double discr;
-	/*
-	a=dot(B,B)
-	b=2⋅dot(B,A−C)
-	c=dot(A−C,A−C)−r2
-	With the above parameterization, the quadratic formula is:
 
-	t = (−b±b2−4ac) / (√2a)
-	*/
 	t_vector4 k = ft_vec4_sub(ray->origin, sphere->center);
 	double a = ft_vec4_dot_product(ray->dir, ray->dir);
 	double b = 2 * ft_vec4_dot_product(ray->dir, k);
@@ -356,19 +359,20 @@ int	ft_sphere_intersection(t_ray *ray, t_sphere *sphere)
 	return (0);
 }
 
+/*
+** const = ray.origin - cylinder.point;
+** a = ray.dir ⋅ ray.dir - (ray.dir ⋅ axis)**2
+** 
+** b/2 = ray.dir ⋅ const - (ray.dir ⋅ axiis) * (const ⋅ axis)
+** 
+** c = const ⋅ const - (const ⋅ axis)**2 - radius**2
+*/
 int	ft_cylinder_intersection(t_ray *ray, t_cylinder *cylinder)
 {
 	double t0;
 	double t1;
 	double discr;
-	/*
-	const = ray.origin - cylinder.point;
-	a = ray.dir ⋅ ray.dir - (ray.dir ⋅ axis)**2
 
-	b/2 = ray.dir ⋅ const - (ray.dir ⋅ axiis) * (const ⋅ axis)
-
-	c = const ⋅ const - (const ⋅ axis)**2 - radius**2
-	*/
 	t_vector4 tmp = ft_vec4_sub(ray->origin, cylinder->point);
 	double a = ft_vec4_dot_product(ray->dir, ray->dir) - pow(ft_vec4_dot_product(ray->dir, cylinder->axis), 2);
 	double b = (ft_vec4_dot_product(ray->dir, tmp) - ft_vec4_dot_product(ray->dir, cylinder->axis) * ft_vec4_dot_product(tmp, cylinder->axis)) * 2;
@@ -388,22 +392,23 @@ int	ft_cylinder_intersection(t_ray *ray, t_cylinder *cylinder)
 	return (0);
 }
 
+/*
+** 1/ Vec1 ⋅ Vec2 = ||Vec1| * ||Vec2|| * cosθ ; where θ is angle between the vectors
+** Vec1 == Vector from cone center to intersection point which is the vector (P - Center);
+** Vec2 == normalized Axis;
+** 2/ P = Origin + t * Dir;
+** 3/ Solve for t; 
+** 
+** a = (Dir ⋅ Axis)**2 - cos**2(θ)
+** b = 2 * ((Dir ⋅ Axis)(CO ⋅ Axis) - Dir ⋅ CO * cos**2(θ))
+** c = (CO ⋅ Axis)**2 - CO ⋅ CO * cos**2(θ)
+*/
 int	ft_cone_intersection(t_ray *ray, t_cone *cone)
 {
 	double t0;
 	double t1;
 	double discr;
-	/*
-		1/ Vec1 ⋅ Vec2 = ||Vec1| * ||Vec2|| * cosθ ; where θ is angle between the vectors
-		Vec1 == Vector from cone center to intersection point which is the vector (P - Center);
-		Vec2 == normalized Axis;
-		2/ P = Origin + t * Dir;
-		3/ Solve for t; 
 
-	a = (Dir ⋅ Axis)**2 - cos**2(θ)
-	b = 2 * ((Dir ⋅ Axis)(CO ⋅ Axis) - Dir ⋅ CO * cos**2(θ))
-	c = (CO ⋅ Axis)**2 - CO ⋅ CO * cos**2(θ)
-	*/
 	t_vector4 k = ft_vec4_sub(ray->origin, cone->center);
 	double a = pow(ft_vec4_dot_product(ray->dir, cone->axis), 2) - pow(cos(cone->half_angle), 2);
 	double b = 2 * (ft_vec4_dot_product(ray->dir, cone->axis) * ft_vec4_dot_product(k, cone->axis) - ft_vec4_dot_product(ray->dir, k) * pow(cos(cone->half_angle), 2));
@@ -442,9 +447,9 @@ unsigned int 	ft_color_rgb_scalar(unsigned int color, double r, double g, double
 	unsigned char	*ptr;
 
 	ptr = (unsigned char *)&color;
-	ptr[0] = (ptr[0] * r) ;//> 255 ? 255 : (ptr[0] * r);
-	ptr[1] = (ptr[1] * g) ;//> 255 ? 255 : (ptr[1] * g);
-	ptr[2] = (ptr[2] * b) ;//> 255 ? 255 : (ptr[2] * b);
+	ptr[0] = (ptr[0] * r) > 255 ? 255 : (ptr[0] * r);
+	ptr[1] = (ptr[1] * g) > 255 ? 255 : (ptr[1] * g);
+	ptr[2] = (ptr[2] * b) > 255 ? 255 : (ptr[2] * b);
 	return (color);
 }
 
@@ -511,8 +516,9 @@ double		ft_compute_specular(t_ray *ray, double dot_prod, t_vector4 sphere_normal
 	t_vector4 v;
 	t_vector4 r;
 
-	v =  ft_vec4_normalize(ft_create_vector4(-ray->dir.v[X], -ray->dir.v[Y], -ray->dir.v[Z], -ray->dir.v[W])); // specular
+	v =  ft_vec4_normalize(ft_create_vector4(-ray->dir.x, -ray->dir.y, -ray->dir.z, -ray->dir.w)); // specular
 	r = ft_vec4_sub(ft_vec4_scalar(sphere_normal, 2 * dot_prod), vec_to_light);
+	// printf("pow : %f\n", pow(ft_vec4_dot_product(r, v), SPECULAR_POW));
 	return (pow(ft_vec4_dot_product(r, v), SPECULAR_POW));
 }
 
@@ -555,11 +561,13 @@ t_shader	ft_compute_sphere_shader(t_data *data, t_ray *ray, t_sphere *sphere)
 			shader_x.specular_r += ft_compute_specular(ray, dot_prod, sphere_normal, ray_to_light.dir) * sphere->specular * ((t_light *)light_list->content)->i_r;
 			shader_x.specular_g += ft_compute_specular(ray, dot_prod, sphere_normal, ray_to_light.dir) * sphere->specular * ((t_light *)light_list->content)->i_g;
 			shader_x.specular_b += ft_compute_specular(ray, dot_prod, sphere_normal, ray_to_light.dir) * sphere->specular * ((t_light *)light_list->content)->i_b;
+			// printf("%f | %f | %f\n", shader_x.specular_r, shader_x.specular_g, shader_x.specular_b);
 		}
 		light_list = light_list->next;
 	}
 
-	pixel_shader.specular = ft_color_rgb_scalar(sphere->color, shader_x.specular_r, shader_x.specular_g, shader_x.specular_b);
+	pixel_shader.specular = ft_color_rgb_scalar(/*sphere->color*/0xFFFFFF, shader_x.specular_r, shader_x.specular_g, shader_x.specular_b);
+	// printf("%x\n", pixel_shader.specular);
 	pixel_shader.diffuse = ft_color_rgb_scalar(sphere->color, shader_x.diffuse_r, shader_x.diffuse_g, shader_x.diffuse_b);
 	pixel_shader.ambient = ft_color_rgb_scalar(sphere->color, AMBIENT_R, AMBIENT_G, AMBIENT_B);
 	return (pixel_shader);
@@ -570,7 +578,8 @@ static t_vector4 ft_get_cone_normal(t_ray *ray, t_vector4 axis, t_vector4 c, dou
 	t_vector4 p_sub_c;
 
 	p_sub_c = ft_vec4_sub(ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t)), c);
-	return (ft_vec4_normalize(ft_vec4_sub(p_sub_c, ft_vec4_scalar(axis, (1 + half_angle * half_angle) *ft_vec4_dot_product(p_sub_c, axis)))));
+	return (ft_vec4_normalize(ft_vec4_sub(p_sub_c,
+	ft_vec4_scalar(axis, (1 + half_angle * half_angle) *ft_vec4_dot_product(p_sub_c, axis)))));
 }
 
 t_shader	ft_compute_cone_shader(t_data *data, t_ray *ray, t_cone *cone)
@@ -606,7 +615,7 @@ t_shader	ft_compute_cone_shader(t_data *data, t_ray *ray, t_cone *cone)
 		}
 		light_list = light_list->next;
 	}
-	pixel_shader.specular = ft_color_rgb_scalar(cone->color, shader_x.specular_r, shader_x.specular_g, shader_x.specular_b);
+	pixel_shader.specular = ft_color_rgb_scalar(0xFFFFFF, shader_x.specular_r, shader_x.specular_g, shader_x.specular_b);
 	pixel_shader.diffuse = ft_color_rgb_scalar(cone->color, shader_x.diffuse_r, shader_x.diffuse_g, shader_x.diffuse_b);
 	pixel_shader.ambient = ft_color_rgb_scalar(cone->color, AMBIENT_R, AMBIENT_G, AMBIENT_B);
 	return (pixel_shader);
@@ -675,7 +684,7 @@ t_shader	ft_compute_cylinder_shader(t_data *data, t_ray *ray, t_cylinder *cylind
 		}
 		light_list = light_list->next;
 	}
-	pixel_shader.specular = ft_color_rgb_scalar(cylinder->color, shader_x.specular_r, shader_x.specular_g, shader_x.specular_b);
+	pixel_shader.specular = ft_color_rgb_scalar(/*cylinder->color*/0xFFFFFF, shader_x.specular_r, shader_x.specular_g, shader_x.specular_b);
 	pixel_shader.diffuse = ft_color_rgb_scalar(cylinder->color, shader_x.diffuse_r, shader_x.diffuse_g, shader_x.diffuse_b);
 	pixel_shader.ambient = ft_color_rgb_scalar(cylinder->color, AMBIENT_R, AMBIENT_G, AMBIENT_B);
 	return (pixel_shader);
@@ -697,7 +706,7 @@ t_shader	ft_compute_plane_shader(t_data *data, t_ray *ray, t_plane *plane)
 	shader_x.specular_b = 0.0;
 	light_list = data->light_list;
 	plane_normal = ft_vec4_dot_product(ray->dir, plane->normal) < 0 ? plane->normal : ft_vec4_scalar(plane->normal, -1);
-	// printf("%f\n", ft_vec4_dot_product(ray->dir, plane->normal));
+	// ft_printvector4(&plane_normal);
 	while (light_list)
 	{
 		ray_to_light = ft_get_ray_to_light(ray, light_list->content);
@@ -715,7 +724,7 @@ t_shader	ft_compute_plane_shader(t_data *data, t_ray *ray, t_plane *plane)
 		}
 		light_list = light_list->next;
 	}
-	pixel_shader.specular = ft_color_rgb_scalar(plane->color, shader_x.specular_r, shader_x.specular_g, shader_x.specular_b);
+	pixel_shader.specular = ft_color_rgb_scalar(/*plane->color*/0xFFFFFF, shader_x.specular_r, shader_x.specular_g, shader_x.specular_b);
 	pixel_shader.diffuse = ft_color_rgb_scalar(plane->color, shader_x.diffuse_r, shader_x.diffuse_g, shader_x.diffuse_b);
 	pixel_shader.ambient = ft_color_rgb_scalar(plane->color, AMBIENT_R, AMBIENT_G, AMBIENT_B);
 	return (pixel_shader);
