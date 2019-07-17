@@ -1,22 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_puttwodtab.c                                    :+:      :+:    :+:   */
+/*   ft_free_tab.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: msidqi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/12/27 00:17:12 by msidqi            #+#    #+#             */
-/*   Updated: 2018/12/27 00:19:38 by msidqi           ###   ########.fr       */
+/*   Created: 2019/07/17 13:07:20 by msidqi            #+#    #+#             */
+/*   Updated: 2019/07/17 13:07:22 by msidqi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "libft.h" 
 
-void	ft_puttwodstr(char **tab)
+void 	ft_free_tab(char ***tab)
 {
 	int i;
 
-	i = 0;
-	while (tab[i])
-		ft_putstr(tab[i++]);
+	i = -1;
+	while ((*tab)[++i])
+	{
+		ft_strdel(&(*tab)[i]);
+	}
+	free((*tab));
+	*tab = NULL;
 }

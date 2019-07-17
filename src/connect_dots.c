@@ -12,84 +12,78 @@
 
 #include "libgl.h"
 
-static void		plotLineLow(t_data *data, t_vector2 a, t_vector2 b, int color)
+static void		plotlinelow(t_data *data, t_vec2 a, t_vec2 b, int color)
 {
-	int			D;
-	int			dx;
-	int			dy;
-	int			yi;
-    t_vector2	tmp;
+	int			var[4];
+	t_vec2		tmp;
 
-	dx = b.x - a.x;
-	dy = b.y - a.y;
-	yi = 1;
-	if (dy < 0)
+	var[1] = b.x - a.x;
+	var[2] = b.y - a.y;
+	var[3] = 1;
+	if (var[2] < 0)
 	{
-		yi = -1;
-		dy = -dy;
+		var[3] = -1;
+		var[2] = -var[2];
 	}
-	D = 2*dy - dx;
+	var[0] = 2 * var[2] - var[1];
 	tmp.y = a.y;
 	tmp.x = a.x;
 	while (tmp.x <= b.x)
 	{
 		ft_image_fill(data, tmp.x, tmp.y, color);
-		if (D > 0)
+		if (var[0] > 0)
 		{
-			tmp.y = tmp.y + yi;
-			D = D - 2*dx;
+			tmp.y = tmp.y + var[3];
+			var[0] = var[0] - 2 * var[1];
 		}
-		D = D + 2*dy;
+		var[0] = var[0] + 2 * var[2];
 		tmp.x++;
 	}
 }
 
-static void		plotLineHigh(t_data *data, t_vector2 a, t_vector2 b, int color)
+static void		plotlinehigh(t_data *data, t_vec2 a, t_vec2 b, int color)
 {
-	int			D;
-	int			dx;
-	int			dy;
-	int			xi;
-    t_vector2	tmp;
+	int			var[4];
+	t_vec2		tmp;
 
-	dx = b.x - a.x;
-	dy = b.y - a.y;
-	xi = 1;
-	if (dx < 0)
+	var[1] = b.x - a.x;
+	var[2] = b.y - a.y;
+	var[3] = 1;
+	if (var[1] < 0)
 	{
-		xi = -1;
-		dx = -dx;
+		var[3] = -1;
+		var[1] = -var[1];
 	}
-	D = 2*dx - dy;
+	var[0] = 2 * var[1] - var[2];
 	tmp.x = a.x;
 	tmp.y = a.y;
 	while (tmp.y <= b.y)
 	{
 		ft_image_fill(data, tmp.x, tmp.y, color);
-		if (D > 0)
+		if (var[0] > 0)
 		{
-			tmp.x = tmp.x + xi;
-			D = D - 2*dy;
+			tmp.x = tmp.x + var[3];
+			var[0] = var[0] - 2 * var[2];
 		}
-		D = D + 2*dx;
+		var[0] = var[0] + 2 * var[1];
 		tmp.y++;
 	}
 }
 
-void			connect_dots(t_data *data, t_vector2 a, t_vector2 b, int color)
+void			connect_dots(t_data *data, t_vec2 a, t_vec2 b, int color)
 {
 	if (fabs(b.y - a.y) < fabs(b.x - a.x))
 	{
 		if (a.x > b.x)
-			plotLineLow(data, b, a, color);
+			plotlinelow(data, b, a, color);
 		else
-			plotLineLow(data, a, b, color);
+			plotlinelow(data, a, b, color);
 	}
 	else
 	{
 		if (a.y > b.y)
-			plotLineHigh(data, b, a, color);
+			plotlinehigh(data, b, a, color);
 		else
-			plotLineHigh(data, a, b, color);
+			plotlinehigh(data, a, b, color);
 	}
 }
