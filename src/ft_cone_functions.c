@@ -37,16 +37,16 @@ int				ft_cone_inter(t_ray *ray, t_cone *co)
 	x = ft_vec4_sub(ray->origin, co->center);
 	abc[0] = ft_vec4_dot_product(ray->dir, ray->dir) -
 		discr_k[1] * pow(ft_vec4_dot_product(ray->dir, co->axis), 2);
-	abc[1] = 2 * (ft_vec4_dot_product(ray->dir, x) -
-discr_k[1] * ft_vec4_dot_product(ray->dir, co->axis) * ft_vec4_dot_product(x, co->axis));
-	abc[2] = ft_vec4_dot_product(x, x)- discr_k[1] * pow(ft_vec4_dot_product(x, co->axis), 2);
+	abc[1] = 2 * (ft_vec4_dot_product(ray->dir, x) - discr_k[1] *
+ft_vec4_dot_product(ray->dir, co->axis) * ft_vec4_dot_product(x, co->axis));
+	abc[2] = ft_vec4_dot_product(x, x) - discr_k[1]
+	* pow(ft_vec4_dot_product(x, co->axis), 2);
 	discr_k[0] = abc[1] * abc[1] - 4 * abc[0] * abc[2];
 	if (discr_k[0] < 0)
 		return (0);
 	t[0] = (-abc[1] + sqrt(discr_k[0])) / (2 * abc[0]);
 	t[1] = (-abc[1] - sqrt(discr_k[0])) / (2 * abc[0]);
-	t[0] = t[0] < t[1] ? t[0] : t[1];
-
+	t[0] = t[0] < t[1] && t[0] > NEAR ? t[0] : t[1];
 	if (t[0] > NEAR && t[0] < ray->t)
 	{
 		ray->t = t[0];

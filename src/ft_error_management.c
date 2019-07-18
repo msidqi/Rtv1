@@ -46,7 +46,7 @@ static char	*ft_usage_type(int error)
 	" r g b\n\tdiffuse r g b\n\tspecular value\n\ttransfo"
 	"(optionnel) 1 2 3 4 | 5 6 7 8 | 9 10 11 12 | 13 14 15 16 \n}";
 	str[3] = "usage : \n=>plane\n{\n\tposition x y z\n\tnormal x y z\n\tcolor"
-	"r g b\n\tdiffuse r g b\n\tspecular value\n\ttransfo (optionnel) "
+	" r g b\n\tdiffuse r g b\n\tspecular value\n\ttransfo (optionnel) "
 	"1 2 3 4 | 5 6 7 8 | 9 10 11 12 | 13 14 15 16\n}";
 	str[4] = "usage : \n=>cone\n{\n\tangle value\n\tposition x y z\n\tnormal "
 	"x y z\n\tcolor r g b\n\tdiffuse r g b\n\tspecular value\n\ttransfo "

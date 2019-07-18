@@ -60,7 +60,7 @@ int	ft_expect_value(char *line, char *name, double *value)
 		ft_free_tab(&tab);
 		return (0);
 	}
-	if (!ft_strcmp(tab[0], "\tintensity") && !ft_is_limited(ft_atof(tab[1])))
+	if (!ft_strcmp(tab[0], "\tspecular") && !ft_is_limited(ft_atof(tab[1])))
 	{
 		ft_free_tab(&tab);
 		return (0);

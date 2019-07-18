@@ -18,31 +18,24 @@ static double	ft_specular(t_ray *ray, double dot_prod,
 	t_vec4 v;
 	t_vec4 r;
 
-	v = ft_vec4_normalize(ft_create_vec4(-ray->dir.x, -ray->dir.y,
-							-ray->dir.z, -ray->dir.w));
+	v = ft_create_vec4(-ray->dir.x, -ray->dir.y,
+							-ray->dir.z, -ray->dir.w);
 	r = ft_vec4_sub(ft_vec4_scalar(normal, 2 * dot_prod), vec_to_light);
 	return (pow(ft_vec4_dot_product(r, v), SPECULAR_POW));
 }
 
-static	void	ft_diffuse(t_shader_x *shx, double dp, t_vec4 *ds, t_light *li)
+static	void	ft_diffuse(t_shader_x *shx, double dot_prod, t_vec4 *ds, t_light *li)
 {
-	shx->diff.x += dp * ds[0].x * li->i_r;
-	shx->diff.y += dp * ds[0].y * li->i_g;
-	shx->diff.z += dp * ds[0].z * li->i_b;
+	shx->diff.x += dot_prod * ds[0].x * li->i_r;
+	shx->diff.y += dot_prod * ds[0].y * li->i_g;
+	shx->diff.z += dot_prod * ds[0].z * li->i_b;
 }
 
 unsigned	int	ft_compute_shader(unsigned int color, t_shader_x *sh_x)
 {
-	t_shader shader;
-
-	shader.specular = ft_color_rgb_scalar(0xFFFFFF,
-			sh_x->spec.x, sh_x->spec.y, sh_x->spec.z);
-	shader.diffuse = ft_color_rgb_scalar(color,
-			sh_x->diff.x, sh_x->diff.y, sh_x->diff.z);
-	shader.ambient = ft_color_rgb_scalar(color,
-			AMBIENT_R, AMBIENT_G, AMBIENT_B);
-	return (ft_color_add(shader.specular,
-						ft_color_add(shader.diffuse, shader.ambient)));
+	return (ft_color_rgb_scalar(color, sh_x->spec.x + sh_x->diff.x + AMBIENT_R,
+						sh_x->spec.y + sh_x->diff.y + AMBIENT_G,
+									sh_x->spec.z + sh_x->diff.z + AMBIENT_B));
 }
 
 static const t_obj_function g_t_obj_functions[4] =
