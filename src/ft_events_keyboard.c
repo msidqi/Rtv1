@@ -19,9 +19,7 @@ int		no_event_mouse_move(int x, int y, t_data *data)
 		data->cam.pos.x -= 0.5;
 	else if (x < (0.2 * WIDTH) && x > (0))
 		data->cam.pos.x += 0.5;
-	t_vec4 cam_pos = ft_create_vec4(data->cam.pos.x, data->cam.pos.y, data->cam.pos.z, 1);
-	t_vec4 look_at_pos = ft_create_vec4(0, 0, -1, 1);
-	ft_camera(data, cam_pos, look_at_pos);
+	ft_camera(data, data->cam.pos, data->cam.to);
 	ft_draw(data);
 	mlx_put_image_to_window(data->mlx, data->win, data->img_ptr, 0, 0);
 	return (0);
@@ -35,9 +33,7 @@ int		mouse_move(int x, int y, t_data *data)
 		data->cam.pos.x -= 0.5;
 	else if (x < (0.2 * WIDTH) && x > 0 && y > 0 && y < HEIGHT)
 		data->cam.pos.x += 0.5;
-	t_vec4 cam_pos = ft_create_vec4(data->cam.pos.x, data->cam.pos.y, data->cam.pos.z, 1);
-	t_vec4 look_at_pos = ft_create_vec4(0, 0, -1, 1);
-	ft_camera(data, cam_pos, look_at_pos);
+	ft_camera(data, data->cam.pos, data->cam.to);
 	ft_draw(data);
 	mlx_put_image_to_window(data->mlx, data->win, data->img_ptr, 0, 0);
 	return (0);
@@ -62,15 +58,13 @@ int		key_press(int key_code, t_data *data)
 		data->cam.pos.z -= 0.5;
 	if (key_code == DOWN_ARROW)
 		data->cam.pos.z += 0.5;
-	t_vec4 cam_pos = ft_create_vec4(data->cam.pos.x, data->cam.pos.y, data->cam.pos.z, 1);
-	t_vec4 look_at_pos = ft_create_vec4(0, 0, -1, 1);
-	ft_camera(data, cam_pos, look_at_pos);
+	ft_camera(data, data->cam.pos, data->cam.to);
 	ft_draw(data);
 	mlx_put_image_to_window(data->mlx, data->win, data->img_ptr, 0, 0);
 	return (0);
 }
 
-int     mouse_press(int button, int x, int y, t_data *data)
+int		mouse_press(int button, int x, int y, t_data *data)
 {
 	ft_refresh_image(data);
 	(void)x;
@@ -79,9 +73,7 @@ int     mouse_press(int button, int x, int y, t_data *data)
 		data->cam.pos.y -= 1;
 	if (button == RIGHT_CLICK)
 		data->cam.pos.y += 1;
-	t_vec4 cam_pos = ft_create_vec4(data->cam.pos.x, data->cam.pos.y, data->cam.pos.z, 1);
-	t_vec4 look_at_pos = ft_create_vec4(0, 0, -1, 1);
-	ft_camera(data, cam_pos, look_at_pos);
+	ft_camera(data, data->cam.pos, data->cam.to);
 	ft_draw(data);
 	mlx_put_image_to_window(data->mlx, data->win, data->img_ptr, 0, 0);
 	return (0);

@@ -14,7 +14,7 @@
 
 int		main(int argc, char **argv)
 {
-	t_data  data;
+	t_data	data;
 
 	data.light_list = NULL;
 	data.scene = NULL;
@@ -35,55 +35,24 @@ int		main(int argc, char **argv)
 	return (0);
 }
 
-
-
-
-
-
-
-
-
 /*
-	macro up : 1;
-	macro down  : 2;
-	macro left : 4;
-	macro right  : 8;
-	(left | up | left | right)
-*/
-
-
-/*
-
-Vec P(x,y,z,w) , Vec C(5,5,5,1)
-
-|P - C|² = r²
-P - C² = r²
-
-
-
-
-
-
-
-
-
-
-
-magnitude A =  ||A|| = P-C
-magnitude B =  ||B|| = V = 1
-
-
-
-B is normalazed 
-
-angle  entre (vec4 A et vec4 B)  ==    dotprod(A , B)
-
-
-
-
-cos (A , B) =   dot(A, B )  / (  ||A||  * ||1||  )
-
-
-
-
+**	macro up : 1;
+**	macro down  : 2;
+**	macro left : 4;
+**	macro right  : 8;
+**	(left | up | left | right)
+**
+** Vec P(x,y,z,w) , Vec C(5,5,5,1)
+**
+** |P - C|² = r²
+** P - C² = r²
+**
+** magnitude A =  ||A|| = P-C
+** magnitude B =  ||B|| = V = 1
+**
+** B is normalazed
+**
+** angle  entre (vec4 A et vec4 B)  ==    dotprod(A , B)
+**
+** cos (A , B) =   dot(A, B )  / (  ||A||  * ||1||  )
 */

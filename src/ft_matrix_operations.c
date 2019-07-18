@@ -18,7 +18,7 @@ void		ft_putmatrix(t_matrix *mat)
 	unsigned int	j;
 
 	i = -1;
-	write (1, "\n", 1);
+	write(1, "\n", 1);
 	while (++i < mat->rows)
 	{
 		j = -1;
@@ -36,7 +36,7 @@ void		ft_putmatrix(t_matrix *mat)
 			}
 		}
 	}
-	write (1, "\n", 1);
+	write(1, "\n", 1);
 }
 
 void		ft_putvec4(t_vec4 *vec)
@@ -63,7 +63,7 @@ void		ft_printmatrix4(t_matrix4 *mat)
 	unsigned int	j;
 
 	i = -1;
-	write (1, "\n", 1);
+	write(1, "\n", 1);
 	while (++i < 4)
 	{
 		j = -1;
@@ -75,7 +75,7 @@ void		ft_printmatrix4(t_matrix4 *mat)
 				printf("% .2f ", mat->v[i][j]);
 		}
 	}
-	write (1, "\n", 1);
+	write(1, "\n", 1);
 }
 
 void		ft_putmatrix4(t_matrix4 *mat)
@@ -84,7 +84,7 @@ void		ft_putmatrix4(t_matrix4 *mat)
 	unsigned int	j;
 
 	i = -1;
-	write (1, "\n", 1);
+	write(1, "\n", 1);
 	while (++i < 4)
 	{
 		j = -1;
@@ -102,5 +102,5 @@ void		ft_putmatrix4(t_matrix4 *mat)
 			}
 		}
 	}
-	write (1, "\n", 1);
+	write(1, "\n", 1);
 }
