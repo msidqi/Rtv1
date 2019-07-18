@@ -100,11 +100,11 @@ t_shader_x		ft_ray_inter_lights(t_data *data,
 	t_light			*li;
 
 	l = data->light_list;
-	li = l->content;
 	shx.diff = ft_create_vec4(0.0, 0.0, 0.0, 0.0);
 	shx.spec = ft_create_vec4(0.0, 0.0, 0.0, 0.0);
 	while (l)
 	{
+		li = l->content;
 		rl = ft_get_ray_to_light(ray, l->content);
 		dp = ft_min(ft_vec4_dot_product(rl.dir, nr), 0);
 		if (!ft_ray_inter_objs(data->scene, &rl,
