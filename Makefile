@@ -17,7 +17,19 @@ GLIB = libgl.a
 LIBMLXL = src/minilibx_macos/libmlx.a
 NAME = RTv1
 SRC_PATH = src/
-SRC = connect_dots.c drawline.c ft_event_system_mlx.c ft_events_keyboard.c ft_multi_thread.c ft_utils_func.c interface.c drawsquares.c ft_image_setup_mlx.c ft_palette.c ft_vector_operations.c ft_matrix_operations.c ft_get_config.c
+SRC = connect_dots.c ft_event_system_mlx.c ft_get_plane_config.c \
+ft_plane_functions.c ft_vector_sub.c drawline.c ft_events_keyboard.c \
+ft_get_ray_to_light.c ft_sphere_functions.c get_next_line.c \
+drawsquares.c ft_expect.c ft_get_sphere_config.c ft_utils_func.c interface.c \
+ft_atof.c ft_expect_matrix.c ft_image_setup_mlx.c ft_vec_create.c \
+ft_camera.c ft_get_camera_config.c ft_light_intersection.c \
+ft_vec_cross_dot_prod.c main.c ft_color_operations.c ft_get_cone_config.c \
+ft_matrix_operations.c ft_vec_destroy.c ft_cone_functions.c ft_get_config.c \
+ft_min_max.c ft_vec_normalize_magnitude.c ft_cylinder_functions.c \
+ft_get_cylinder_config.c ft_multi_thread.c ft_vec_scalar.c ft_draw.c \
+ft_get_light_config.c ft_palette.c ft_vector_add.c ft_error_management.c \
+ft_get_matrix.c ft_parsing_tools.c ft_vector_operations.c
+SRC_PATH_PARSER = src/parser/
 INCLUDE = include
 OBJ = $(SRC:.c=.o)
 GLIB = libgl.a
@@ -27,7 +39,8 @@ FLAGS = -framework OpenGl -framework Appkit
 all : $(NAME)
 
 $(GLIB) : 
-	@$(CC) -c $(addprefix $(SRC_PATH),$(SRC)) -I $(INCLUDE)
+	@$(CC) -c $(addprefix $(SRC_PATH),$(SRC))  -I $(INCLUDE)
+	# $(addprefix $(SRC_PATH_PARSER),$(SRC_PARSER))
 	@ar rc $(GLIB) $(OBJ)
 	@ranlib $(GLIB)
 $(LIBFTL) : 

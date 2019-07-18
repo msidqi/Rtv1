@@ -6,7 +6,7 @@
 /*   By: msidqi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/07 22:13:10 by msidqi            #+#    #+#             */
-/*   Updated: 2019/06/26 23:10:55 by msidqi           ###   ########.fr       */
+/*   Updated: 2019/07/17 15:59:33 by msidqi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,11 @@ typedef	struct		s_list
 	struct s_list	*next;
 }					t_list;
 
+void				ft_free_tab(char ***tab);
 int					ft_sqrt(int nb);
 char				*ft_itoa_base(int value, int base);
 void				ft_alert(char *str, int n);
-void				ft_put2dstr(char **tab);
+void				ft_puttwodstr(char **tab);
 char				**ft_split_whitespaces(char *str);
 int					ft_charcount(char *s, int i);
 int					ft_wordcount(char *s, char c);
@@ -134,5 +135,6 @@ void				ft_lstdel(t_list **alst, void (*del)(void*, size_t));
 void				ft_lstadd(t_list **alst, t_list *new);
 void				ft_lstiter(t_list *lst, void (*f)(t_list *elem));
 t_list				*ft_lstmap(t_list *lst, t_list *(*f)(t_list *elem));
+void				ft_link_two_lists(t_list *head_1, t_list *head_2);
 
 #endif

@@ -12,7 +12,7 @@
 
 #include "../include/libgl.h"
 
-void	ft_color_change(int *col, t_data *data)
+void		ft_color_change(int *col, t_data *data)
 {
 	int				tmp;
 	unsigned char	*ptr;

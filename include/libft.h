@@ -6,7 +6,7 @@
 /*   By: msidqi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/07 22:13:10 by msidqi            #+#    #+#             */
-/*   Updated: 2019/06/26 23:10:42 by msidqi           ###   ########.fr       */
+/*   Updated: 2019/07/17 15:59:49 by msidqi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 # define TRUE 1
 # define FALSE 0
 
+void				ft_free_tab(char ***tab);
+void				ft_puttwodtab(char **tab);
 char				**ft_split_whitespaces(char *str);
 int					ft_charcount(char *s, int i);
 int					ft_wordcount(char *s, char c);
@@ -95,5 +97,6 @@ void				ft_lstdel(t_list **alst, void (*del)(void*, size_t));
 void				ft_lstadd(t_list **alst, t_list *new);
 void				ft_lstiter(t_list *lst, void (*f)(t_list *elem));
 t_list				*ft_lstmap(t_list *lst, t_list *(*f)(t_list *elem));
+void                ft_link_two_lists(t_list *head_1, t_list *head_2);
 
 #endif
