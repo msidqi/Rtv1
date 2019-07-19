@@ -37,6 +37,6 @@ t_ray	ft_get_ray_to_light(t_ray *ray, t_light *light)
 	inter_point = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
 	r_light.origin = inter_point;
 	r_light.dir = ft_vec4_normalize(ft_vec4_sub(light->origin,
-															r_light.origin));
+														r_light.origin));
 	return (r_light);
 }

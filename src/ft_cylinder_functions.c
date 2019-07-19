@@ -41,7 +41,7 @@ int				ft_cylinder_inter(t_ray *ray, t_cylinder *cyl)
 		return (0);
 	t[0] = (-abc[1] + sqrt(discr)) / (2 * abc[0]);
 	t[1] = (-abc[1] - sqrt(discr)) / (2 * abc[0]);
-	t[0] = t[0] < t[1] ? t[0] : t[1];
+	t[0] = t[0] < t[1] && t[0] > NEAR ? t[0] : t[1];
 	if (t[0] > NEAR && t[0] < ray->t)
 	{
 		ray->t = t[0];
@@ -78,11 +78,19 @@ int				ft_cylinder_inter(t_ray *ray, t_cylinder *cyl)
 static t_vec4	ft_get_cylinder_normal(t_ray *ray, t_vec4 axis, t_vec4 c)
 {
 	t_vec4 p_sub_c;
+	double m;
+	t_vec4	x;
 
+	x = ft_vec4_sub(ray->origin, c);
+	m = ft_vec4_dot_product(ray->dir, ft_vec4_scalar(axis , ray->t)) + ft_vec4_dot_product(x, axis);
 	p_sub_c = ft_vec4_sub(ft_vec4_add(ray->origin,
 				ft_vec4_scalar(ray->dir, ray->t)), c);
+	return (ft_vec4_normalize(ft_vec4_sub(p_sub_c, ft_vec4_scalar(axis, m))));
+
+	/*p_sub_c = ft_vec4_sub(ft_vec4_add(ray->origin,
+				ft_vec4_scalar(ray->dir, ray->t)), c);
 	return (ft_vec4_normalize(ft_vec4_sub(p_sub_c,
-					ft_vec4_scalar(axis, ft_vec4_dot_product(p_sub_c, axis)))));
+					ft_vec4_scalar(axis, ft_vec4_dot_product(p_sub_c, axis)))));*/
 }
 
 unsigned int	ft_cylinder_shader(t_data *data, t_ray *ray, t_cylinder *cyl)

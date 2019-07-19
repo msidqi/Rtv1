@@ -28,10 +28,10 @@
 
 int		ft_image_setup(t_data *data)
 {
-	if (!(data->img_ptr = mlx_new_image(data->mlx, data->winwidth,
-		data->winheight)))
-		return (0);
-	if (!(data->image = (int *)mlx_get_data_addr(data->img_ptr, &data->bpp,
+	if (!data || !data->mlx || data->winwidth < 1 || data->winheight < 1
+	|| !(data->img_ptr = mlx_new_image(data->mlx,
+										data->winwidth, data->winheight))
+	|| !(data->image = (int *)mlx_get_data_addr(data->img_ptr, &data->bpp,
 										&data->size_line, &data->endian)))
 		return (0);
 	return (1);
@@ -45,12 +45,13 @@ void	ft_image_fill(t_data *data, int x, int y, int color)
 int		ft_window_setup(t_data *data, char *win_name,
 									int winheight, int winwidth)
 {
+	if (!data || winheight < 1 || winwidth < 1
+							|| !win_name || !(data->mlx = mlx_init()))
+		return (0);
 	data->winheight = winheight;
 	data->winwidth = winwidth;
-	if (!(data->mlx = mlx_init()))
-		return (0);
 	if (!(data->win = mlx_new_window(data->mlx, data->winwidth,
-		data->winheight, win_name)))
+											data->winheight, win_name)))
 		return (0);
 	return (1);
 }

@@ -26,8 +26,9 @@ int		main(int argc, char **argv)
 		return (1);
 	}
 	ft_get_config(argv[1], &data);
-	ft_window_setup(&data, "ReTweet", HEIGHT, WIDTH);
-	ft_image_setup(&data);
+	if (!ft_window_setup(&data, "ReTweet", HEIGHT, WIDTH)
+													|| !ft_image_setup(&data))
+		return (1);
 	ft_camera(&data, data.cam.pos, data.cam.to);
 	ft_draw(&data);
 	mlx_put_image_to_window(data.mlx, data.win, data.img_ptr, 0, 0);

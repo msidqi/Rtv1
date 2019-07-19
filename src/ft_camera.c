@@ -49,7 +49,7 @@ void			ft_camera(t_data *data, t_vec4 position, t_vec4 lookat)
 	up = ft_vec4_normalize(ft_create_vec4(0, 1, 0, 0));
 	camera_left = ft_vec4_cross_product(up, forward);
 	camera_up = ft_vec4_cross_product(forward, camera_left);
-	data->cam.up = camera_up;
-	data->cam.left = camera_left;
+	data->cam.up = ft_vec4_normalize(camera_up);
+	data->cam.left = ft_vec4_normalize(camera_left);
 	data->cam.forward = forward;
 }

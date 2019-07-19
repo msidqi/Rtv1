@@ -38,7 +38,7 @@ int				ft_cone_inter(t_ray *ray, t_cone *co)
 	abc[0] = ft_vec4_dot_product(ray->dir, ray->dir) -
 		discr_k[1] * pow(ft_vec4_dot_product(ray->dir, co->axis), 2);
 	abc[1] = 2 * (ft_vec4_dot_product(ray->dir, x) - discr_k[1] *
-ft_vec4_dot_product(ray->dir, co->axis) * ft_vec4_dot_product(x, co->axis));
+	ft_vec4_dot_product(ray->dir, co->axis) * ft_vec4_dot_product(x, co->axis));
 	abc[2] = ft_vec4_dot_product(x, x) - discr_k[1]
 	* pow(ft_vec4_dot_product(x, co->axis), 2);
 	discr_k[0] = abc[1] * abc[1] - 4 * abc[0] * abc[2];
