@@ -36,12 +36,7 @@ int				ft_sphere_inter(t_ray *ray, t_sphere *sp)
 		return (0);
 	t[0] = (-abc[1] + sqrt(discr)) / (2 * abc[0]);
 	t[1] = (-abc[1] - sqrt(discr)) / (2 * abc[0]);
-	t[0] = t[0] < t[1] /*&& t[0] > NEAR*/ ? t[0] : t[1];
-	/*if (t[0] >= 0 && t[0] < NEAR && t[0] < ray->t)
-	{
-		ray->t = 0;
-		return (1);		
-	}*/
+	t[0] = t[0] < t[1] && t[0] > NEAR ? t[0] : t[1];
 	if (t[0] > NEAR && t[0] < ray->t)
 	{
 		ray->t = t[0];

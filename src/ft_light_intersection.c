@@ -22,9 +22,7 @@ static double	ft_specular(t_ray *ray, double dot_prod,
 		return (0);
 	v = ft_vec4_scalar(ray->dir, -1);
 	r = ft_vec4_sub(ft_vec4_scalar(normal, 2 * dot_prod), vec_to_light);
-	// ft_printvec4(&r);
 	return (pow(ft_min(ft_vec4_dot_product(r, v), 0), SPECULAR_POW));
-	// return (pow(ft_vec4_dot_product(r, v), SPECULAR_POW));
 
 }
 
@@ -35,12 +33,6 @@ static	void	ft_diffuse(t_shader_x *shx, double dot_prod, t_vec4 *ds, t_light *li
 	shx->diff.z += dot_prod * ds[0].z * li->i_b;
 }
 
-/*unsigned	int	ft_compute_shader(unsigned int color, t_shader_x *sh_x)
-{
-	return (ft_color_rgb_scalar(color, sh_x->spec.x + sh_x->diff.x + AMBIENT_R,
-						sh_x->spec.y + sh_x->diff.y + AMBIENT_G,
-									sh_x->spec.z + sh_x->diff.z + AMBIENT_B));
-}*/
 unsigned	int	ft_compute_shader(unsigned int color, t_shader_x *sh_x)
 {
 	t_shader shader;
