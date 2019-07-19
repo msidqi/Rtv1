@@ -74,7 +74,7 @@
 # define AMBIENT_R 0.4
 # define AMBIENT_G 0.4
 # define AMBIENT_B 0.4
-# define SPECULAR_POW 80
+# define SPECULAR_POW 2
 # define HEIGHT 720
 # define WIDTH 1280
 # define ASPECT_RATIO HEIGHT / WIDTH

@@ -18,9 +18,9 @@ unsigned	int	ft_color_rgb_scalar(unsigned int color, double r,
 	unsigned char	*ptr;
 
 	ptr = (unsigned char *)&color;
-	ptr[0] = (ptr[0] * r) > 255 ? 255 : (ptr[0] * r);
+	ptr[2] = (ptr[2] * r) > 255 ? 255 : (ptr[2] * r);
 	ptr[1] = (ptr[1] * g) > 255 ? 255 : (ptr[1] * g);
-	ptr[2] = (ptr[2] * b) > 255 ? 255 : (ptr[2] * b);
+	ptr[0] = (ptr[0] * b) > 255 ? 255 : (ptr[0] * b);
 	return (color);
 }
 
