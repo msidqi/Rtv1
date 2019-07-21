@@ -63,15 +63,15 @@ static const t_obj_function g_t_obj_functions[4] =
 int				ft_ray_inter_objs(t_list *list, t_ray *r_light,
 		double distance_to_light)
 {
-	t_list	*scene;
-	int		i;
+	t_list			*scene;
+	unsigned int 	i;
 
 	scene = list;
 	while (scene != NULL)
 	{
 		r_light->t = FAR;
 		i = -1;
-		while (++i < 4)
+		while (++i < (unsigned int)STATIC_ARRAY_SIZE(g_t_obj_functions))
 		{
 			if (g_t_obj_functions[i].type == scene->content_size &&
 					g_t_obj_functions[i].call(r_light, scene->content) &&

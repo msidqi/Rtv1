@@ -31,13 +31,13 @@ int		ft_image_setup(t_data *data)
 	if (!data || !data->mlx || data->winwidth < 1 || data->winheight < 1
 	|| !(data->img_ptr = mlx_new_image(data->mlx,
 										data->winwidth, data->winheight))
-	|| !(data->image = (int *)mlx_get_data_addr(data->img_ptr, &data->bpp,
+	|| !(data->image = (unsigned int *)mlx_get_data_addr(data->img_ptr, &data->bpp,
 										&data->size_line, &data->endian)))
 		return (0);
 	return (1);
 }
 
-void	ft_image_fill(t_data *data, int x, int y, int color)
+void	ft_image_fill(t_data *data, int x, int y, unsigned int color)
 {
 	data->image[y * data->winwidth + x] = color;
 }

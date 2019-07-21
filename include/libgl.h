@@ -22,32 +22,8 @@
 # include <stdio.h>
 # include <fcntl.h>
 
-# define RIGHT_ARROW 124
-# define LEFT_ARROW 123
-# define UP_ARROW 126
-# define DOWN_ARROW 125
-# define ZOOM_OUT 78
-# define ZOOM_IN 69
-# define SPACE 49
-# define LEFT_CLICK 1
-# define RIGHT_CLICK 2
-# define SCROLL_UP 4
-# define SCROLL_DOWN 5
-# define NUM_LOCK_9 92
-# define NUM_LOCK_8 91
-# define NUM_LOCK_7 89
-# define NUM_LOCK_6 88
-# define NUM_LOCK_5 87
-# define NUM_LOCK_4 86
-# define NUM_LOCK_3 85
-# define NUM_LOCK_2 84
-# define NUM_LOCK_1 83
-# define NUM_LOCK_0 82
-# define MOUSE_PRESS_CODE 4
-# define MOUSE_MOVE_CODE 6
-# define KEY_PRESS_CODE 2
-# define RED_BUTTON_CODE 17
 # define ABS(Value) (Value >= 0) ? (Value) : -(Value)
+# define STATIC_ARRAY_SIZE(ptr) (sizeof(ptr) / sizeof(ptr[0]))
 # define MAX_ITER 30
 # define VERTEX 0
 # define VECTOR 1
@@ -57,27 +33,65 @@
 # define ROTATION_MATRIX 1
 # define SCALING_MATRIX 2
 # define NEAR 1e-6
-# define FAR 1e30
+# define FAR 300
 # define POINT_LIGHT 0
 # define DIRECTIONAL_LIGHT 1
 # define SPOT_LIGHT 2
 # define AREA_LIGHT 3
-# define SPHERE 0
-# define PLANE 1
-# define CONE 2
-# define CYLINDER 3
 # define RED 0xFF0000
-# define GREEN 0x00FF00
+# define GREEN 0xFF00
 # define BLUE 0xFF
 # define BLACK 0x0
 # define WHITE 0xFFFFFF
-# define AMBIENT_R 0.4
-# define AMBIENT_G 0.4
-# define AMBIENT_B 0.4
-# define SPECULAR_POW 2
+# define AMBIENT_R 0.7
+# define AMBIENT_G 0.7
+# define AMBIENT_B 0.7
+# define SPECULAR_POW 30
 # define HEIGHT 720
 # define WIDTH 1280
 # define ASPECT_RATIO HEIGHT / WIDTH
+
+
+typedef enum		e_event_code
+{
+	MOUSE_PRESS_CODE	=	4,
+	MOUSE_MOVE_CODE		=	6,
+	KEY_PRESS_CODE		=	2,
+	RED_BUTTON_CODE		=	17,
+}					t_event_code;
+
+typedef enum		e_key_code
+{
+	LEFT_CLICK	=	1,
+	RIGHT_CLICK	=	2,
+	SCROLL_UP	=	4,
+	SCROLL_DOWN	=	5,
+	ZOOM_IN		=	69,
+	ZOOM_OUT	=	78,
+	SPACE		=	49,
+	NUM_LOCK_9	=	92,
+	NUM_LOCK_8	=	91,
+	NUM_LOCK_7	=	89,
+	NUM_LOCK_6	=	88,
+	NUM_LOCK_5	=	87,
+	NUM_LOCK_4	=	86,
+	NUM_LOCK_3	=	85,
+	NUM_LOCK_2	=	84,
+	NUM_LOCK_1	=	83,
+	NUM_LOCK_0	=	82,
+	RIGHT_ARROW	=	124,
+	LEFT_ARROW	=	123,
+	UP_ARROW	=	126,
+	DOWN_ARROW	=	125,
+}					t_key_code;
+
+typedef enum		e_object
+{
+	SPHERE = 0,
+	PLANE,
+	CONE,
+	CYLINDER,
+}					t_object;
 
 typedef struct		t_vec2
 {
@@ -183,7 +197,7 @@ typedef	struct		s_data
 	void			*mlx;
 	void			*win;
 	void			*img_ptr;
-	int				*image;
+	unsigned int	*image;
 	int				endian;
 	int				size_line;
 	int				bpp;
@@ -257,7 +271,7 @@ typedef struct		s_obj_function
 int					ft_window_setup(t_data *data, char *win_name,
 											int winheight, int winwidth);
 int					ft_image_setup(t_data *data);
-void				ft_image_fill(t_data *data, int x, int y, int color);
+void				ft_image_fill(t_data *data, int x, int y, unsigned int color);
 double				lerp(double x1, double x2, double lerp);
 double				ft_get_world_pos(double screen_coord,
 								double widthheight, double zoom);

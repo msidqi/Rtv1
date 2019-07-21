@@ -29,13 +29,25 @@ int		mouse_move(int x, int y, t_data *data)
 {
 	(void)y;
 	ft_refresh_image(data);
-	if (x > (0.8 * WIDTH) && x < (WIDTH) && y > 0 && y < HEIGHT)
+	if (x > (0.9 * WIDTH) && x < (WIDTH) && y > 0 && y < HEIGHT)
 		data->cam.pos.x -= 0.5;
-	else if (x < (0.2 * WIDTH) && x > 0 && y > 0 && y < HEIGHT)
+	else if (x < (0.1 * WIDTH) && x > 0 && y > 0 && y < HEIGHT)
 		data->cam.pos.x += 0.5;
 	ft_camera(data, data->cam.pos, data->cam.to);
 	ft_draw(data);
 	mlx_put_image_to_window(data->mlx, data->win, data->img_ptr, 0, 0);
+	if (x > (0.9 * WIDTH) && x < (WIDTH))
+	{
+		int i = -1, j;
+		while (++i < HEIGHT)
+		{
+			j = (0.9 * WIDTH) - 1;
+			while (++j < WIDTH)
+			{
+				mlx_pixel_put(data->mlx, data->win, j, i, 0xAAFF0000);
+			}
+		}
+	}
 	return (0);
 }
 

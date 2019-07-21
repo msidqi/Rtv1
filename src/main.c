@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libgl.h"
+#include "../include/libgl.h"
 
 int		main(int argc, char **argv)
 {

@@ -26,7 +26,7 @@ void		ft_refresh_image(t_data *data)
 {
 	mlx_destroy_image(data->mlx, data->img_ptr);
 	data->img_ptr = mlx_new_image(data->mlx, data->winwidth, data->winheight);
-	data->image = (int *)mlx_get_data_addr(data->img_ptr,
+	data->image = (unsigned int *)mlx_get_data_addr(data->img_ptr,
 								&data->bpp, &data->size_line, &data->endian);
 }
 
