@@ -11,6 +11,7 @@
 # **************************************************************************** #
 
 NAME = libft.a
+SRC_PATH = src
 SRC = ft_isascii.c ft_lstadd.c ft_memcmp.c ft_putnbr.c ft_strchr.c \
 ft_strjoin.c ft_strnew.c ft_wordcount.c ft_isdigit.c ft_lstdel.c ft_memcpy.c \
 ft_putnbr_fd.c ft_strclr.c ft_strlcat.c ft_strnstr.c ft_alert.c ft_islower.c \
@@ -25,22 +26,26 @@ ft_isalnum.c ft_itoa_base.c ft_memccpy.c ft_putendl.c ft_sqrt.c ft_striter.c \
 ft_strncpy.c ft_tolower.c ft_isalpha.c ft_link_two_lists.c ft_memchr.c \
 ft_putendl_fd.c ft_strcat.c ft_striteri.c ft_strnequ.c ft_toupper.c
 SRC_FILES = %.c
-OBJ = $(SRC:.c=.o)
+OBJS_DIR = .obj
+OBJ = $(addprefix $(OBJS_DIR)/,$(SRC:.c=.o))
 CC = gcc -Wall -Wextra -Werror
 H_PATH = ../../include
 
 all: $(NAME)
 
-$(OBJ) : %.o : $(SRC_FILES)
-	@$(CC) -c $^ -I$(H_PATH)
+$(OBJ) : $(OBJS_DIR)/%.o : $(SRC_PATH)/%.c
+	$(CC) -c $^ -o $@ -I$(H_PATH)
 $(NAME) : $(OBJ)
-	@ar rc $@ $(OBJ)
-	@ranlib $(NAME)
+	ar rc $@ $(OBJ)
+	ranlib $(NAME)
 
 clean:
-	@/bin/rm -f $(OBJ)
+	/bin/rm -f $(OBJ)
 
 fclean: clean
-	@/bin/rm -f $(NAME)
+	/bin/rm -f $(NAME)
 
 re: fclean all
+
+$(OBJS_DIR):
+	mkdir $(OBJS_DIR)
