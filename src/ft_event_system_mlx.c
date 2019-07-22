@@ -41,12 +41,15 @@ void		ft_refresh_image(t_data *data)
 ** 	mlx_loop_hook(data->mlx, &no_event_mouse_move, (void *)data);
 */
 
-void		ft_mlx_hooks(t_data *data, t_bool ismove)
+void		ft_mlx_hooks(t_data *data, int events)
 {
-	if (ismove)
+	if ((events & MOUSE_MOVE_HOOK))
 		mlx_hook(data->win, MOUSE_MOVE_CODE, 0, &mouse_move, (void *)data);
-	mlx_hook(data->win, KEY_PRESS_CODE, 0, &key_press, (void *)data);
-	mlx_hook(data->win, MOUSE_PRESS_CODE, 0, &mouse_press, (void *)data);
-	mlx_hook(data->win, RED_BUTTON_CODE, 0, &red_button, (void *)data);
+	if ((events & KEY_PRESS_HOOK))
+		mlx_hook(data->win, KEY_PRESS_CODE, 0, &key_press, (void *)data);
+	if ((events & MOUSE_PRESS_HOOK))
+		mlx_hook(data->win, MOUSE_PRESS_CODE, 0, &mouse_press, (void *)data);
+	if ((events & RED_BUTTON_HOOK))
+		mlx_hook(data->win, RED_BUTTON_CODE, 0, &red_button, (void *)data);
 	mlx_loop(data->mlx);
 }

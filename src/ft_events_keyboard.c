@@ -12,13 +12,11 @@
 
 #include "libgl.h"
 
-int		no_event_mouse_move(int x, int y, t_data *data)
+
+
+int		no_event_mouse_move(t_data *data)
 {
-	(void)y;
-	if (x > (0.8 * WIDTH) && x < (WIDTH))
-		data->cam.pos.x -= 0.5;
-	else if (x < (0.2 * WIDTH) && x > (0))
-		data->cam.pos.x += 0.5;
+	ft_refresh_image(data);
 	ft_camera(data, data->cam.pos, data->cam.to);
 	ft_draw(data);
 	mlx_put_image_to_window(data->mlx, data->win, data->img_ptr, 0, 0);

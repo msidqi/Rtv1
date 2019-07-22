@@ -60,6 +60,15 @@ typedef enum		e_event_code
 	RED_BUTTON_CODE		=	17,
 }					t_event_code;
 
+typedef enum		e_ft_mlx_hooks
+{
+	NO_EVENT_HOOK		=	0,
+	MOUSE_PRESS_HOOK	=	1,
+	MOUSE_MOVE_HOOK		=	2,
+	KEY_PRESS_HOOK		=	4,
+	RED_BUTTON_HOOK		=	8,
+}					t_ft_mlx_hooks;
+
 typedef enum		e_key_code
 {
 	LEFT_CLICK	=	1,
@@ -276,8 +285,8 @@ double				lerp(double x1, double x2, double lerp);
 double				ft_get_world_pos(double screen_coord,
 								double widthheight, double zoom);
 void				ft_refresh_image(t_data *data);
-void				ft_mlx_hooks(t_data *data, t_bool ismove);
-int					no_event_mouse_move(int x, int y, t_data *data);
+void				ft_mlx_hooks(t_data *data, int ismove);
+int					no_event_mouse_move(t_data *data);
 int					key_press(int key_code, t_data *data);
 int					mouse_press(int button, int x, int y, t_data *data);
 int					mouse_move(int x, int y, t_data *data);

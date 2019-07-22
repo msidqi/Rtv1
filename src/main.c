@@ -32,7 +32,8 @@ int		main(int argc, char **argv)
 	ft_camera(&data, data.cam.pos, data.cam.to);
 	ft_draw(&data);
 	mlx_put_image_to_window(data.mlx, data.win, data.img_ptr, 0, 0);
-	ft_mlx_hooks(&data, true);
+	ft_mlx_hooks(&data, RED_BUTTON_HOOK | KEY_PRESS_HOOK | MOUSE_PRESS_HOOK);
+	mlx_loop(data.mlx);
 	return (0);
 }
 
@@ -46,7 +47,7 @@ int		main(int argc, char **argv)
 ** Vec P(x,y,z,w) , Vec C(5,5,5,1)
 **
 ** |P - C|² = r²
-** P - C² = r²
+** 	P - C² 	= r²
 **
 ** magnitude A =  ||A|| = P-C
 ** magnitude B =  ||B|| = V = 1
@@ -55,5 +56,6 @@ int		main(int argc, char **argv)
 **
 ** angle  entre (vec4 A et vec4 B)  ==    dotprod(A , B)
 **
-** cos (A , B) =   dot(A, B )  / (  ||A||  * ||1||  )
+** dot(A, B )  =   cos (A , B) * ||A||  * ||1||
+** cos (A , B) =   dot(A, B )  / ||A||  * ||1||
 */
