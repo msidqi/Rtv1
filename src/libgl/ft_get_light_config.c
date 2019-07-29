@@ -58,5 +58,6 @@ void		ft_get_light_config(int fd, t_data *data)
 		else
 			ft_error_management(data, 6, (void **)&line, fd);
 	}
+	light->type = AREA_LIGHT;
 	ft_lstadd(&(data->light_list), ft_lstnew((void *)light, 0));
 }

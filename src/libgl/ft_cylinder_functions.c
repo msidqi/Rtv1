@@ -100,7 +100,12 @@ unsigned int	ft_cylinder_shader(t_data *data, t_ray *ray, t_cylinder *cyl)
 	cyl_nor = ft_get_cylinder_normal(ray, cyl->axis, cyl->point);
 	ds[0] = cyl->diffuse;
 	ds[1] = ft_create_vec4(cyl->specular, cyl->specular,
-			cyl->specular, cyl->specular);
+	cyl->specular, cyl->specular);
+	if (cyl->refl.w == 1 && ray->refl_depth > 0)
+	{
+		ray->refl_depth--;
+		return (ft_reflected_ray(data, cyl_nor, ray, cyl->refl));
+	}
 	sh_x = ft_ray_inter_lights(data, cyl_nor, ray, ds);
 	return (ft_compute_shader(cyl->color, &sh_x));
 }

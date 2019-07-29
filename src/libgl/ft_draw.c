@@ -26,6 +26,7 @@ void			ft_draw(t_data *data)
 	t_list			*s;
 	t_ray			ray;
 	unsigned int	i;
+	int j = 2;
 
 	xy[1] = -1;
 	while (++xy[1] < data->winheight)
@@ -37,6 +38,21 @@ void			ft_draw(t_data *data)
 			s = data->scene;
 			while (s != NULL)
 			{
+				if (s->content_size == PLANE) // tmp : testing textures
+					((t_plane *)s->content)->refl.w = 2;
+				if (s->content_size == SPHERE && j > 0)
+				{
+					((t_sphere *)s->content)->refl.x = 1;
+					((t_sphere *)s->content)->refl.y = 1;
+					((t_sphere *)s->content)->refl.z = 1;
+					((t_sphere *)s->content)->refl.w = 1;
+					j--;
+				}
+				else if (s->content_size == SPHERE && j == 0)
+				{
+					((t_sphere *)s->content)->refl.w = 1;
+					j--;
+				}
 				i = -1;
 				while (++i < (unsigned int)STATIC_ARRAY_SIZE(g_t_obj_ft2))
 					if (g_t_obj_ft2[i].type == s->content_size

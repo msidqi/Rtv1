@@ -11,6 +11,56 @@
 /* ************************************************************************** */
 
 #include "libgl.h"
+#define MAX_ITER 30
+
+void			ft_init_fractal(t_data *data)
+{
+	data->set = 'm';
+	data->movex = 0;
+	data->movey = 0;
+	data->zoom = 3;
+}
+
+int			mandelbrot_set(double c_x, double c_y)
+{
+	double	real;
+	double	imaginary;
+	double	tmpreal;
+	int		i;
+
+	i = 0;
+	imaginary = 0;
+	real = 0;
+	while (i < MAX_ITER)
+	{
+		tmpreal = real * real - imaginary * imaginary + c_x;
+		imaginary = 2 * real * imaginary + c_y;
+		real = tmpreal;
+		if (real * real + imaginary * imaginary > 4)
+			return (i);
+		i++;
+	}
+	return (0);
+}
+
+int	ft_checkif_in_set(t_data *data, double a, double b)
+{
+	if (data->set == 'm')
+		return (mandelbrot_set(a / data->zoom,b / data->zoom));
+	return (0);
+}
+
+void	ft_color_change(int *col)
+{
+	int				tmp;
+	unsigned char	*ptr;
+
+	tmp = *col;
+	ptr = (unsigned char*)col;
+	ptr[0] = 0 * (tmp) / MAX_ITER;
+	ptr[1] = 255 * (tmp) / MAX_ITER;
+	ptr[2] = 0 * (tmp) / MAX_ITER;
+}
 
 /*
 ** a plane is defined by a normal and a point1.
@@ -57,7 +107,10 @@ unsigned int	ft_plane_shader(t_data *data, t_ray *ray, t_plane *pl)
 	t_list		*l_lst;
 	t_vec4		pl_nor;
 	t_vec4		ds[2];
+	int			c;
+	t_vec4		p;
 
+	c = 0;
 	sh_x.diff = ft_create_vec4(0.0, 0.0, 0.0, 0.0);
 	sh_x.spec = ft_create_vec4(0.0, 0.0, 0.0, 0.0);
 	l_lst = data->light_list;
@@ -65,6 +118,22 @@ unsigned int	ft_plane_shader(t_data *data, t_ray *ray, t_plane *pl)
 	ds[0] = pl->diffuse;
 	ds[1] = ft_create_vec4(pl->specular, pl->specular,
 			pl->specular, pl->specular);
+	if (pl->refl.w == 1 && ray->refl_depth > 0)
+	{
+		ray->refl_depth--;
+		return (ft_reflected_ray(data, pl_nor, ray, pl->refl));
+	}
 	sh_x = ft_ray_inter_lights(data, pl_nor, ray, ds);
-	return (ft_compute_shader(pl->color, &sh_x));
+	if (pl->refl.w == 2)
+	{
+		p = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
+		/*double t = 1 + (sin(4 * p.x));
+		int c = ft_color_add(ft_color_rgb_scalar(0xFF00, (1 - t), (1 - t), (1 - t)), ft_color_rgb_scalar(pl->color, t, t, t));*/
+		c = ((((int)(100 * sin(2 * p.x)) ^ (int)(100 * sin(2 * p.z))) > 0)) ? pl->color : 0x0;
+		/*ft_init_fractal(data);
+		int c;
+		c = ft_checkif_in_set(data, p.x + pl->point.x, p.z + pl->point.z);
+		ft_color_change(&c);*/
+	}
+	return (ft_compute_shader(ft_color_add(pl->color, c), &sh_x));
 }

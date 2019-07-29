@@ -80,6 +80,11 @@ unsigned int	ft_cone_shader(t_data *data, t_ray *ray, t_cone *c)
 	ds[0] = c->diffuse;
 	ds[1] = ft_create_vec4(c->specular, c->specular,
 			c->specular, c->specular);
+	if (c->refl.w == 1 && ray->refl_depth > 0)
+	{
+		ray->refl_depth--;
+		return (ft_reflected_ray(data, co_nor, ray, c->refl));
+	}
 	sh_x = ft_ray_inter_lights(data, co_nor, ray, ds);
 	return (ft_compute_shader(c->color, &sh_x));
 }

@@ -33,7 +33,8 @@
 # define ROTATION_MATRIX 1
 # define SCALING_MATRIX 2
 # define NEAR 1e-6
-# define FAR 300
+# define FAR 1e+6
+# define DISTANT_LIGHT FAR + 1
 # define POINT_LIGHT 0
 # define DIRECTIONAL_LIGHT 1
 # define SPOT_LIGHT 2
@@ -168,10 +169,12 @@ typedef struct		s_ray
 	t_vec4			origin;
 	t_vec4			dir;
 	double			t;
+	short			refl_depth;
 }					t_ray;
 
 typedef	struct		s_light
 {
+	short			type;
 	double			i_r;
 	double			i_g;
 	double			i_b;
@@ -194,6 +197,11 @@ typedef struct		s_camera
 
 typedef	struct		s_data
 {
+	double			movex;
+	double			movey;
+	char			set;
+	double			zoom;
+
 	t_list			*light_list;
 	t_list			*scene;
 	t_camera		cam;
@@ -212,6 +220,7 @@ typedef	struct		s_data
 
 typedef	struct		s_sphere
 {
+	t_vec4			refl;
 	double			specular;
 	t_vec4			diffuse;
 	t_vec4			center;
@@ -222,6 +231,7 @@ typedef	struct		s_sphere
 
 typedef	struct		s_plane
 {
+	t_vec4			refl;
 	double			specular;
 	t_vec4			diffuse;
 	t_vec4			normal;
@@ -231,6 +241,7 @@ typedef	struct		s_plane
 
 typedef	struct		s_cone
 {
+	t_vec4			refl;
 	double			specular;
 	t_vec4			diffuse;
 	t_vec4			axis;
@@ -241,6 +252,7 @@ typedef	struct		s_cone
 
 typedef	struct		s_cylinder
 {
+	t_vec4			refl;
 	double			specular;
 	t_vec4			diffuse;
 	t_vec4			axis;
@@ -346,11 +358,14 @@ unsigned int		ft_cylinder_shader(t_data *data, t_ray *ray,
 										t_cylinder *cylinder);
 unsigned int		ft_cone_shader(t_data *data, t_ray *ray, t_cone *cone);
 void				ft_camera_ray(t_ray *ray, t_camera *cam, int x, int y);
-int					ft_ray_inter_objs(t_list *list, t_ray *r_light,
-										double distance_to_light);
+double					ft_ray_inter_objs(t_list *list, t_ray *r_light,
+										double distance_to_light, t_light *li);
 unsigned int		ft_compute_shader(unsigned int color, t_shader_x *sh_x);
 t_shader_x			ft_ray_inter_lights(t_data *data, t_vec4 nr,
 										t_ray *ray, t_vec4 *ds);
+int					ft_reflected_ray(t_data *data, t_vec4 nr,
+												t_ray *ray,	t_vec4 refl);
+double				ft_distance_to_light(t_light *li, t_ray *rl);
 double				ft_min(double val, double min);
 double				ft_max(double val, double max);
 

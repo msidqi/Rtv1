@@ -12,6 +12,55 @@
 
 #include "libgl.h"
 
+static void			ft_init_fractal(t_data *data)
+{
+	data->set = 'm';
+	data->movex = 0;
+	data->movey = 0;
+	data->zoom = 3;
+}
+
+static int			mandelbrot_set(double c_x, double c_y)
+{
+	double	real;
+	double	imaginary;
+	double	tmpreal;
+	int		i;
+
+	i = 0;
+	imaginary = 0;
+	real = 0;
+	while (i < MAX_ITER)
+	{
+		tmpreal = real * real - imaginary * imaginary + c_x;
+		imaginary = 2 * real * imaginary + c_y;
+		real = tmpreal;
+		if (real * real + imaginary * imaginary > 4)
+			return (i);
+		i++;
+	}
+	return (0);
+}
+
+static int	ft_checkif_in_set(t_data *data, double a, double b)
+{
+	if (data->set == 'm')
+		return (mandelbrot_set(a / data->zoom,b / data->zoom));
+	return (0);
+}
+
+static void	ft_color_change(int *col)
+{
+	int				tmp;
+	unsigned char	*ptr;
+
+	tmp = *col;
+	ptr = (unsigned char*)col;
+	ptr[0] = 0 * (tmp) / MAX_ITER;
+	ptr[1] = 255 * (tmp) / MAX_ITER;
+	ptr[2] = 222 * (tmp) / MAX_ITER;
+}
+
 /*
 ** a=dot(B,B)
 ** b=2⋅dot(B,A−C)
@@ -79,6 +128,18 @@ unsigned int	ft_sphere_shader(t_data *data, t_ray *ray, t_sphere *sp)
 	ds[0] = sp->diffuse;
 	ds[1] = ft_create_vec4(sp->specular, sp->specular,
 			sp->specular, sp->specular);
+	if (sp->refl.w == 1 && ray->refl_depth > 0)
+	{
+		ray->refl_depth--;
+		return (ft_reflected_ray(data, sp_nor, ray, sp->refl));
+	}
 	sh_x = ft_ray_inter_lights(data, sp_nor, ray, ds);
-	return (ft_compute_shader(sp->color, &sh_x));
+	t_vec4 p = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
+	// double t = 1 + (sin(20 * p.y) / 2);
+	// int c = ft_color_add(ft_color_rgb_scalar(0x0, (1 - t), (1 - t), (1 - t)), ft_color_rgb_scalar(sp->color, t, t, t));
+	ft_init_fractal(data);
+	int c;
+	c = ft_checkif_in_set(data, p.x + sp->center.x, p.z + sp->center.z);
+	ft_color_change(&c);
+	return (ft_compute_shader(ft_color_add(sp->color, c), &sh_x));
 }
