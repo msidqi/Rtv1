@@ -12,10 +12,10 @@
 
 #include "libgl.h"
 
-void	drawnsquares(t_data *data, unsigned int onedlen)
+void	drawnsquares(t_data *data, int onedlen)
 {
-	unsigned int j;
-	unsigned int x;
+	int j;
+	int x;
 
 	x = 0;
 	j = 0;

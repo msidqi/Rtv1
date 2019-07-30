@@ -29,11 +29,11 @@ void		ft_create_vec3(t_vec3 *a, double x, double y, double z)
 ** free matrix with ft_destroy_matrix
 */
 
-t_matrix	*ft_create_matrix(unsigned int rows, unsigned int cols)
+t_matrix	*ft_create_matrix(int rows, int cols)
 {
 	t_matrix		*mat;
-	unsigned int	i;
-	unsigned int	j;
+	int	i;
+	int	j;
 
 	i = -1;
 	if (rows != cols || rows * cols < 2 || !(mat = malloc(sizeof(t_matrix))))

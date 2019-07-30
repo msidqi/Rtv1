@@ -31,12 +31,25 @@ t_ray	ft_get_ray(t_data *data, t_vec4 *view_window_pos)
 
 t_ray	ft_get_ray_to_light(t_ray *ray, t_light *light)
 {
-	t_vec4	inter_point;
 	t_ray	r_light;
 
-	inter_point = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
-	r_light.origin = inter_point;
-	r_light.dir = ft_vec4_normalize(ft_vec4_sub(light->origin,
-														r_light.origin));
+	r_light.origin = ft_create_vec4(0, 0, 0, 0);
+	if (light->type == POINT_LIGHT || light->type == AREA_LIGHT)
+	{
+		r_light.origin  = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
+		r_light.dir = ft_vec4_normalize(ft_vec4_sub(light->origin,
+															r_light.origin));
+	}
+	else if (light->type == DIRECTIONAL_LIGHT)
+	{
+		r_light.origin  = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
+		r_light.dir = ft_vec4_normalize(ft_create_vec4(0, -1, 0, 0)); //read from file
+	}
+	if (light->type == SPOT_LIGHT)
+	{
+		r_light.origin  = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
+		r_light.dir = ft_vec4_normalize(ft_vec4_sub(light->origin,
+															r_light.origin));
+	}
 	return (r_light);
 }

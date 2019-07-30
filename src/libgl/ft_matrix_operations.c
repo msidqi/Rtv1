@@ -14,8 +14,8 @@
 
 void		ft_putmatrix(t_matrix *mat)
 {
-	unsigned int	i;
-	unsigned int	j;
+	int	i;
+	int	j;
 
 	i = -1;
 	write(1, "\n", 1);

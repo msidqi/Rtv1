@@ -12,7 +12,7 @@
 
 #include "libgl.h"
 
-unsigned	int	ft_color_rgb_scalar(unsigned int color, double r,
+int	ft_color_rgb_scalar(int color, double r,
 		double g, double b)
 {
 	unsigned char	*ptr;
@@ -30,18 +30,18 @@ unsigned	int	ft_color_rgb_scalar(unsigned int color, double r,
 ** 00000000 00000000 00000000 00000000
 **	R is the biggest color value
 **	Since we're working on a little endian OS and server X is also little e
-**	we get access to the smaller value first.
+**	we get access the smaller value first.
 **	This doesn't make difference when working bits wise, only bytes wise,
 **	ptr[0] contains B's value && ptr[3] == alpha
 **
 */
 
-int				ft_color_add(unsigned int color1, unsigned int color2)
+int				ft_color_add(int color1, int color2)
 {
-	unsigned int a;
-	unsigned int r;
-	unsigned int g;
-	unsigned int b;
+	int a;
+	int r;
+	int g;
+	int b;
 
 	a = ((color2 >> 24) & 0xff) + ((color1 >> 24) & 0xff);
 	r = ((color2 >> 16) & 0xff) + ((color1 >> 16) & 0xff);

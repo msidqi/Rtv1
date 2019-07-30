@@ -29,8 +29,20 @@ int		main(int argc, char **argv)
 	if (!ft_window_setup(&data, "ReTweet", HEIGHT, WIDTH)
 													|| !ft_image_setup(&data))
 		return (1);
+	// t_triangle *t;
+
+	// t = malloc(sizeof(t));
+	// t->color = 0xFF00FF;
+	// t->diffuse = ft_create_vec4(0.5, 0.5, 0.5, 0);
+	// t->normal = ft_create_vec4(0, 0, 1, 0);
+	// t->point = ft_create_vec4(0, 0, -1, 0);
+	// t->vertex0 = ft_create_vec4(0, 5, -1, 0);
+	// t->vertex1 = ft_create_vec4(5, 5, -1, 0);
+	// t->vertex2 = ft_create_vec4(5, 0, -1, 0);
+	// t->specular = 0.5;
+	// ft_lstadd(data.scene, ft_lstnew((void *)cone, CONE));
 	ft_camera(&data, data.cam.pos, data.cam.to);
-	ft_draw(&data);
+	ft_draw_scene(&data);
 	mlx_put_image_to_window(data.mlx, data.win, data.img_ptr, 0, 0);
 	ft_mlx_hooks(&data, RED_BUTTON_HOOK | KEY_PRESS_HOOK | MOUSE_PRESS_HOOK);
 	mlx_loop(data.mlx);

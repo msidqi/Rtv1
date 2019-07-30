@@ -28,10 +28,10 @@
 
 int				ft_cone_inter(t_ray *ray, t_cone *co)
 {
-	double abc[3];
-	double t[2];
-	t_vec4 x;
-	double discr_k[2];
+	double	abc[3];
+	double	t[2];
+	t_vec4	x;
+	double	discr_k[2];
 
 	discr_k[1] = 1 + pow(tan(co->half_angle), 2);
 	x = ft_vec4_sub(ray->origin, co->center);
@@ -68,7 +68,7 @@ static t_vec4	ft_get_cone_normal(t_ray *ray, t_vec4 axis,
 						* ft_vec4_dot_product(p_sub_c, axis)))));
 }
 
-unsigned int	ft_cone_shader(t_data *data, t_ray *ray, t_cone *c)
+int	ft_cone_shader(t_data *data, t_ray *ray, t_cone *c)
 {
 	t_shader_x	sh_x;
 	t_list		*l_lst;
@@ -80,6 +80,11 @@ unsigned int	ft_cone_shader(t_data *data, t_ray *ray, t_cone *c)
 	ds[0] = c->diffuse;
 	ds[1] = ft_create_vec4(c->specular, c->specular,
 			c->specular, c->specular);
+	if (c->refl.w == 1 && ray->refl_depth > 0)
+	{
+		ray->refl_depth--;
+		return (ft_reflected_ray(data, co_nor, ray, c->refl));
+	}
 	sh_x = ft_ray_inter_lights(data, co_nor, ray, ds);
 	return (ft_compute_shader(c->color, &sh_x));
 }

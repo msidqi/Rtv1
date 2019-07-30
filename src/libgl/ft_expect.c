@@ -127,7 +127,7 @@ int	ft_expect_diffuse(char *line, char *name, t_vec4 *vector)
 	return (1);
 }
 
-int	ft_expect_color(char *line, char *name, unsigned int *color)
+int	ft_expect_color(char *line, char *name, int *color)
 {
 	char	**tab;
 

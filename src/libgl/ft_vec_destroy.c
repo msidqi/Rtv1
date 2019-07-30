@@ -14,7 +14,7 @@
 
 int		ft_destroy_matrix(t_matrix *mat)
 {
-	unsigned int	i;
+	int	i;
 
 	i = -1;
 	if (!mat)

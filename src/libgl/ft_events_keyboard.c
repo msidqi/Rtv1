@@ -18,7 +18,7 @@ int		no_event_mouse_move(t_data *data)
 {
 	ft_refresh_image(data);
 	ft_camera(data, data->cam.pos, data->cam.to);
-	ft_draw(data);
+	ft_draw_scene(data);
 	mlx_put_image_to_window(data->mlx, data->win, data->img_ptr, 0, 0);
 	return (0);
 }
@@ -27,12 +27,13 @@ int		mouse_move(int x, int y, t_data *data)
 {
 	(void)y;
 	ft_refresh_image(data);
-	if (x > (0.9 * WIDTH) && x < (WIDTH) && y > 0 && y < HEIGHT)
-		data->cam.pos.x -= 0.5;
-	else if (x < (0.1 * WIDTH) && x > 0 && y > 0 && y < HEIGHT)
-		data->cam.pos.x += 0.5;
+	if (!data->islocked)
+	{
+		data->juliapos.x = (double)(x * 1.5) / data->winwidth;
+		data->juliapos.y = (double)(y * 1.5) / data->winheight;
+	}
 	ft_camera(data, data->cam.pos, data->cam.to);
-	ft_draw(data);
+	ft_draw_scene(data);
 	mlx_put_image_to_window(data->mlx, data->win, data->img_ptr, 0, 0);
 	if (x > (0.9 * WIDTH) && x < (WIDTH))
 	{
@@ -61,15 +62,15 @@ int		key_press(int key_code, t_data *data)
 	}
 	ft_refresh_image(data);
 	if (key_code == LEFT_ARROW)
-		data->cam.pos.x += 0.5;
+		data->cam.pos.x += 1;
 	if (key_code == RIGHT_ARROW)
-		data->cam.pos.x -= 0.5;
+		data->cam.pos.x -= 1;
 	if (key_code == UP_ARROW)
-		data->cam.pos.z -= 0.5;
+		data->cam.pos.z -= 1;
 	if (key_code == DOWN_ARROW)
-		data->cam.pos.z += 0.5;
+		data->cam.pos.z += 1;
 	ft_camera(data, data->cam.pos, data->cam.to);
-	ft_draw(data);
+	ft_draw_scene(data);
 	mlx_put_image_to_window(data->mlx, data->win, data->img_ptr, 0, 0);
 	return (0);
 }
@@ -80,11 +81,11 @@ int		mouse_press(int button, int x, int y, t_data *data)
 	(void)x;
 	(void)y;
 	if (button == LEFT_CLICK)
-		data->cam.pos.y -= 1;
+		data->cam.pos.y -= 5;
 	if (button == RIGHT_CLICK)
-		data->cam.pos.y += 1;
+		data->cam.pos.y += 5;
 	ft_camera(data, data->cam.pos, data->cam.to);
-	ft_draw(data);
+	ft_draw_scene(data);
 	mlx_put_image_to_window(data->mlx, data->win, data->img_ptr, 0, 0);
 	return (0);
 }

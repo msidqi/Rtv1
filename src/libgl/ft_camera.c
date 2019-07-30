@@ -17,21 +17,24 @@ static double	ft_map(int x_or_y, double size, int width_or_height)
 	return (x_or_y * size / width_or_height - (size / 2));
 }
 
-void			ft_camera_ray(t_ray *ray, t_camera *cam, int x, int y)
+void			ft_get_camera_ray(t_ray *ray, t_camera *cam, int x, int y)
 {
 	t_vec4 new_left;
 	t_vec4 new_up;
 	t_vec4 new_forw;
 	t_vec4 left_up;
 
-	new_left = ft_vec4_scalar(cam->left, ft_map(x, cam->bigl,
-				WIDTH * ASPECT_RATIO));
+	new_left = ft_vec4_scalar(cam->left, ft_map(x - ((WIDTH - HEIGHT) / 2), cam->bigl,
+				(double)(WIDTH * ASPECT_RATIO)));
 	new_up = ft_vec4_scalar(cam->up, ft_map(y, cam->l, HEIGHT));
 	new_forw = ft_vec4_scalar(cam->forward, cam->focal_length);
 	left_up = ft_vec4_add(new_up, new_left);
 	ray->dir = ft_vec4_normalize(ft_vec4_add(left_up, new_forw));
 	ray->origin = ft_create_vec4(cam->pos.x, cam->pos.y, cam->pos.z, 0);
+	// ray->dir = ft_vec4_normalize( new_forw);
+	// ray->origin = ft_create_vec4(left_up.x, left_up.y, left_up.z, 0);//orthogr
 	ray->t = FAR;
+	ray->refl_depth = 2;
 }
 
 void			ft_camera(t_data *data, t_vec4 position, t_vec4 lookat)
@@ -43,6 +46,7 @@ void			ft_camera(t_data *data, t_vec4 position, t_vec4 lookat)
 
 	data->cam.l = 1;
 	data->cam.bigl = 1;
+	data->cam.bigl = data->cam.bigl * (data->cam.l / data->cam.bigl);
 	data->cam.pos = position;
 	data->cam.to = lookat;
 	forward = ft_vec4_normalize(ft_vec4_sub(data->cam.to, data->cam.pos));

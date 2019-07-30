@@ -11,6 +11,58 @@
 /* ************************************************************************** */
 
 #include "libgl.h"
+static void			ft_init_fractal(t_data *data)
+{
+	data->set = 'm';
+	data->movex = 0;
+	data->movey = 0;
+	data->zoom = 20;
+	data->max_iter = MAX_ITER;
+	data->color.red = 0;
+	data->color.green = 255;
+	data->color.blue = 222;
+}
+
+static int			mandelbrot_set(t_data *data, double c_x, double c_y)
+{
+	double	real;
+	double	imaginary;
+	double	tmpreal;
+	int		i;
+
+	i = 0;
+	imaginary = 0;
+	real = 0;
+	while (i < data->max_iter)
+	{
+		tmpreal = real * real - imaginary * imaginary + c_x;
+		imaginary = 2 * real * imaginary + c_y;
+		real = tmpreal;
+		if (real * real + imaginary * imaginary > 4)
+			return (i);
+		i++;
+	}
+	return (0);
+}
+
+static int	ft_checkif_in_set(t_data *data, double a, double b)
+{
+	if (data->set == 'm')
+		return (mandelbrot_set(data, a / data->zoom,b / data->zoom));
+	return (0);
+}
+
+static void	ft_color_change(int *col, t_data *data)
+{
+	int				tmp;
+	unsigned char	*ptr;
+
+	tmp = *col;
+	ptr = (unsigned char*)col;
+	ptr[0] = data->color.blue * (tmp) / MAX_ITER;
+	ptr[1] = data->color.green * (tmp) / MAX_ITER;
+	ptr[2] = data->color.red * (tmp) / MAX_ITER;
+}
 
 /*
 ** a=dot(B,B)
@@ -38,7 +90,7 @@ int				ft_sphere_inter(t_ray *ray, t_sphere *sp)
 	t[1] = (-abc[1] - sqrt(discr)) / (2 * abc[0]);
 	t[0] = t[0] < t[1] && t[0] > NEAR ? t[0] : t[1];
 	if (t[0] > NEAR && t[0] < ray->t)
-	{
+	{//if (sp->ref == 1)printf("%f\n", t[0]);
 		ray->t = t[0];
 		return (1);
 	}
@@ -65,7 +117,7 @@ static t_vec4	ft_get_sphere_normal(t_ray *ray, t_sphere *sp)
 			ft_vec4_scalar(ray->dir, ray->t)), sp->center)));
 }
 
-unsigned int	ft_sphere_shader(t_data *data, t_ray *ray, t_sphere *sp)
+int	ft_sphere_shader(t_data *data, t_ray *ray, t_sphere *sp)
 {
 	t_shader_x	sh_x;
 	t_list		*l_lst;
@@ -79,6 +131,18 @@ unsigned int	ft_sphere_shader(t_data *data, t_ray *ray, t_sphere *sp)
 	ds[0] = sp->diffuse;
 	ds[1] = ft_create_vec4(sp->specular, sp->specular,
 			sp->specular, sp->specular);
+	if (sp->refl.w == 1 && ray->refl_depth > 0)
+	{
+		ray->refl_depth--;
+		return (ft_reflected_ray(data, sp_nor, ray, sp->refl));
+	}
 	sh_x = ft_ray_inter_lights(data, sp_nor, ray, ds);
-	return (ft_compute_shader(sp->color, &sh_x));
+	t_vec4 p = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
+	// double t = 1 + (sin(20 * p.y) / 2);
+	// int c = ft_color_add(ft_color_rgb_scalar(0x0, (1 - t), (1 - t), (1 - t)), ft_color_rgb_scalar(sp->color, t, t, t));
+	ft_init_fractal(data);
+	int c;
+	c = ft_checkif_in_set(data, p.x + sp->center.x, p.z + sp->center.z);
+	ft_color_change(&c, data);
+	return (ft_compute_shader(ft_color_add(sp->color, c), &sh_x));
 }

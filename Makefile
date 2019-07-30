@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = RTv1
+NAME = rtv1
 LIBFT = libft.a
 LIBGL = libgl.a
 LIBMLX = libmlx.a
@@ -28,10 +28,11 @@ ft_camera.c ft_get_camera_config.c ft_light_intersection.c \
 ft_vec_cross_dot_prod.c ft_color_operations.c ft_get_cone_config.c \
 ft_matrix_operations.c ft_vec_destroy.c ft_cone_functions.c ft_get_config.c \
 ft_min_max.c ft_vec_normalize_magnitude.c ft_cylinder_functions.c \
-ft_get_cylinder_config.c ft_multi_thread.c ft_vec_scalar.c ft_draw.c \
+ft_get_cylinder_config.c ft_multi_thread.c ft_vec_scalar.c ft_draw_scene.c \
 ft_get_light_config.c ft_palette.c ft_vector_add.c ft_error_management.c \
 ft_get_matrix.c ft_parsing_tools.c ft_vector_operations.c
 INCLUDE = include
+INC = include/libft.h include/libgl.h
 OBJS_DIR = .objs
 CC = gcc -Wall -Wextra -Werror 
 FLAGS = -framework OpenGl -framework Appkit -lmlx
@@ -39,7 +40,7 @@ OBJ = $(addprefix $(OBJS_DIR)/,$(SRC:.c=.o))
 
 all : $(NAME)
 
-$(OBJ) : $(OBJS_DIR)/%.o : $(GLSRC_PATH)/%.c | $(OBJS_DIR)
+$(OBJ) : $(OBJS_DIR)/%.o : $(GLSRC_PATH)/%.c $(INC)| $(OBJS_DIR)
 	$(CC) -c $< -o $@ -I$(INCLUDE)
 $(LIBGLL) : $(OBJ)
 	ar rc $@ $^

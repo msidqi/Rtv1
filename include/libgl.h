@@ -33,24 +33,21 @@
 # define ROTATION_MATRIX 1
 # define SCALING_MATRIX 2
 # define NEAR 1e-6
-# define FAR 300
-# define POINT_LIGHT 0
-# define DIRECTIONAL_LIGHT 1
-# define SPOT_LIGHT 2
-# define AREA_LIGHT 3
+# define FAR 1e+6
+# define DISTANT_LIGHT 1e+6
 # define RED 0xFF0000
 # define GREEN 0xFF00
 # define BLUE 0xFF
 # define BLACK 0x0
 # define WHITE 0xFFFFFF
-# define AMBIENT_R 0.7
-# define AMBIENT_G 0.7
-# define AMBIENT_B 0.7
+# define AMBIENT_R 0.4
+# define AMBIENT_G 0.4
+# define AMBIENT_B 0.4
 # define SPECULAR_POW 30
 # define HEIGHT 720
 # define WIDTH 1280
 # define ASPECT_RATIO HEIGHT / WIDTH
-
+# define MAX_ITER 30
 
 typedef enum		e_event_code
 {
@@ -71,28 +68,36 @@ typedef enum		e_ft_mlx_hooks
 
 typedef enum		e_key_code
 {
-	LEFT_CLICK	=	1,
-	RIGHT_CLICK	=	2,
-	SCROLL_UP	=	4,
-	SCROLL_DOWN	=	5,
-	ZOOM_IN		=	69,
-	ZOOM_OUT	=	78,
-	SPACE		=	49,
-	NUM_LOCK_9	=	92,
-	NUM_LOCK_8	=	91,
-	NUM_LOCK_7	=	89,
-	NUM_LOCK_6	=	88,
-	NUM_LOCK_5	=	87,
-	NUM_LOCK_4	=	86,
-	NUM_LOCK_3	=	85,
-	NUM_LOCK_2	=	84,
-	NUM_LOCK_1	=	83,
-	NUM_LOCK_0	=	82,
-	RIGHT_ARROW	=	124,
-	LEFT_ARROW	=	123,
-	UP_ARROW	=	126,
-	DOWN_ARROW	=	125,
+	LEFT_CLICK			=	1,
+	RIGHT_CLICK			=	2,
+	SCROLL_UP			=	4,
+	SCROLL_DOWN			=	5,
+	ZOOM_IN				=	69,
+	ZOOM_OUT			=	78,
+	SPACE				=	49,
+	NUM_LOCK_9			=	92,
+	NUM_LOCK_8			=	91,
+	NUM_LOCK_7			=	89,
+	NUM_LOCK_6			=	88,
+	NUM_LOCK_5			=	87,
+	NUM_LOCK_4			=	86,
+	NUM_LOCK_3			=	85,
+	NUM_LOCK_2			=	84,
+	NUM_LOCK_1			=	83,
+	NUM_LOCK_0			=	82,
+	RIGHT_ARROW			=	124,
+	LEFT_ARROW			=	123,
+	UP_ARROW			=	126,
+	DOWN_ARROW			=	125,
 }					t_key_code;
+
+typedef enum		e_light_type
+{
+	POINT_LIGHT	= 0,
+	DIRECTIONAL_LIGHT,
+	SPOT_LIGHT,
+	AREA_LIGHT,
+}					t_light_type;
 
 typedef enum		e_object
 {
@@ -117,8 +122,8 @@ typedef struct		s_vec3
 
 typedef struct		s_matrix
 {
-	unsigned int	cols;
-	unsigned int	rows;
+	int	cols;
+	int	rows;
 	double			**v;
 }					t_matrix;
 
@@ -170,14 +175,17 @@ typedef struct		s_ray // P(t) = origin + t * dir
 	t_vec4			origin; // vector to origin point
 	t_vec4			dir; // direction vector
 	double			t; // distance
+	short			refl_depth;
 }					t_ray;
 
-typedef	struct		t_light
+typedef	struct		s_light
 {
+	short			type;
 	double			i_r; // intensity rgb(1.0, 0.0, 0.0) == red
 	double			i_g;
 	double			i_b;
 	t_vec4			origin;
+	t_vec4			dir;
 }					t_light;
 
 typedef struct		s_camera
@@ -195,18 +203,25 @@ typedef struct		s_camera
 
 typedef	struct		s_data
 {
+	t_vec2			juliapos;
+	t_bool			islocked;
+	double			zoom;
+	double			movex;
+	double			movey;
+	char			set;
+	int				max_iter;
+
 	t_list			*light_list;
 	t_list			*scene;
 	t_camera		cam;
-	// t_vec4			worldpos;
 	t_color			color;
 	t_startend		thread_range;
-	unsigned int	winwidth;
-	unsigned int	winheight;
+	int	winwidth;
+	int	winheight;
 	void			*mlx;
 	void			*win;
 	void			*img_ptr;
-	unsigned int	*image;
+	int	*image;
 	int				endian;
 	int				size_line;
 	int				bpp;
@@ -214,41 +229,56 @@ typedef	struct		s_data
 
 typedef	struct		s_sphere
 {
+	t_vec4			refl; /// {r_refl, g_refl, b_refl, reflectance_boolean}
 	double			specular;
 	t_vec4			diffuse;
 	t_vec4			center;
 	double			radius;
-	unsigned int	color;
-
+	int	color;
 }					t_sphere;
 
 typedef	struct		s_plane
+{
+	t_vec4			refl;
+	double			specular;
+	t_vec4       	diffuse;
+	t_vec4			normal;
+	t_vec4			point;
+	int	color;
+}					t_plane;
+
+typedef	struct		s_triangle
 {
 	double			specular;
 	t_vec4       	diffuse;
 	t_vec4			normal;
 	t_vec4			point;
-	unsigned int	color;
-}					t_plane;
+	t_vec4			vertex0;
+	t_vec4			vertex1;
+	t_vec4			vertex2;
+	int	color;
+}					t_triangle;
 
 typedef	struct		s_cone
 {
+	t_vec4			refl;
 	double			specular;
 	t_vec4			diffuse;
 	t_vec4			axis;
 	t_vec4			center;
 	double			half_angle;
-	unsigned int	color;
+	int	color;
 }					t_cone;
 
 typedef	struct		s_cylinder
 {
+	t_vec4			refl;
 	double			specular;
 	t_vec4			diffuse;
 	t_vec4			axis;
 	t_vec4			point;
 	double			radius;
-	unsigned int	color;
+	int	color;
 }					t_cylinder;
 
 typedef struct		s_shader_x
@@ -259,9 +289,9 @@ typedef struct		s_shader_x
 
 typedef struct		s_shader
 {
-	unsigned int	diffuse;
-	unsigned int	specular;
-	unsigned int	ambient;
+	int	diffuse;
+	int	specular;
+	int	ambient;
 }					t_shader;
 
 typedef struct		s_palette
@@ -274,13 +304,15 @@ typedef struct		s_obj_function
 {
 	size_t			type;
 	int				(*call)();
-	unsigned int	(*call2)();
+	int	(*call2)();
 }					t_obj_function;
 
+int		ft_reflected_ray(t_data *data, t_vec4 nr, t_ray *ray, t_vec4 refl);
 int					ft_window_setup(t_data *data, char *win_name,
 											int winheight, int winwidth);
 int					ft_image_setup(t_data *data);
-void				ft_image_fill(t_data *data, int x, int y, unsigned int color);
+void				ft_image_fill(t_data *data, int x,
+												int y, int color);
 double				lerp(double x1, double x2, double lerp);
 double				ft_get_world_pos(double screen_coord,
 								double widthheight, double zoom);
@@ -290,9 +322,9 @@ int					no_event_mouse_move(t_data *data);
 int					key_press(int key_code, t_data *data);
 int					mouse_press(int button, int x, int y, t_data *data);
 int					mouse_move(int x, int y, t_data *data);
-void				ft_multi_thread(t_data *data, int n_threads, void *(*f)(void *));
+// void				ft_multi_thread(t_data *data, int n_threads, void *(*f)(void *));
 void				drawline(t_data *data, int startline, int nlines, int color);
-void				drawnsquares(t_data *data, unsigned int onedlen);
+void				drawnsquares(t_data *data, int onedlen);
 void				connect_dots(t_data *data, t_vec2 a, t_vec2 b, int color);
 void				ft_create_vec2(t_vec2 *a, double x, double y);
 void				ft_create_vec3(t_vec3 *a, double x, double y, double z);
@@ -312,7 +344,7 @@ double				ft_vec2_dot_product(t_vec2 a, t_vec2 b);
 double				ft_vec3_dot_product(t_vec3 a, t_vec3 b);
 t_vec2				ft_vec2_rotate_byangle(t_vec2 a, double angle);
 t_vec2				ft_vec2_rotate_byaxis(t_vec2 a, t_vec2 x_axis, t_vec2 y_axis);
-t_matrix			*ft_create_matrix(unsigned int rows, unsigned int cols);
+t_matrix			*ft_create_matrix(int rows, int cols);
 t_matrix4			ft_create_matrix4();
 int					ft_destroy_matrix(t_matrix *mat);
 void				ft_putmatrix(t_matrix *mat);
@@ -326,7 +358,7 @@ t_vec4				ft_vec4_sub(t_vec4 vec1, t_vec4 vec2);
 t_vec4    			ft_vec4_normalize(t_vec4 a);
 double    			ft_vec4_mag(t_vec4 a);
 double				ft_vec4_dot_product(t_vec4 a, t_vec4 b);
-void				ft_draw(t_data *data);
+void				ft_draw_scene(t_data *data);
 void				ft_printmatrix4(t_matrix4 *mat);
 t_vec4 	   			ft_vec4_cross_product(t_vec4 vec1, t_vec4 vec2);
 t_vec4				ft_vec4_add(t_vec4 vec1, t_vec4 vec2);
@@ -337,15 +369,16 @@ int					ft_cone_inter(t_ray *ray, t_cone *cone);
 int					ft_cylinder_inter(t_ray *ray, t_cylinder *cylinder);
 void				ft_camera(t_data *data, t_vec4 position, t_vec4 lookat);
 t_ray				ft_get_ray_to_light(t_ray *ray, t_light *source);
-unsigned int 		ft_color_rgb_scalar(unsigned int color, double r, double g, double b);
-int					ft_color_add(unsigned int color1, unsigned int color2);
-unsigned int		ft_sphere_shader(t_data *data, t_ray *ray, t_sphere *sphere);
-unsigned int		ft_plane_shader(t_data *data, t_ray *ray, t_plane *plane);
-unsigned int		ft_cylinder_shader(t_data *data, t_ray *ray, t_cylinder *cylinder);
-unsigned int		ft_cone_shader(t_data *data, t_ray *ray, t_cone *cone);
-void				ft_camera_ray(t_ray *ray, t_camera *cam, int x, int y);
-int					ft_ray_inter_objs(t_list *list, t_ray *r_light, double distance_to_light);
-unsigned int		ft_compute_shader(unsigned int color, t_shader_x *sh_x);
+int 		ft_color_rgb_scalar(int color, double r, double g, double b);
+int					ft_color_add(int color1, int color2);
+int		ft_sphere_shader(t_data *data, t_ray *ray, t_sphere *sphere);
+int		ft_plane_shader(t_data *data, t_ray *ray, t_plane *plane);
+int		ft_cylinder_shader(t_data *data, t_ray *ray, t_cylinder *cylinder);
+int		ft_cone_shader(t_data *data, t_ray *ray, t_cone *cone);
+void				ft_get_camera_ray(t_ray *ray, t_camera *cam, int x, int y);
+double					ft_ray_inter_objs(t_list *list, t_ray *r_light,
+									double distance_to_light, t_light *li);
+int		ft_compute_shader(int color, t_shader_x *sh_x);
 t_shader_x			ft_ray_inter_lights(t_data *data, t_vec4 nr,
                                          t_ray *ray, t_vec4 *ds);
 double				ft_min(double val, double min);
@@ -365,7 +398,7 @@ int					ft_expect_vector(char *line, char *name, t_vec4 *vector);
 int					ft_expect_intensity(char *line, char *name, t_light *light);
 int					ft_expect_diffuse(char *line, char *name, t_vec4 *vector);
 int					ft_expect_value(char *line, char *name, double *n);
-int					ft_expect_color(char *line, char *name, unsigned int *color);
+int					ft_expect_color(char *line, char *name, int *color);
 int					ft_expect_matrix(char *line, char *str, t_vec4 *vec);
 
 int					ft_is_numeric(char *str);
