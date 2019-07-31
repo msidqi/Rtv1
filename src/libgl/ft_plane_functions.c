@@ -54,13 +54,11 @@ static t_vec4	ft_get_plane_normal(t_ray *ray, t_plane *pl)
 unsigned int	ft_plane_shader(t_data *data, t_ray *ray, t_plane *pl)
 {
 	t_shader_x	sh_x;
-	t_list		*l_lst;
 	t_vec4		pl_nor;
 	t_vec4		ds[2];
 
 	sh_x.diff = ft_create_vec4(0.0, 0.0, 0.0, 0.0);
 	sh_x.spec = ft_create_vec4(0.0, 0.0, 0.0, 0.0);
-	l_lst = data->light_list;
 	pl_nor = ft_get_plane_normal(ray, pl);
 	ds[0] = pl->diffuse;
 	ds[1] = ft_create_vec4(pl->specular, pl->specular,
