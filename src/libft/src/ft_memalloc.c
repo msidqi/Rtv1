@@ -15,9 +15,7 @@
 void	*ft_memalloc(size_t size)
 {
 	void	*tab;
-	size_t	i;
 
-	i = 0;
 	if (!(tab = (void *)malloc(size)))
 		return (NULL);
 	else

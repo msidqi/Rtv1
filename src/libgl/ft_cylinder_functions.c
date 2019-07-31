@@ -96,11 +96,9 @@ static t_vec4	ft_get_cylinder_normal(t_ray *ray, t_vec4 axis, t_vec4 c)
 int	ft_cylinder_shader(t_data *data, t_ray *ray, t_cylinder *cyl)
 {
 	t_shader_x	sh_x;
-	t_list		*l_lst;
 	t_vec4		cyl_nor;
 	t_vec4		ds[2];
 
-	l_lst = data->light_list;
 	cyl_nor = ft_get_cylinder_normal(ray, cyl->axis, cyl->point);
 	ds[0] = cyl->diffuse;
 	ds[1] = ft_create_vec4(cyl->specular, cyl->specular,

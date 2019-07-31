@@ -71,11 +71,9 @@ static t_vec4	ft_get_cone_normal(t_ray *ray, t_vec4 axis,
 int	ft_cone_shader(t_data *data, t_ray *ray, t_cone *c)
 {
 	t_shader_x	sh_x;
-	t_list		*l_lst;
 	t_vec4		co_nor;
 	t_vec4		ds[2];
 
-	l_lst = data->light_list;
 	co_nor = ft_get_cone_normal(ray, c->axis, c->center, c->half_angle);
 	ds[0] = c->diffuse;
 	ds[1] = ft_create_vec4(c->specular, c->specular,
