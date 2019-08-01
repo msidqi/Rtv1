@@ -12,7 +12,7 @@
 
 #include "libgl.h"
 
-int				ft_triangle_inter(t_ray *ray, t_plane *triangle)
+int				ft_triangle_inter(t_ray *ray, t_plane *plane)
 {
 	t_vec4 k;
 	double t0;
@@ -35,7 +35,7 @@ int				ft_triangle_inter(t_ray *ray, t_plane *triangle)
         // Iz = a * Vertex0.z + b * Vertex1.z + c * Vertex2.z
         // if a b c are all positive, I is inside the tiranlge
         
-        I = t0 * D + O;
+//        I = t0 * D + O;
 		ray->t = t0;
 		return (1);
 	}
@@ -52,13 +52,11 @@ static t_vec4	ft_get_triangle_normal(t_ray *ray, t_triangle *tr)
 unsigned int	ft_triangle_shader(t_data *data, t_ray *ray, t_triangle *tr)
 {
 	t_shader_x	sh_x;
-	t_list		*l_lst;
 	t_vec4		tr_nor;
 	t_vec4		ds[2];
 
 	sh_x.diff = ft_create_vec4(0.0, 0.0, 0.0, 0.0);
 	sh_x.spec = ft_create_vec4(0.0, 0.0, 0.0, 0.0);
-	l_lst = data->light_list;
 	tr_nor = ft_get_triangle_normal(ray, tr);
 	ds[0] = tr->diffuse;
 	ds[1] = ft_create_vec4(tr->specular, tr->specular,

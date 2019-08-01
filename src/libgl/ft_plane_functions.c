@@ -103,7 +103,7 @@ int	ft_checkif_in_set(t_data *data, double a, double b)
 	return (0);
 }
 
-void	ft_color_change(int *col, t_data *data)
+void	ft_color_change2(int *col, t_data *data)
 {
 	int				tmp;
 	unsigned char	*ptr;
@@ -184,7 +184,7 @@ int	ft_plane_shader(t_data *data, t_ray *ray, t_plane *pl)
 		/*ft_init_fractal(data);
 		int c;
 		c = ft_checkif_in_set(data, p.x + pl->point.x, p.z + pl->point.z);
-		ft_color_change(&c, data);*/
+		ft_color_change2(&c, data);*/
 	}
 	return (ft_compute_shader(ft_color_add(pl->color, c), &sh_x));
 }
