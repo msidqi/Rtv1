@@ -51,9 +51,6 @@ int		ft_is_numeric(char *str)
 
 int		ft_bracket_control(char *str, char c)
 {
-	int i;
-
-	i = 1;
 	if (!str)
 		return (0);
 	if (str[0] != c || ft_strlen(str) != 1)

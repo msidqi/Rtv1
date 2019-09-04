@@ -37,8 +37,6 @@ void			ft_camera_ray(t_ray *ray, t_camera *cam, int x, int y)
 void			ft_camera(t_data *data, t_vec4 position, t_vec4 lookat)
 {
 	t_vec4 forward;
-	t_vec4 camera_up;
-	t_vec4 camera_left;
 	t_vec4 up;
 
 	data->cam.l = 1;
@@ -50,9 +48,7 @@ void			ft_camera(t_data *data, t_vec4 position, t_vec4 lookat)
 		up = ft_vec4_normalize(ft_create_vec4(1, 0, 0, 0));
 	else
 		up = ft_vec4_normalize(data->cam.absolute_up);
-	camera_left = ft_vec4_cross_product(up, forward);
-	camera_up = ft_vec4_cross_product(forward, camera_left);
-	data->cam.up = ft_vec4_normalize(camera_up);
-	data->cam.left = ft_vec4_normalize(camera_left);
+	data->cam.left = ft_vec4_normalize(ft_vec4_cross_product(up, forward));
+	data->cam.up = ft_vec4_normalize(ft_vec4_cross_product(forward, data->cam.left));
 	data->cam.forward = forward;
 }
