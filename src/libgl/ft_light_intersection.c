@@ -74,8 +74,8 @@ double	ft_light_intensity(t_list *scene, t_light *li, t_vec4 inter_point, t_vec4
 		return (1);
 	if (li->type == SPOT_LIGHT /* && dot_prod between light.dir and the ray.dir < 0 */)
 	{
-		li->dir = ft_create_vec4(0, 1, 0, 0);
-		if (ft_vec4_dot_product(li->dir, ray_to_light) < -0.9)
+		li->dir = ft_create_vec4(0, 1, 0, 0); // from file
+		if (ft_vec4_dot_product(li->dir, ray_to_light) < -0.9) // from file
 			return (1);
 	}
 	else if (li->type == AREA_LIGHT)
