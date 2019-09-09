@@ -97,6 +97,7 @@ typedef enum		e_light_type
 	DIRECTIONAL_LIGHT,
 	SPOT_LIGHT,
 	AREA_LIGHT,
+	AREA_SPOT_LIGHT,
 }					t_light_type;
 
 typedef enum		e_object
@@ -181,11 +182,20 @@ typedef struct		s_ray // P(t) = origin + t * dir
 typedef	struct		s_light
 {
 	short			type;
-	double			i_r; // intensity rgb(1.0, 0.0, 0.0) == red
-	double			i_g;
-	double			i_b;
+	double			r;	// intensity rgb(1.0, 0.0, 0.0) == red
+	double			g;
+	double			b;
 	t_vec4			origin;
-	t_vec4			dir;
+
+	t_vec4			dir;	 // direcional light && spot light 
+
+	unsigned short	u_nodes; // number of nodes in area light
+	unsigned short	v_nodes;
+	t_vec4			u_dir;	 // area light orientation vectors
+	t_vec4			v_dir;
+	t_list			*lst;
+
+	float			spot_dot; // angle of the spot light ]-1, 0[ 
 }					t_light;
 
 typedef struct		s_camera
@@ -221,7 +231,7 @@ typedef	struct		s_data
 	void			*mlx;
 	void			*win;
 	void			*img_ptr;
-	int	*image;
+	int				*image;
 	int				endian;
 	int				size_line;
 	int				bpp;
@@ -256,7 +266,7 @@ typedef	struct		s_triangle
 	t_vec4			vertex0;
 	t_vec4			vertex1;
 	t_vec4			vertex2;
-	int	color;
+	int				color;
 }					t_triangle;
 
 typedef	struct		s_cone
@@ -307,7 +317,6 @@ typedef struct		s_obj_function
 	int	(*call2)();
 }					t_obj_function;
 
-int		ft_reflected_ray(t_data *data, t_vec4 nr, t_ray *ray, t_vec4 refl);
 int					ft_window_setup(t_data *data, char *win_name,
 											int winheight, int winwidth);
 int					ft_image_setup(t_data *data);
@@ -368,19 +377,23 @@ int					ft_sphere_inter(t_ray *ray, t_sphere *sphere);
 int					ft_cone_inter(t_ray *ray, t_cone *cone);
 int					ft_cylinder_inter(t_ray *ray, t_cylinder *cylinder);
 void				ft_camera(t_data *data, t_vec4 position, t_vec4 lookat);
-t_ray				ft_get_ray_to_light(t_ray *ray, t_light *source);
-int 		ft_color_rgb_scalar(int color, double r, double g, double b);
+t_ray				ft_get_shadow_ray(t_ray *ray, t_light *source);
+int					ft_reflected_ray(t_data *data, t_vec4 nr, t_ray *ray, t_vec4 refl);
+int 				ft_color_rgb_scalar(int color, double r, double g, double b);
 int					ft_color_add(int color1, int color2);
-int		ft_sphere_shader(t_data *data, t_ray *ray, t_sphere *sphere);
-int		ft_plane_shader(t_data *data, t_ray *ray, t_plane *plane);
-int		ft_cylinder_shader(t_data *data, t_ray *ray, t_cylinder *cylinder);
-int		ft_cone_shader(t_data *data, t_ray *ray, t_cone *cone);
+int					ft_sphere_shader(t_data *data, t_ray *ray, t_sphere *sphere);
+int					ft_plane_shader(t_data *data, t_ray *ray, t_plane *plane);
+int					ft_cylinder_shader(t_data *data, t_ray *ray, t_cylinder *cylinder);
+int					ft_cone_shader(t_data *data, t_ray *ray, t_cone *cone);
 void				ft_get_camera_ray(t_ray *ray, t_camera *cam, int x, int y);
-double					ft_ray_inter_objs(t_list *list, t_ray *r_light,
+double					ft_ray_inter_objs(t_list *list, t_ray *sh_ray,
 									double distance_to_light, t_light *li);
-int		ft_compute_shader(int color, t_shader_x *sh_x);
+int					ft_compute_shader(int color, t_shader_x *sh_x);
 t_shader_x			ft_ray_inter_lights(t_data *data, t_vec4 nr,
                                          t_ray *ray, t_vec4 *ds);
+double				ft_distance_to_light(t_light *li, t_ray *sh_ray);
+double				ft_light_intensity(t_list *scene, t_light *li,
+									t_vec4 *inter_point, t_vec4 *shadow_ray);
 double				ft_min(double val, double min);
 double				ft_max(double val, double max);
 // parser
@@ -400,6 +413,8 @@ int					ft_expect_diffuse(char *line, char *name, t_vec4 *vector);
 int					ft_expect_value(char *line, char *name, double *n);
 int					ft_expect_color(char *line, char *name, int *color);
 int					ft_expect_matrix(char *line, char *str, t_vec4 *vec);
+int					ft_expect_area_uv(char *line, char *name, t_vec4 *uv_dir, unsigned short *uv_nodes);
+int					ft_expect_spot_dot(char *line, char *name, float *spot_dot);
 
 int					ft_is_numeric(char *str);
 size_t				ft_table_size(char **tab);

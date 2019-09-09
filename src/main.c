@@ -16,31 +16,20 @@ int		main(int argc, char **argv)
 {
 	t_data	data;
 
-	data.light_list = NULL;
-	data.scene = NULL;
-	data.cam.focal_length = 2;
 	if (argc != 2)
 	{
 		ft_putendl_fd("Invalid number of config file\n"
 		"usage : \n./RTv1 config file", 2);
 		return (1);
 	}
+	data.light_list = NULL;
+	data.scene = NULL;
+	data.cam.focal_length = 2;
+	srand(time(NULL));
 	ft_get_config(argv[1], &data);
 	if (!ft_window_setup(&data, "ReTweet", HEIGHT, WIDTH)
 													|| !ft_image_setup(&data))
 		return (1);
-	// t_triangle *t;
-
-	// t = malloc(sizeof(t));
-	// t->color = 0xFF00FF;
-	// t->diffuse = ft_create_vec4(0.5, 0.5, 0.5, 0);
-	// t->normal = ft_create_vec4(0, 0, 1, 0);
-	// t->point = ft_create_vec4(0, 0, -1, 0);
-	// t->vertex0 = ft_create_vec4(0, 5, -1, 0);
-	// t->vertex1 = ft_create_vec4(5, 5, -1, 0);
-	// t->vertex2 = ft_create_vec4(5, 0, -1, 0);
-	// t->specular = 0.5;
-	// ft_lstadd(data.scene, ft_lstnew((void *)cone, CONE));
 	ft_camera(&data, data.cam.pos, data.cam.to);
 	ft_draw_scene(&data);
 	mlx_put_image_to_window(data.mlx, data.win, data.img_ptr, 0, 0);

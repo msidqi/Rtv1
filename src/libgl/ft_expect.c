@@ -70,6 +70,62 @@ int	ft_expect_value(char *line, char *name, double *value)
 	return (1);
 }
 
+int ft_expect_spot_dot(char *line, char *name, float *spot_dot)
+{
+	char	**tab;
+	float	val;
+
+	if (!line)
+		return (0);
+	if (!(tab = ft_strsplit(line, ' ')))
+		return (0);
+	if (ft_table_size(tab) != 2 ||
+			ft_strncmp(tab[0], name, ft_strlen(name)) != 0)
+	{
+		ft_free_tab(&tab);
+		return (0);
+	}
+	val = ft_atof(tab[1]);
+	if (!ft_is_numeric(tab[1]) || val >= 0.0|| val <= -1.0)
+	{
+		ft_free_tab(&tab);
+		return (0);
+	}
+	*spot_dot = val;
+	ft_free_tab(&tab);
+	return (1);
+}
+
+int ft_expect_area_uv(char *line, char *name, t_vec4 *uv_dir, unsigned short *uv_nodes)
+{
+	char	**tab;
+	int		i;
+
+	if (!line)
+		return (0);
+	if (!(tab = ft_strsplit(line, ' ')))
+		return (0);
+	if (ft_table_size(tab) != 5 ||
+			ft_strncmp(tab[0], name, ft_strlen(name)) != 0)
+	{
+		ft_free_tab(&tab);
+		return (0);
+	}
+	i = 0;
+	while (tab[++i])
+		if (!ft_is_numeric(tab[i]))
+		{
+			ft_free_tab(&tab);
+			return (0);
+		}
+	uv_dir->x = ft_atof(tab[1]);
+	uv_dir->y = ft_atof(tab[2]);
+	uv_dir->z = ft_atof(tab[3]);
+	*uv_nodes = (unsigned short)ft_atoi(tab[4]);
+	ft_free_tab(&tab);
+	return (1);
+}
+
 int	ft_expect_intensity(char *line, char *name, t_light *light)
 {
 	char	**tab;
@@ -92,9 +148,9 @@ int	ft_expect_intensity(char *line, char *name, t_light *light)
 			ft_free_tab(&tab);
 			return (0);
 		}
-	light->i_r = ft_atof(tab[1]);
-	light->i_g = ft_atof(tab[2]);
-	light->i_b = ft_atof(tab[3]);
+	light->r = ft_atof(tab[1]);
+	light->g = ft_atof(tab[2]);
+	light->b = ft_atof(tab[3]);
 	ft_free_tab(&tab);
 	return (1);
 }

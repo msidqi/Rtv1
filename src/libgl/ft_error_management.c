@@ -61,12 +61,22 @@ static char	*ft_usage_type(int error)
 
 void		ft_error_management(t_data *data, int error, void **to_free, int fd)
 {
+	t_list	*tmp;
+
 	if (fd != -1)
 		close(fd);
 	ft_memdel(to_free);
 	ft_putendl_fd(ft_error_type(error), 2);
 	if (error <= 7)
 		ft_putendl_fd(ft_usage_type(error), 2);
+	tmp = data->light_list;
+	while (tmp)
+	{
+		if (((t_light *)tmp->content)->type == AREA_LIGHT ||
+			((t_light *)tmp->content)->type == AREA_SPOT_LIGHT)
+			ft_lstdel(&((t_light *)tmp->content)->lst, &ft_del);
+		tmp = tmp->next;
+	}
 	ft_lstdel(&data->scene, &ft_del);
 	ft_lstdel(&data->light_list, &ft_del);
 	exit(1);

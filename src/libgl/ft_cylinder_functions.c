@@ -70,8 +70,8 @@ int				ft_cylinder_inter(t_ray *ray, t_cylinder *cyl)
 ** normal == O + t * D - C - ((P - C) ⋅ axis) * axis)
 ** normal = P - C - ((P - C) . axe ) * axe;
 **
-** => normal = (r_light.origin) - (cylinder.point
-** 			+ ft_vec4_dot_product(ft_vec4_sub(r_light.origin, cylinder.point),
+** => normal = (sh_ray.origin) - (cylinder.point
+** 			+ ft_vec4_dot_product(ft_vec4_sub(sh_ray.origin, cylinder.point),
 **												cylinder.axis) * cylinder.axis)
 */
 

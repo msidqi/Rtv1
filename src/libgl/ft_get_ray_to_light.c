@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_get_ray_to_light.c                              :+:      :+:    :+:   */
+/*   ft_get_shadow_ray.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: msidqi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,44 +12,33 @@
 
 #include "libgl.h"
 
-t_ray	ft_get_ray(t_data *data, t_vec4 *view_window_pos)
-{
-	t_ray ray;
-
-	ray.dir = ft_vec4_normalize(ft_vec4_sub((*view_window_pos),
-				data->cam.pos));
-	ray.origin = ft_create_vec4(data->cam.pos.x,
-			data->cam.pos.y, data->cam.pos.z, 0);
-	return (ray);
-}
-
 /*
 ** tmp, calculating position vector from camera to inter_point
 ** intersection point calculated
 ** 							(pos vec of cam + cam_to_inter = inter_vec_pos)
 */
 
-t_ray	ft_get_ray_to_light(t_ray *ray, t_light *light)
+t_ray	ft_get_shadow_ray(t_ray *ray, t_light *light)
 {
-	t_ray	r_light;
+	t_ray	sh_ray;
 
-	r_light.origin = ft_create_vec4(0, 0, 0, 0);
-	if (light->type == POINT_LIGHT || light->type == AREA_LIGHT)
+	sh_ray.origin = ft_create_vec4(0, 0, 0, 0);
+	if (light->type == POINT_LIGHT || light->type == AREA_LIGHT || light->type == AREA_SPOT_LIGHT)
 	{
-		r_light.origin  = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
-		r_light.dir = ft_vec4_normalize(ft_vec4_sub(light->origin,
-															r_light.origin));
+		sh_ray.origin  = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
+		sh_ray.dir = ft_vec4_normalize(ft_vec4_sub(light->origin,
+															sh_ray.origin));
 	}
 	else if (light->type == DIRECTIONAL_LIGHT)
 	{
-		r_light.origin  = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
-		r_light.dir = ft_vec4_normalize(ft_create_vec4(0, -1, 0, 0)); //read from file
+		sh_ray.origin  = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
+		sh_ray.dir = ft_vec4_normalize(ft_vec4_scalar(light->dir, -1));
 	}
 	if (light->type == SPOT_LIGHT)
 	{
-		r_light.origin  = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
-		r_light.dir = ft_vec4_normalize(ft_vec4_sub(light->origin,
-															r_light.origin));
+		sh_ray.origin  = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
+		sh_ray.dir = ft_vec4_normalize(ft_vec4_sub(light->origin,
+															sh_ray.origin));
 	}
-	return (r_light);
+	return (sh_ray);
 }

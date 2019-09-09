@@ -21,7 +21,7 @@ SRC_PATH = src
 GLSRC_PATH = src/libgl
 SRC = connect_dots.c ft_event_system_mlx.c ft_get_plane_config.c \
 ft_plane_functions.c ft_vector_sub.c drawline.c ft_events_keyboard.c \
-ft_get_ray_to_light.c ft_sphere_functions.c get_next_line.c \
+ft_get_shadow_ray.c ft_sphere_functions.c get_next_line.c \
 drawsquares.c ft_expect.c ft_get_sphere_config.c ft_utils_func.c interface.c \
 ft_atof.c ft_expect_matrix.c ft_image_setup_mlx.c ft_vec_create.c \
 ft_camera.c ft_get_camera_config.c ft_light_intersection.c \
