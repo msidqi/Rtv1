@@ -239,12 +239,12 @@ typedef	struct		s_data
 
 typedef	struct		s_sphere
 {
-	t_vec4			refl; /// {r_refl, g_refl, b_refl, reflectance_boolean}
+	t_vec4			refl; /// {r_refl, g_refl, b_refl, (0 == no_ref, 1 == reflection, 2 == refraction 3 == both)}
 	double			specular;
 	t_vec4			diffuse;
 	t_vec4			center;
 	double			radius;
-	int	color;
+	int				color;
 }					t_sphere;
 
 typedef	struct		s_plane
@@ -254,7 +254,7 @@ typedef	struct		s_plane
 	t_vec4       	diffuse;
 	t_vec4			normal;
 	t_vec4			point;
-	int	color;
+	int				color;
 }					t_plane;
 
 typedef	struct		s_triangle
@@ -277,7 +277,7 @@ typedef	struct		s_cone
 	t_vec4			axis;
 	t_vec4			center;
 	double			half_angle;
-	int	color;
+	int				color;
 }					t_cone;
 
 typedef	struct		s_cylinder
@@ -288,7 +288,7 @@ typedef	struct		s_cylinder
 	t_vec4			axis;
 	t_vec4			point;
 	double			radius;
-	int	color;
+	int				color;
 }					t_cylinder;
 
 typedef struct		s_shader_x
@@ -314,7 +314,7 @@ typedef struct		s_obj_function
 {
 	size_t			type;
 	int				(*call)();
-	int	(*call2)();
+	int				(*call2)();
 }					t_obj_function;
 
 int					ft_window_setup(t_data *data, char *win_name,

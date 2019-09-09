@@ -129,18 +129,20 @@ int	ft_sphere_shader(t_data *data, t_ray *ray, t_sphere *sp)
 	ds[0] = sp->diffuse;
 	ds[1] = ft_create_vec4(sp->specular, sp->specular,
 			sp->specular, sp->specular);
+	// printf("%f\n", sp->refl.w);
 	if (sp->refl.w == 1 && ray->refl_depth > 0)
 	{
 		ray->refl_depth--;
 		return (ft_reflected_ray(data, sp_nor, ray, sp->refl));
 	}
 	sh_x = ft_ray_inter_lights(data, sp_nor, ray, ds);
-	t_vec4 p = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
+	/*t_vec4 p = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
 	// double t = 1 + (sin(20 * p.y) / 2);
 	// int c = ft_color_add(ft_color_rgb_scalar(0x0, (1 - t), (1 - t), (1 - t)), ft_color_rgb_scalar(sp->color, t, t, t));
 	ft_init_fractal(data);
 	int c;
 	c = ft_checkif_in_set(data, p.x + sp->center.x, p.z + sp->center.z);
 	ft_color_change(&c, data);
-	return (ft_compute_shader(ft_color_add(sp->color, c), &sh_x));
+	return (ft_compute_shader(ft_color_add(sp->color, c), &sh_x));*/
+	return (ft_compute_shader(sp->color, &sh_x));
 }

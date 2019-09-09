@@ -21,7 +21,7 @@ const t_obj_function g_t_obj_functions[4] =
 };
 
 /*
-** 3-loop to see if ray is blocked by any another
+** step 3 -loop check if ray is blocked by any another
 ** 							object in scene, towards light source.
 */
 
@@ -40,9 +40,8 @@ double				ft_ray_inter_objs(t_list *list, t_ray *sh_ray,
 		{
 			if (g_t_obj_functions[i].type == scene->content_size &&
 					g_t_obj_functions[i].call(sh_ray, scene->content) &&
-					distance_to_light > ft_vec4_mag(ft_vec4_scalar(sh_ray->dir, sh_ray->t))){
+					distance_to_light > ft_vec4_mag(ft_vec4_scalar(sh_ray->dir, sh_ray->t)))
 				return (0);
-				}
 		}
 		scene = scene->next;
 	}
@@ -53,7 +52,7 @@ int ft_reflected_ray(t_data *data, t_vec4 nr, t_ray *ray, t_vec4 refl)
 {
 	unsigned int	i;
 	t_list			*s;
-	int	color;
+	int				color;
 	t_ray			refl_ray;
 
 	color = 0x222222;

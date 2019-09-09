@@ -22,8 +22,8 @@ t_ray	ft_get_shadow_ray(t_ray *ray, t_light *light)
 {
 	t_ray	sh_ray;
 
-	sh_ray.origin = ft_create_vec4(0, 0, 0, 0);
-	if (light->type == POINT_LIGHT || light->type == AREA_LIGHT || light->type == AREA_SPOT_LIGHT)
+	if (light->type == POINT_LIGHT 	||
+		light->type == AREA_LIGHT 	|| light->type == AREA_SPOT_LIGHT)
 	{
 		sh_ray.origin  = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
 		sh_ray.dir = ft_vec4_normalize(ft_vec4_sub(light->origin,
@@ -36,9 +36,8 @@ t_ray	ft_get_shadow_ray(t_ray *ray, t_light *light)
 	}
 	if (light->type == SPOT_LIGHT)
 	{
-		sh_ray.origin  = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
-		sh_ray.dir = ft_vec4_normalize(ft_vec4_sub(light->origin,
-															sh_ray.origin));
+		sh_ray.origin = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
+		sh_ray.dir = ft_vec4_normalize(ft_vec4_sub(light->origin, sh_ray.origin));
 	}
 	return (sh_ray);
 }

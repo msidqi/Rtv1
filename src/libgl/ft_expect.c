@@ -17,9 +17,7 @@ int	ft_expect_vector(char *line, char *name, t_vec4 *vector)
 	char	**tab;
 	int		i;
 
-	if (!line)
-		return (0);
-	if (!(tab = ft_strsplit(line, ' ')))
+	if (!line || !(tab = ft_strsplit(line, ' ')))
 		return (0);
 	if (ft_table_size(tab) != 4 ||
 			ft_strncmp(tab[0], name, ft_strlen(name)) != 0)
@@ -45,9 +43,7 @@ int	ft_expect_value(char *line, char *name, double *value)
 {
 	char	**tab;
 
-	if (!line)
-		return (0);
-	if (!(tab = ft_strsplit(line, ' ')))
+	if (!line || !(tab = ft_strsplit(line, ' ')))
 		return (0);
 	if (ft_table_size(tab) != 2 || ft_strncmp(tab[0],
 				name, ft_strlen(name)) != 0)
@@ -70,14 +66,40 @@ int	ft_expect_value(char *line, char *name, double *value)
 	return (1);
 }
 
+int ft_expect_refl(char *line, char *n, t_vec4 *refl)
+{
+	char	**tab;
+	int		i;
+	float	t;
+	if (!line || !(tab = ft_strsplit(line, ' ')))
+		return (0);
+	if (ft_table_size(tab) != 5 || ft_strncmp(tab[0], n, ft_strlen(n)) != 0)
+	{
+		ft_free_tab(&tab);
+		return (0);
+	}
+	i = 0;
+	t = ft_atof(tab[4]);
+	while (tab[++i] && i < 4)
+		if (!ft_is_numeric(tab[i]) || !ft_is_limited(ft_atof(tab[i])))
+		{
+			ft_free_tab(&tab);
+			return (0);
+		}
+	refl->x = ft_atof(tab[1]);
+	refl->y = ft_atof(tab[2]);
+	refl->z = ft_atof(tab[3]);
+	refl->w =  (t > 3 || t < 0) ? 0 : t;
+	ft_free_tab(&tab);
+	return (1);
+}
+
 int ft_expect_spot_dot(char *line, char *name, float *spot_dot)
 {
 	char	**tab;
 	float	val;
 
-	if (!line)
-		return (0);
-	if (!(tab = ft_strsplit(line, ' ')))
+	if (!line || !(tab = ft_strsplit(line, ' ')))
 		return (0);
 	if (ft_table_size(tab) != 2 ||
 			ft_strncmp(tab[0], name, ft_strlen(name)) != 0)
@@ -101,9 +123,7 @@ int ft_expect_area_uv(char *line, char *name, t_vec4 *uv_dir, unsigned short *uv
 	char	**tab;
 	int		i;
 
-	if (!line)
-		return (0);
-	if (!(tab = ft_strsplit(line, ' ')))
+	if (!line || !(tab = ft_strsplit(line, ' ')))
 		return (0);
 	if (ft_table_size(tab) != 5 ||
 			ft_strncmp(tab[0], name, ft_strlen(name)) != 0)
@@ -131,9 +151,7 @@ int	ft_expect_intensity(char *line, char *name, t_light *light)
 	char	**tab;
 	int		i;
 
-	if (!line)
-		return (0);
-	if (!(tab = ft_strsplit(line, ' ')))
+	if (!line || !(tab = ft_strsplit(line, ' ')))
 		return (0);
 	if (ft_table_size(tab) != 4 ||
 			ft_strncmp(tab[0], name, ft_strlen(name)) != 0)
@@ -160,9 +178,7 @@ int	ft_expect_diffuse(char *line, char *name, t_vec4 *vector)
 	char	**tab;
 	int		i;
 
-	if (!line)
-		return (0);
-	if (!(tab = ft_strsplit(line, ' ')))
+	if (!line || !(tab = ft_strsplit(line, ' ')))
 		return (0);
 	if (ft_table_size(tab) != 4 ||
 			ft_strncmp(tab[0], name, ft_strlen(name)) != 0)

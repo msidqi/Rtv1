@@ -25,7 +25,7 @@ void		ft_draw_scene(t_data *data)
 	int	xy[2];
 	t_list			*s;
 	t_ray			ray;
-	unsigned int	i;int j = 2;
+	unsigned int	i;
 
 	xy[1] = -1;
 	while (++xy[1] < data->winheight)
@@ -39,20 +39,6 @@ void		ft_draw_scene(t_data *data)
 			{
 				if (s->content_size == PLANE)
 					((t_plane *)s->content)->refl.w = 2;
-				if (s->content_size == SPHERE && j > 0)
-				{
-					((t_sphere *)s->content)->refl.x = 1;
-					((t_sphere *)s->content)->refl.y = 1;
-					((t_sphere *)s->content)->refl.z = 1;
-					((t_sphere *)s->content)->refl.w = 1;
-					j--;
-					// printf("here %f\n", ((t_cylinder *)s->content)->refl.w);
-				}
-				else if (s->content_size == SPHERE && j == 0)
-				{
-					((t_sphere *)s->content)->refl.w = 0;
-					j--;
-				}
 				i = -1;
 				while (++i < (unsigned int)STATIC_ARRAY_SIZE(g_t_obj_ft2))
 					if (g_t_obj_ft2[i].type == s->content_size
