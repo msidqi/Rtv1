@@ -66,7 +66,7 @@ int	ft_expect_value(char *line, char *name, double *value)
 	return (1);
 }
 
-int ft_expect_refl(char *line, char *n, t_vec4 *refl)
+int ft_expect_ref(char *line, char *n, t_vec4 *ref)
 {
 	char	**tab;
 	int		i;
@@ -86,10 +86,10 @@ int ft_expect_refl(char *line, char *n, t_vec4 *refl)
 			ft_free_tab(&tab);
 			return (0);
 		}
-	refl->x = ft_atof(tab[1]);
-	refl->y = ft_atof(tab[2]);
-	refl->z = ft_atof(tab[3]);
-	refl->w =  (t > 3 || t < 0) ? 0 : t;
+	ref->x = ft_atof(tab[1]);
+	ref->y = ft_atof(tab[2]);
+	ref->z = ft_atof(tab[3]);
+	ref->w =  (t > 3 || t < 0) ? 0 : t;
 	ft_free_tab(&tab);
 	return (1);
 }

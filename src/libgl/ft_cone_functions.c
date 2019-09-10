@@ -68,21 +68,27 @@ static t_vec4	ft_get_cone_normal(t_ray *ray, t_vec4 axis,
 						* ft_vec4_dot_product(p_sub_c, axis)))));
 }
 
-int	ft_cone_shader(t_data *data, t_ray *ray, t_cone *c)
+int	ft_cone_shader(t_data *data, t_ray *ray, t_cone *co)
 {
 	t_shader_x	sh_x;
 	t_vec4		co_nor;
 	t_vec4		ds[2];
+	int			c;
 
-	co_nor = ft_get_cone_normal(ray, c->axis, c->center, c->half_angle);
-	ds[0] = c->diffuse;
-	ds[1] = ft_create_vec4(c->specular, c->specular,
-			c->specular, c->specular);
-	if (c->refl.w == 1 && ray->refl_depth > 0)
+	c = 0x0;
+	co_nor = ft_get_cone_normal(ray, co->axis, co->center, co->half_angle);
+	ds[0] = co->diffuse;
+	ds[1] = ft_create_vec4(co->specular, co->specular,
+			co->specular, co->specular);
+	if (co->ref.w == 1 && ray->refl_depth > 0)
 	{
 		ray->refl_depth--;
-		return (ft_reflected_ray(data, co_nor, ray, c->refl));
+		c = ft_reflected_ray(data, co_nor, ray, co->ref);
+		if (false) // 100% reflectant, and no shading
+			return (c);
 	}
+	if (co->ref.w == 2)
+		c = ft_refracted_ray(data, co_nor, ray, co->ref);
 	sh_x = ft_ray_inter_lights(data, co_nor, ray, ds);
-	return (ft_compute_shader(c->color, &sh_x));
+	return (ft_compute_shader(ft_color_add(co->color, c), &sh_x));
 }

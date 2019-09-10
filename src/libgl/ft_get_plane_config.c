@@ -27,6 +27,27 @@ static int	ft_stock_plane_config_transfo(char *line, t_plane *p)
 	return (j == 2 ? 1 : 0);
 }
 
+static int	ft_plane_values(int *i, t_plane *p, char *s)
+{
+	if (!(*i & 1) && ft_expect_vector(s, "\tposition", &(p->point)))
+		*i += 1;
+	else if (!(*i & 2) && ft_expect_color(s, "\tcolor", &(p->color)))
+		*i += 2;
+	else if (!(*i & 4) && ft_expect_diffuse(s, "\tdiffuse", &(p->diffuse)))
+		*i += 4;
+	else if (!(*i & 8) && ft_expect_value(s, "\tspecular", &(p->specular)))
+		*i += 8;
+	else if (!(*i & 16) && ft_expect_vector(s, "\tnormal", &(p->normal)))
+		*i += 16;
+	else if (!(*i & 32) && ft_stock_plane_config_transfo(s, p))
+		*i += 32;
+	else if (!(*i & 64) && ft_expect_ref(s, "\tref", &p->ref))
+		*i += 64;
+	else
+		return (0);
+	return (1);
+}
+
 static int	ft_stock_plane_config(int fd, t_plane *p, int i, int j)
 {
 	char	*s;
@@ -34,18 +55,10 @@ static int	ft_stock_plane_config(int fd, t_plane *p, int i, int j)
 	s = NULL;
 	while (get_next_line(fd, &s) > 0)
 	{
-		if (!(i & 1) && ft_expect_vector(s, "\tposition", &(p->point)))
-			i += 1;
-		else if (!(i & 2) && ft_expect_color(s, "\tcolor", &(p->color)))
-			i += 2;
-		else if (!(i & 4) && ft_expect_diffuse(s, "\tdiffuse", &(p->diffuse)))
-			i += 4;
-		else if (!(i & 8) && ft_expect_value(s, "\tspecular", &(p->specular)))
-			i += 8;
-		else if (!(i & 16) && ft_expect_vector(s, "\tnormal", &(p->normal)))
-			i += 16;
-		else if (!(i & 32) && ft_stock_plane_config_transfo(s, p))
-			i += 32;
+		if (ft_plane_values(&i, p, s)){
+			if ((i | 64) > i) // set default values here by ||
+				p->ref.w = 0; // reflection refraction => false
+		}
 		else if ((j = ft_bracket_control(s, '}')))
 			break ;
 		else
@@ -53,7 +66,7 @@ static int	ft_stock_plane_config(int fd, t_plane *p, int i, int j)
 		ft_strdel(&s);
 	}
 	ft_strdel(&s);
-	return ((i == 31 || i == 63) && j ? 1 : 0);
+	return ((i == 31 || i == 63 || i == 95 || i == 127) && j ? 1 : 0);
 }
 
 void		ft_get_plane_config(int fd, t_data *data)

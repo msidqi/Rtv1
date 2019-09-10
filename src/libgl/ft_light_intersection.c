@@ -35,7 +35,7 @@ int	ft_compute_shader(int color, t_shader_x *sh_x)
 {
 	t_shader shader;
 
-	shader.specular = ft_color_rgb_scalar(0xFFFFFF,
+	shader.specular = ft_color_rgb_scalar(0xfff4d6,
 			sh_x->spec.x, sh_x->spec.y, sh_x->spec.z);
 	shader.diffuse = ft_color_rgb_scalar(color,
 			sh_x->diff.x, sh_x->diff.y, sh_x->diff.z);
@@ -47,9 +47,7 @@ int	ft_compute_shader(int color, t_shader_x *sh_x)
 
 double			ft_distance_to_light(t_light *li, t_ray *sh_ray)
 {
-	if (li->type == POINT_LIGHT)
-		return (ft_vec4_mag(ft_vec4_sub(li->origin, sh_ray->origin)));
-	else if (li->type == SPOT_LIGHT)
+	if (li->type == POINT_LIGHT || li->type == SPOT_LIGHT)
 		return (ft_vec4_mag(ft_vec4_sub(li->origin, sh_ray->origin)));
 	else if (li->type == DIRECTIONAL_LIGHT)
 		return (DISTANT_LIGHT);

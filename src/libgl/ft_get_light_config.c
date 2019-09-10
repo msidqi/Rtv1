@@ -34,17 +34,17 @@ static int		ft_stock_light_config(int fd, t_light *l, int i, int j)
 	s = NULL;
 	while (get_next_line(fd, &s) > 0)
 	{
-		if (ft_expect_vector(s, "\tposition", &(l->origin)))
+		if ((i | 1) > i && ft_expect_vector(s, "\tposition", &(l->origin)))
 			i = i | 1;
-		else if (ft_expect_intensity(s, "\tintensity", l))
+		else if ((i | 2) > i && ft_expect_intensity(s, "\tintensity", l))
 			i = i | 2;
-		else if (ft_expect_area_uv(s, "\tarea_u", &(l->u_dir), &(l->u_nodes)))
+		else if ((i | 4) > i && ft_expect_area_uv(s, "\tarea_u", &(l->u_dir), &(l->u_nodes)))
 			i = i | 4;
-		else if (ft_expect_area_uv(s, "\tarea_v", &(l->v_dir), &(l->v_nodes)))
+		else if ((i | 8) > i && ft_expect_area_uv(s, "\tarea_v", &(l->v_dir), &(l->v_nodes)))
 			i = i | 8;
-		else if (ft_expect_spot_dot(s, "\tspot_dot", &(l->spot_dot)))
+		else if ((i | 16) > i && ft_expect_spot_dot(s, "\tspot_dot", &(l->spot_dot)))
 			i = i | 16;
-		else if (ft_expect_vector(s, "\tdirection", &(l->dir)))
+		else if ((i | 32) > i && ft_expect_vector(s, "\tdirection", &(l->dir)))
 			i = i | 32;
 		else if ((j = ft_bracket_control(s, '}')))
 			break ;
@@ -61,10 +61,10 @@ static t_vec4	ft_node_pos(t_light *light, int *i_j)
 	return (ft_vec4_add(light->origin,
 		ft_vec4_add(ft_vec4_scalar(light->u_dir,
 			(i_j[1] + (float)(rand() % 10) / light->u_nodes)
-							* 0.1 - (light->u_nodes * 0.1 / 2)),
+							* 0.05 - (light->u_nodes * 0.05 / 2)),
 		ft_vec4_scalar(light->v_dir,
 			(i_j[0] + (float)(rand() % 10) / light->v_nodes)
-							* 0.1 - (light->v_nodes * 0.1 / 2)))));
+							* 0.05 - (light->v_nodes * 0.05 / 2)))));
 }
 
 static void		ft_create_area_lightlst(t_data *data, int fd, t_light *l)

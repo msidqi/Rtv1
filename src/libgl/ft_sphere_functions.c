@@ -11,7 +11,8 @@
 /* ************************************************************************** */
 
 #include "libgl.h"
-static void			ft_init_fractal(t_data *data)
+
+/*static void			ft_init_fractal(t_data *data)
 {
 	data->set = 'm';
 	data->movex = 0;
@@ -62,7 +63,7 @@ static void	ft_color_change(int *col, t_data *data)
 	ptr[0] = data->color.blue * (tmp) / MAX_ITER;
 	ptr[1] = data->color.green * (tmp) / MAX_ITER;
 	ptr[2] = data->color.red * (tmp) / MAX_ITER;
-}
+}*/
 
 /*
 ** a=dot(B,B)
@@ -122,19 +123,22 @@ int	ft_sphere_shader(t_data *data, t_ray *ray, t_sphere *sp)
 	t_shader_x	sh_x;
 	t_vec4		sp_nor;
 	t_vec4		ds[2];
+	int			c;
 
-	sh_x.diff = ft_create_vec4(0.0, 0.0, 0.0, 0.0);
-	sh_x.spec = ft_create_vec4(0.0, 0.0, 0.0, 0.0);
+	c = 0x0;
 	sp_nor = ft_get_sphere_normal(ray, sp);
 	ds[0] = sp->diffuse;
 	ds[1] = ft_create_vec4(sp->specular, sp->specular,
 			sp->specular, sp->specular);
-	// printf("%f\n", sp->refl.w);
-	if (sp->refl.w == 1 && ray->refl_depth > 0)
+	if (sp->ref.w == 1 && ray->refl_depth > 0)
 	{
 		ray->refl_depth--;
-		return (ft_reflected_ray(data, sp_nor, ray, sp->refl));
+		c = ft_reflected_ray(data, sp_nor, ray, sp->ref);
+		if (false) // 100% reflectant, and no shading
+			return (c);
 	}
+	if (sp->ref.w == 2)
+		c = ft_refracted_ray(data, sp_nor, ray, sp->ref);
 	sh_x = ft_ray_inter_lights(data, sp_nor, ray, ds);
 	/*t_vec4 p = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
 	// double t = 1 + (sin(20 * p.y) / 2);
@@ -144,5 +148,6 @@ int	ft_sphere_shader(t_data *data, t_ray *ray, t_sphere *sp)
 	c = ft_checkif_in_set(data, p.x + sp->center.x, p.z + sp->center.z);
 	ft_color_change(&c, data);
 	return (ft_compute_shader(ft_color_add(sp->color, c), &sh_x));*/
-	return (ft_compute_shader(sp->color, &sh_x));
+	// printf("compute\n");
+	return (ft_compute_shader(ft_color_add(sp->color, c), &sh_x));
 }

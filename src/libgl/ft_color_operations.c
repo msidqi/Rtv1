@@ -12,8 +12,7 @@
 
 #include "libgl.h"
 
-int	ft_color_rgb_scalar(int color, double r,
-		double g, double b)
+int	ft_color_rgb_scalar(int color, double r, double g, double b)
 {
 	unsigned char	*ptr;
 
@@ -52,6 +51,15 @@ int				ft_color_add(int color1, int color2)
 	g = g > 255 ? 255 : g;
 	b = b > 255 ? 255 : b;
 	return ((a << 24) | (r << 16) | (g << 8) | b);
+}
+
+
+int	ft_color_mix(int color1, int color2, float percent)
+{
+	return (ft_color_add(
+	ft_color_rgb_scalar(color1, percent, percent, percent),
+	ft_color_rgb_scalar(color2, 1 - percent, 1 - percent, 1 - percent))
+	);
 }
 
 /*

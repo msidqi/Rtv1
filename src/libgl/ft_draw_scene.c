@@ -37,8 +37,6 @@ void		ft_draw_scene(t_data *data)
 			s = data->scene;
 			while (s != NULL)
 			{
-				if (s->content_size == PLANE)
-					((t_plane *)s->content)->refl.w = 2;
 				i = -1;
 				while (++i < (unsigned int)STATIC_ARRAY_SIZE(g_t_obj_ft2))
 					if (g_t_obj_ft2[i].type == s->content_size

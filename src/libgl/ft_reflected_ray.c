@@ -73,3 +73,14 @@ int ft_reflected_ray(t_data *data, t_vec4 nr, t_ray *ray, t_vec4 refl)
 	}
 	return (ft_color_rgb_scalar(color, refl.x, refl.y, refl.z));
 }
+
+int ft_refracted_ray(t_data *data, t_vec4 nr, t_ray *ray, t_vec4 refr)
+{
+	int				color = 0;
+	(void)data;
+	(void)nr;
+	(void)ray;
+	(void)refr;
+
+	return (color);
+}

@@ -160,31 +160,32 @@ int	ft_plane_shader(t_data *data, t_ray *ray, t_plane *pl)
 	t_vec4		pl_nor;
 	t_vec4		ds[2];
 	int			c;
-	t_vec4		p;
 
-	c = 0;
-	sh_x.diff = ft_create_vec4(0.0, 0.0, 0.0, 0.0);
-	sh_x.spec = ft_create_vec4(0.0, 0.0, 0.0, 0.0);
+	c = 0x0;
 	pl_nor = ft_get_plane_normal(ray, pl);
 	ds[0] = pl->diffuse;
 	ds[1] = ft_create_vec4(pl->specular, pl->specular,
 			pl->specular, pl->specular);
-	if (pl->refl.w == 1 && ray->refl_depth > 0)
+	if (pl->ref.w == 1 && ray->refl_depth > 0)
 	{
 		ray->refl_depth--;
-		return (ft_reflected_ray(data, pl_nor, ray, pl->refl));
+		c = ft_reflected_ray(data, pl_nor, ray, pl->ref);
+		if (false) // 100% reflectant, and no shading
+			return (c);
 	}
+	if (pl->ref.w == 2)
+		c = ft_reflected_ray(data, pl_nor, ray, pl->ref);
 	sh_x = ft_ray_inter_lights(data, pl_nor, ray, ds);
-	if (pl->refl.w == 2)
+	/*if (pl->ref.w == 2)
 	{
 		p = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
-		/*double t = 1 + (sin(4 * p.x));
-		int c = ft_color_add(ft_color_rgb_scalar(0xFF00, (1 - t), (1 - t), (1 - t)), ft_color_rgb_scalar(pl->color, t, t, t));*/
+		// double t = 1 + (sin(4 * p.x));
+		// int c = ft_color_add(ft_color_rgb_scalar(0xFF00, (1 - t), (1 - t), (1 - t)), ft_color_rgb_scalar(pl->color, t, t, t));
 		c = ((((int)(100 * sin(2 * p.x)) ^ (int)(100 * sin(2 * p.z))) > 0)) ? pl->color : 0x0;
-		/*ft_init_fractal(data);
-		int c;
-		c = ft_checkif_in_set(data, p.x + pl->point.x, p.z + pl->point.z);
-		ft_color_change2(&c, data);*/
-	}
+		// ft_init_fractal(data);
+		// int c;
+		// c = ft_checkif_in_set(data, p.x + pl->point.x, p.z + pl->point.z);
+		// ft_color_change2(&c, data);
+	}*/
 	return (ft_compute_shader(ft_color_add(pl->color, c), &sh_x));
 }

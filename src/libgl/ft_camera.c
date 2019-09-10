@@ -34,7 +34,7 @@ void			ft_get_camera_ray(t_ray *ray, t_camera *cam, int x, int y)
 	// ray->dir = ft_vec4_normalize( new_forw);
 	// ray->origin = ft_create_vec4(left_up.x, left_up.y, left_up.z, 0);//orthogr
 	ray->t = FAR;
-	ray->refl_depth = 2;
+	ray->refl_depth = 3;
 }
 
 void			ft_camera(t_data *data, t_vec4 position, t_vec4 lookat)

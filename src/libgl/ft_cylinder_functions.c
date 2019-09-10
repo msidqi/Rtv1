@@ -98,16 +98,22 @@ int	ft_cylinder_shader(t_data *data, t_ray *ray, t_cylinder *cyl)
 	t_shader_x	sh_x;
 	t_vec4		cyl_nor;
 	t_vec4		ds[2];
+	int c;
 
+	c = 0x0;
 	cyl_nor = ft_get_cylinder_normal(ray, cyl->axis, cyl->point);
 	ds[0] = cyl->diffuse;
 	ds[1] = ft_create_vec4(cyl->specular, cyl->specular,
 	cyl->specular, cyl->specular);
-	if (cyl->refl.w == 1 && ray->refl_depth > 0)
+	if (cyl->ref.w == 1 && ray->refl_depth > 0)
 	{
 		ray->refl_depth--;
-		return (ft_reflected_ray(data, cyl_nor, ray, cyl->refl));
+		c = ft_reflected_ray(data, cyl_nor, ray, cyl->ref);
+		if (false) // 100% reflectant, and no shading
+			return (c);
 	}
+	if (cyl->ref.w == 1)
+		c = ft_refracted_ray(data, cyl_nor, ray, cyl->ref);
 	sh_x = ft_ray_inter_lights(data, cyl_nor, ray, ds);
-	return (ft_compute_shader(cyl->color, &sh_x));
+	return (ft_compute_shader(ft_color_add(cyl->color, c), &sh_x));
 }

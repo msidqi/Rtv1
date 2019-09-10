@@ -239,7 +239,7 @@ typedef	struct		s_data
 
 typedef	struct		s_sphere
 {
-	t_vec4			refl; /// {r_refl, g_refl, b_refl, (0 == no_ref, 1 == reflection, 2 == refraction 3 == both)}
+	t_vec4			ref; /// {r_ref, g_ref, b_ref, (0 == no_ref, 1 == reflection, 2 == refraction 3 == both)}
 	double			specular;
 	t_vec4			diffuse;
 	t_vec4			center;
@@ -249,7 +249,7 @@ typedef	struct		s_sphere
 
 typedef	struct		s_plane
 {
-	t_vec4			refl;
+	t_vec4			ref;
 	double			specular;
 	t_vec4       	diffuse;
 	t_vec4			normal;
@@ -271,7 +271,7 @@ typedef	struct		s_triangle
 
 typedef	struct		s_cone
 {
-	t_vec4			refl;
+	t_vec4			ref;
 	double			specular;
 	t_vec4			diffuse;
 	t_vec4			axis;
@@ -282,7 +282,7 @@ typedef	struct		s_cone
 
 typedef	struct		s_cylinder
 {
-	t_vec4			refl;
+	t_vec4			ref;
 	double			specular;
 	t_vec4			diffuse;
 	t_vec4			axis;
@@ -379,8 +379,10 @@ int					ft_cylinder_inter(t_ray *ray, t_cylinder *cylinder);
 void				ft_camera(t_data *data, t_vec4 position, t_vec4 lookat);
 t_ray				ft_get_shadow_ray(t_ray *ray, t_light *source);
 int					ft_reflected_ray(t_data *data, t_vec4 nr, t_ray *ray, t_vec4 refl);
+int					ft_refracted_ray(t_data *data, t_vec4 nr, t_ray *ray, t_vec4 refr);
 int 				ft_color_rgb_scalar(int color, double r, double g, double b);
 int					ft_color_add(int color1, int color2);
+int					ft_color_mix(int color1, int color2, float percent);
 int					ft_sphere_shader(t_data *data, t_ray *ray, t_sphere *sphere);
 int					ft_plane_shader(t_data *data, t_ray *ray, t_plane *plane);
 int					ft_cylinder_shader(t_data *data, t_ray *ray, t_cylinder *cylinder);
@@ -413,6 +415,7 @@ int					ft_expect_diffuse(char *line, char *name, t_vec4 *vector);
 int					ft_expect_value(char *line, char *name, double *n);
 int					ft_expect_color(char *line, char *name, int *color);
 int					ft_expect_matrix(char *line, char *str, t_vec4 *vec);
+int					ft_expect_ref(char *line, char *name, t_vec4 *vec);
 int					ft_expect_area_uv(char *line, char *name, t_vec4 *uv_dir, unsigned short *uv_nodes);
 int					ft_expect_spot_dot(char *line, char *name, float *spot_dot);
 
