@@ -21,6 +21,7 @@
 # include <time.h>
 # include <stdio.h>
 # include <fcntl.h>
+# include "stb_image.h"
 
 # define ABS(Value) (Value >= 0) ? (Value) : -(Value)
 # define STATIC_ARRAY_SIZE(ptr) (sizeof(ptr) / sizeof(ptr[0]))
@@ -237,8 +238,17 @@ typedef	struct		s_data
 	int				bpp;
 }					t_data;
 
+
+typedef struct		s_img
+{
+	int				width;
+	int				height;
+	unsigned char	*buff;
+}					t_img;
+
 typedef	struct		s_sphere
 {
+	t_img			texture;
 	t_vec4			ref; /// {r_ref, g_ref, b_ref, (0 == no_ref, 1 == reflection, 2 == refraction 3 == both)}
 	double			specular;
 	t_vec4			diffuse;
@@ -334,7 +344,7 @@ int					mouse_move(int x, int y, t_data *data);
 // void				ft_multi_thread(t_data *data, int n_threads, void *(*f)(void *));
 void				drawline(t_data *data, int startline, int nlines, int color);
 void				drawnsquares(t_data *data, int onedlen);
-void				connect_dots(t_data *data, t_vec2 a, t_vec2 b, int color);
+void				connect_dotss(t_data *data, t_vec2 a, t_vec2 b, int color);
 void				ft_create_vec2(t_vec2 *a, double x, double y);
 void				ft_create_vec3(t_vec3 *a, double x, double y, double z);
 t_vec2				ft_vec2_add(t_vec2 a, t_vec2 b);

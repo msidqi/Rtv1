@@ -70,7 +70,7 @@ static void		plotlinehigh(t_data *data, t_vec2 a, t_vec2 b, int color)
 	}
 }
 
-void			connect_dots(t_data *data, t_vec2 a, t_vec2 b, int color)
+void			connect_dotss(t_data *data, t_vec2 a, t_vec2 b, int color)
 {
 	if (fabs(b.y - a.y) < fabs(b.x - a.x))
 	{
