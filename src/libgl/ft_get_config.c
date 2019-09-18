@@ -33,7 +33,7 @@ void	ft_get_config(char *conf_file, t_data *data)
 	if (fd < 0)
 		ft_error_management(data, 0, NULL, fd);
 	while (get_next_line(fd, &line) > 0)
-	{
+	{//printf("type\n");
 		i = 0;
 		while (i < 6)
 		{

@@ -21,7 +21,6 @@
 # include <time.h>
 # include <stdio.h>
 # include <fcntl.h>
-# include "stb_image.h"
 
 # define ABS(Value) (Value >= 0) ? (Value) : -(Value)
 # define STATIC_ARRAY_SIZE(ptr) (sizeof(ptr) / sizeof(ptr[0]))
@@ -259,6 +258,7 @@ typedef	struct		s_sphere
 
 typedef	struct		s_plane
 {
+	t_img			texture;
 	t_vec4			ref;
 	double			specular;
 	t_vec4       	diffuse;

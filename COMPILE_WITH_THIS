@@ -1,0 +1,1 @@
+gcc src/libft/src/*.c src/main.c src/libgl/*.c -Iinclude -lm -framework OpenGL -framework Appkit -lpthread -lmlx && ./a.out scenes/mandlebrot_tmp.cfg 
