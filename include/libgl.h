@@ -238,16 +238,17 @@ typedef	struct		s_data
 }					t_data;
 
 
-typedef struct		s_img
+typedef struct		s_texture
 {
 	int				width;
 	int				height;
-	unsigned char	*buff;
-}					t_img;
+	int 			*buff;
+	void			*img;
+}					t_texture;
 
 typedef	struct		s_sphere
 {
-	t_img			texture;
+	t_texture		texture;
 	t_vec4			ref; /// {r_ref, g_ref, b_ref, (0 == no_ref, 1 == reflection, 2 == refraction 3 == both)}
 	double			specular;
 	t_vec4			diffuse;
@@ -258,7 +259,7 @@ typedef	struct		s_sphere
 
 typedef	struct		s_plane
 {
-	t_img			texture;
+	t_texture		texture;
 	t_vec4			ref;
 	double			specular;
 	t_vec4       	diffuse;

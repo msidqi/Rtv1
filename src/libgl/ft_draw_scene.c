@@ -37,23 +37,21 @@ void		ft_draw_scene(t_data *data)
 			s = data->scene;
 			while (s != NULL)
 			{
-				/*/if ( xy[0] == 0 && xy[1] == 0 && s->content_size == PLANE)
+				if ( xy[0] == 0 && xy[1] == 0 && s->content_size == PLANE)
 				{
+					int bpp, size_l, endian;
 					t_plane *sp = (t_plane *)s->content;
-					int channels;
-					
-					sp->texture.buff = stbi_load("earth.jpg", &sp->texture.width, &sp->texture.height, &channels, 3);
-					// size_t img_size = sp->texture.width * sp->texture.height * channels;
+					sp->texture.img = mlx_xpm_file_to_image(data->mlx, "textures/pepe.xpm", &sp->texture.width, &sp->texture.height);
+					sp->texture.buff = (int *)mlx_get_data_addr(sp->texture.img, &bpp, &size_l, &endian);
 					if(sp->texture.buff == NULL)
 					{
 						printf("Error in loading the image\n");
 						exit(1);
 					}
-					// for (int k = 0; k < img_size; k += 3)
-					// 	printf("%d, %d | %d |: %X\n", sp->texture.width, sp->texture.height, channels, sp->texture.buff[k] + sp->texture.buff[k + 1] * 256 + sp->texture.buff[k + 2] * 256 * 256);
-					// stbi_image_free(sp->texture.buff);
-					// exit(1);
-				}*/
+					// for (int k = 0; k < size_l; k++)
+					// 	printf("%X\n", sp->texture.buff[k]);
+					//  exit(1);
+				}
 				i = -1;
 				while (++i < (unsigned int)STATIC_ARRAY_SIZE(g_t_obj_ft2))
 					if (g_t_obj_ft2[i].type == s->content_size

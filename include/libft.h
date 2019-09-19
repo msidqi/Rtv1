@@ -57,6 +57,7 @@ typedef	struct		s_list
 	struct s_list	*next;
 }					t_list;
 
+char 	           *ft_readfile(const char *filepath, size_t *usize);
 void				ft_free_tab(char ***tab);
 int					ft_sqrt(int nb);
 char				*ft_itoa_base(int value, int base);
