@@ -106,6 +106,7 @@ typedef enum		e_object
 	PLANE,
 	CONE,
 	CYLINDER,
+	BOX,
 }					t_object;
 
 typedef struct		t_vec2
@@ -280,6 +281,16 @@ typedef	struct		s_triangle
 	int				color;
 }					t_triangle;
 
+typedef	struct		s_box
+{
+	t_vec4			ref;
+	double			specular;
+	t_vec4			diffuse;
+	t_vec4			bound_max;
+	t_vec4			bound_min;
+	int				color;
+}					t_box;
+
 typedef	struct		s_cone
 {
 	t_vec4			ref;
@@ -411,6 +422,11 @@ double				ft_min(double val, double min);
 double				ft_max(double val, double max);
 // parser
 
+int					ft_box_inter(t_ray *ray, t_box *box);
+
+
+int					ft_box_shader(t_data *data, t_ray *ray, t_box *box);
+
 typedef struct	s_function
 {
 	char		*type;
@@ -445,6 +461,7 @@ void				ft_get_sphere_config(int fd, t_data *data);
 void				ft_get_light_config(int fd, t_data *data);
 void				ft_get_plane_config(int fd, t_data *data);
 void				ft_get_cone_config(int fd, t_data *data);
+void				ft_get_box_config(int fd, t_data *data);
 void				ft_get_cylinder_config(int fd, t_data *data);
 void				ft_get_config(char *conf_file, t_data *data);
 void				ft_del(void *content, size_t size);

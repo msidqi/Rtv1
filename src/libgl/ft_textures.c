@@ -49,19 +49,46 @@ int		ft_texture_plane(int id, t_ray *ray, t_plane *pl)
 	t_vec4 inter_point;
 	
 	inter_point = ft_vec4_add(ft_vec4_scalar(ray->dir, ray->t), ray->origin);
-	if (inter_point.x > 10 || inter_point.z > 10 || inter_point.x < 0 || inter_point.z < 0)
-		return (0x00);
-	if (inter_point.x > 10) // repeating texture
-		inter_point.x -= 10;
-	if (inter_point.z > 10)
-		inter_point.z -= 10;
-	if (inter_point.x < 0)
-		inter_point.x += 10;
-	if (inter_point.z < 0)
-		inter_point.z += 10;
+
+	t_vec4	dir1 = ft_vec4_sub(inter_point, pl->point);
+	// printf("%f\n", ft_vec4_dot_product(dir1, pl->normal));
+	// t_vec4	dir2 = ;
 	u = inter_point.x / 10;
 	v = inter_point.z / 10;
-	x = u * pl->texture.width;
-	y = v * pl->texture.height;
-	return (pl->texture.buff[x + y * pl->texture.width]);
+	x = u * (pl->texture.width - 1);
+	y = v * (pl->texture.height - 1);
+
+	if (x >= pl->texture.width) // repeating texture
+		x = x % (pl->texture.width - 1);
+	if (x <= 0)
+		x = (pl->texture.width - 1) - (abs(x) % (pl->texture.width - 1));
+	if (y >= pl->texture.height)
+		y = y % (pl->texture.height - 1);
+	if (y <= 0)
+		y = (pl->texture.height - 1) - (abs(y) % (pl->texture.height - 1)) ;
+
+	// if (x >= pl->texture.width)
+	// 	x = pl->texture.width - 1;
+	// if (y >= pl->texture.height)
+	// 	y = pl->texture.height - 1;
+	// printf("| %d, %d\n", pl->texture.width, pl->texture.height);
+
+
+
+
+	// 	if (inter_point.x > 10 || inter_point.z > 10 || inter_point.x < 0 || inter_point.z < 0)
+	// 	return (0x00);
+	// if (inter_point.x > 10) // repeating texture
+	// 	inter_point.x -= 10;
+	// if (inter_point.z > 10)
+	// 	inter_point.z -= 10;
+	// if (inter_point.x < 0)
+	// 	inter_point.x += 10;
+	// if (inter_point.z < 0)
+	// 	inter_point.z += 10;
+	// u = inter_point.x / 10;
+	// v = inter_point.z / 10;
+	// x = u * pl->texture.width;
+	// y = v * pl->texture.height;
+	return (pl->texture.buff[x + y * (pl->texture.width)]);
 }

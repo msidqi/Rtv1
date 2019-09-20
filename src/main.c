@@ -34,10 +34,6 @@ int		main(int argc, char **argv)
 	ft_draw_scene(&data);
 	mlx_put_image_to_window(data.mlx, data.win, data.img_ptr, 0, 0);
 	ft_mlx_hooks(&data, RED_BUTTON_HOOK | KEY_PRESS_HOOK | MOUSE_PRESS_HOOK);
-	// int w, h, endian, size_l, bpp;
-	// void *img = mlx_xpm_file_to_image(data.mlx, "textures/sphere.xpm", &w, &h);
-	// int *buff = (int *)mlx_get_data_addr(img, &bpp, &size_l, &endian);
-	// mlx_put_image_to_window(data.mlx, data.win, img, 0, 0);
 	mlx_loop(data.mlx);
 	return (0);
 }

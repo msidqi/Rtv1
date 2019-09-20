@@ -12,12 +12,13 @@
 
 #include "libgl.h"
 
-const t_obj_function g_t_obj_functions[4] =
+const t_obj_function g_t_obj_functions[5] =
 {
-	{SPHERE, &ft_sphere_inter, &ft_sphere_shader},
-	{PLANE, &ft_plane_inter, &ft_plane_shader},
-	{CONE, &ft_cone_inter, &ft_cone_shader},
-	{CYLINDER, &ft_cylinder_inter, &ft_cylinder_shader}
+	{ SPHERE, &ft_sphere_inter, &ft_sphere_shader },
+	{ PLANE, &ft_plane_inter, &ft_plane_shader },
+	{ CONE, &ft_cone_inter, &ft_cone_shader },
+	{ CYLINDER, &ft_cylinder_inter, &ft_cylinder_shader },
+	{ BOX, &ft_box_inter, &ft_box_shader }
 };
 
 /*
@@ -74,13 +75,64 @@ int ft_reflected_ray(t_data *data, t_vec4 nr, t_ray *ray, t_vec4 refl)
 	return (ft_color_rgb_scalar(color, refl.x, refl.y, refl.z));
 }
 
-int ft_refracted_ray(t_data *data, t_vec4 nr, t_ray *ray, t_vec4 refr)
-{
-	int				color = 0;
-	(void)data;
-	(void)nr;
-	(void)ray;
-	(void)refr;
 
-	return (color);
+static t_ray		ft_ray_create(t_ray *ray, t_vec4 r)
+{
+	t_ray	new;
+	t_vec4	tmp;
+
+	tmp = ft_vec4_scalar(ray->dir, ray->t);
+	new.origin = ft_vec4_add(ray->origin, tmp);
+	new.dir = ft_vec4_normalize(r);
+	new.t = FAR;
+	return (new);
+}
+
+static t_vec4		ft_reflection_vector(t_vec4 dir, t_vec4 normal)
+{
+	t_vec4	r;
+	double	dot;
+	double	n;
+	double	c[2];
+	t_vec4	nref;
+
+	nref = normal;
+	dot = ft_vec4_dot_product(dir, normal);
+	n = 1 / 1.3;
+	if (dot < 0)
+		dot = -dot;
+	else
+	{
+		n = 1.3;
+		nref = ft_vec4_scalar(normal, -1);
+	}
+	c[0] = ft_vec4_dot_product(nref, dir);
+	c[1] = sqrt(ft_min(0, 1 - (n * n) * (1 - (dot * dot))));
+	r = ft_vec4_add(ft_vec4_scalar(dir, n), ft_vec4_scalar(nref, n * c[0] - c[1]));
+	r = ft_vec4_normalize(r);
+	return (r);
+}
+
+int						ft_refracted_ray(t_data *data, t_vec4 normal, t_ray *ray, t_vec4 refr)
+{
+	t_vec4			r;
+	t_ray			refracted_ray;
+	int				color;
+	t_list			*s;
+	unsigned int	i;
+
+	color = 0x0;
+	r = ft_reflection_vector(ray->dir, normal);
+	refracted_ray = ft_ray_create(ray, r);
+	s = data->scene;
+	while (s != NULL)
+	{
+		i = -1;
+		while (++i < (unsigned int)STATIC_ARRAY_SIZE(g_t_obj_functions))
+			if (g_t_obj_functions[i].type == s->content_size
+					&& g_t_obj_functions[i].call(&refracted_ray, s->content))
+					color = g_t_obj_functions[i].call2(data, &refracted_ray, s->content);
+		s = s->next;
+	}
+	return (ft_color_rgb_scalar(color, refr.x, refr.y, refr.z));
 }

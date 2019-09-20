@@ -12,14 +12,15 @@
 
 #include "libgl.h"
 
-const t_function g_t_function[6] =
+const t_function g_t_function[7] =
 {
 	{ "=>camera :", &ft_get_camera_config },
 	{ "=>light :", &ft_get_light_config },
 	{ "=>sphere :", &ft_get_sphere_config },
 	{ "=>plane :", &ft_get_plane_config },
 	{ "=>cone :", &ft_get_cone_config },
-	{ "=>cylinder :", &ft_get_cylinder_config }
+	{ "=>cylinder :", &ft_get_cylinder_config },
+	{ "=>box :", &ft_get_box_config }
 };
 
 void	ft_get_config(char *conf_file, t_data *data)
@@ -35,7 +36,7 @@ void	ft_get_config(char *conf_file, t_data *data)
 	while (get_next_line(fd, &line) > 0)
 	{//printf("type\n");
 		i = 0;
-		while (i < 6)
+		while (i < (unsigned int)STATIC_ARRAY_SIZE(g_t_function))
 		{
 			if (!ft_strcmp(g_t_function[i].type, line))
 			{

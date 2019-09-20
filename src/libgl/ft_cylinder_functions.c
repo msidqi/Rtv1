@@ -112,7 +112,7 @@ int	ft_cylinder_shader(t_data *data, t_ray *ray, t_cylinder *cyl)
 		if (false) // 100% reflectant, and no shading
 			return (c);
 	}
-	if (cyl->ref.w == 1)
+	if (cyl->ref.w == 2)
 		c = ft_refracted_ray(data, cyl_nor, ray, cyl->ref);
 	sh_x = ft_ray_inter_lights(data, cyl_nor, ray, ds);
 	return (ft_compute_shader(ft_color_add(cyl->color, c), &sh_x));
