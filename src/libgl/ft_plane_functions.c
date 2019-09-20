@@ -176,7 +176,7 @@ int	ft_plane_shader(t_data *data, t_ray *ray, t_plane *pl)
 	if (pl->ref.w == 2)
 		c = ft_reflected_ray(data, pl_nor, ray, pl->ref);
 	sh_x = ft_ray_inter_lights(data, pl_nor, ray, ds);
-	return (ft_compute_shader(ft_texture_plane(0, ray, pl), &sh_x));
+	// return (ft_compute_shader(ft_texture_plane(0, ray, pl), &sh_x));
 	/*if (pl->ref.w == 2)
 	{
 		p = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));

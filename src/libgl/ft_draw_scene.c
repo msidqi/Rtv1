@@ -37,11 +37,11 @@ void		ft_draw_scene(t_data *data)
 			s = data->scene;
 			while (s != NULL)
 			{
-				if ( xy[0] == 0 && xy[1] == 0 && s->content_size == PLANE)
+				if ( xy[0] == 0 && xy[1] == 0 && s->content_size == SPHERE)
 				{
 					int bpp, size_l, endian;
-					t_plane *sp = (t_plane *)s->content;
-					sp->texture.img = mlx_xpm_file_to_image(data->mlx, "textures/pepe.xpm", &sp->texture.width, &sp->texture.height);
+					t_sphere *sp = (t_sphere *)s->content;
+					sp->texture.img = mlx_xpm_file_to_image(data->mlx, "textures/earth.xpm", &sp->texture.width, &sp->texture.height);
 					sp->texture.buff = (int *)mlx_get_data_addr(sp->texture.img, &bpp, &size_l, &endian);
 					if(sp->texture.buff == NULL)
 					{
