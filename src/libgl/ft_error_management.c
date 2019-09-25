@@ -20,7 +20,7 @@ void		ft_del(void *content, size_t size)
 
 char		*ft_error_type(int error)
 {
-	char *str[11];
+	char *str[13];
 
 	str[0] = "Error invalid config file";
 	str[1] = "Config file syntax error in : Camera";
@@ -33,6 +33,8 @@ char		*ft_error_type(int error)
 	str[8] = "Error 1 camera max";
 	str[9] = "Error 1 object at least";
 	str[10] = "Error allocating memory";
+	str[11] = "Error while loading the texture image";
+	str[12] = "Config file syntax error in : Box";
 	return (str[error]);
 }
 
@@ -59,16 +61,10 @@ static char	*ft_usage_type(int error)
 	return (str[error]);
 }
 
-void		ft_error_management(t_data *data, int error, void **to_free, int fd)
+static void		ft_free_lights(t_data *data)
 {
 	t_list	*tmp;
 
-	if (fd != -1)
-		close(fd);
-	ft_memdel(to_free);
-	ft_putendl_fd(ft_error_type(error), 2);
-	if (error <= 7)
-		ft_putendl_fd(ft_usage_type(error), 2);
 	tmp = data->light_list;
 	while (tmp)
 	{
@@ -77,7 +73,58 @@ void		ft_error_management(t_data *data, int error, void **to_free, int fd)
 			ft_lstdel(&((t_light *)tmp->content)->lst, &ft_del);
 		tmp = tmp->next;
 	}
-	ft_lstdel(&data->scene, &ft_del);
 	ft_lstdel(&data->light_list, &ft_del);
+}
+
+void		ft_free_objects(t_data *data) //not done yet
+{
+	t_list	*tmp;
+	while (data->scene)
+	{printf("-\n");
+		tmp = data->scene->next;
+		if (data->scene->content_size == SPHERE && printf("A\n") && ((t_sphere *)data->scene->content)->texture.img != NULL)
+			mlx_destroy_image(data->mlx, ((t_sphere *)data->scene->content)->texture.img);
+		else if (data->scene->content_size == PLANE && printf("B\n") && ((t_plane *)data->scene->content)->texture.img != NULL)
+			mlx_destroy_image(data->mlx, ((t_plane *)data->scene->content)->texture.img);
+		else if (data->scene->content_size == CONE && printf("C\n") && ((t_cone *)data->scene->content)->texture.img != NULL)
+			mlx_destroy_image(data->mlx, ((t_cone *)data->scene->content)->texture.img);
+		else if (data->scene->content_size == CYLINDER && printf("D\n") && ((t_cylinder *)data->scene->content)->texture.img != NULL)
+			mlx_destroy_image(data->mlx, ((t_cylinder *)data->scene->content)->texture.img);
+		else if (data->scene->content_size == BOX && printf("E\n") && ((t_box *)data->scene->content)->texture.img != NULL && printf("after E\n"))
+			mlx_destroy_image(data->mlx, ((t_box *)data->scene->content)->texture.img);
+		free(data->scene->content);
+		free(data->scene);
+		data->scene = tmp;
+	}
+}
+
+// static void ft_obj_del(void *content, size_t size)
+// {
+// 	extern data;
+
+// 	if (size == SPHERE)
+// 		mlx_destroy_image(data->mlx, ((t_sphere *)content)->texture.img);
+// 	else if (size == PLANE)
+// 		mlx_destroy_image(data->mlx, ((t_plane *)content)->texture.img);
+// 	else if (size == CONE)
+// 		mlx_destroy_image(data->mlx, ((t_cone *)content)->texture.img);
+// 	else if (size == CYLINDER)
+// 		mlx_destroy_image(data->mlx, ((t_cylinder *)content)->texture.img);
+// 	else if (size == BOX)
+// 		mlx_destroy_image(data->mlx, ((t_box *)content)->texture.img);
+// 	free(content);
+// }
+
+void		ft_error_management(t_data *data, int error, void **to_free, int fd)
+{
+	
+	if (fd != -1)
+		close(fd);
+	ft_memdel(to_free);
+	ft_putendl_fd(ft_error_type(error), 2);
+	if (error <= 7)
+		ft_putendl_fd(ft_usage_type(error), 2);
+	ft_free_lights(data);
+	ft_free_objects(data);
 	exit(1);
 }

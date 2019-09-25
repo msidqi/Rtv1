@@ -12,6 +12,35 @@
 
 #include "libgl.h"
 
+static void ft_plane_val_correction(t_plane **plane, t_data *data, int fd)
+{
+	t_vec4 up;
+	double dot_prod;
+
+	up = ft_create_vec4(0, 1, 0, 0);
+	(*plane)->normal = ft_vec4_normalize((*plane)->normal);					// correcting normal
+	dot_prod = ft_vec4_dot_product((*plane)->normal, up);
+	if (dot_prod <= 1 + NEAR && dot_prod >= 1 - NEAR)
+		up = ft_create_vec4(1, 0, 0, 0);
+	(*plane)->left = ft_vec4_normalize(
+							ft_vec4_cross_product((*plane)->normal, up));	// calculate left && forward vectors
+	(*plane)->forw = ft_vec4_normalize(
+					ft_vec4_cross_product((*plane)->left, (*plane)->normal));
+
+	if ((*plane)->texture.id > 0)
+	{
+		if (!ft_load_texture((*plane)->texture.id, &(*plane)->texture, data)) // loading texture if exists
+			ft_error_management(data, 11, (void **)plane, fd);
+		if ((*plane)->texture.stretch_x == 0)
+			(*plane)->texture.stretch_x = 1;
+		if ((*plane)->texture.stretch_y == 0)
+			(*plane)->texture.stretch_y = 1;
+		if ((*plane)->texture.stretch_z == 0)
+			(*plane)->texture.stretch_z = 1;
+	}
+		
+}
+
 static int	ft_stock_plane_config_transfo(char *line, t_plane *p)
 {
 	int j;
@@ -43,6 +72,8 @@ static int	ft_plane_values(int *i, t_plane *p, char *s)
 		*i += 32;
 	else if (!(*i & 64) && ft_expect_ref(s, "\tref", &p->ref))
 		*i += 64;
+	else if (!(*i & 128) && ft_expect_texture(s, "\ttexture", &p->texture))
+		*i += 128;
 	else
 		return (0);
 	return (1);
@@ -58,6 +89,11 @@ static int	ft_stock_plane_config(int fd, t_plane *p, int i, int j)
 		if (ft_plane_values(&i, p, s)){
 			if ((i | 64) > i) // set default values here by ||
 				p->ref.w = 0; // reflection refraction => false
+			if ((i | 128) > i)
+			{
+				p->texture.img = NULL;
+				p->texture.id = -1;
+			}
 		}
 		else if ((j = ft_bracket_control(s, '}')))
 			break ;
@@ -66,7 +102,8 @@ static int	ft_stock_plane_config(int fd, t_plane *p, int i, int j)
 		ft_strdel(&s);
 	}
 	ft_strdel(&s);
-	return ((i == 31 || i == 63 || i == 95 || i == 127) && j ? 1 : 0);
+	return ((i == 31 || i == 63 || i == 95 || i == 127 || i == 159 ||
+							i == 191 || i == 223 || i == 255) && j ? 1 : 0);
 }
 
 void		ft_get_plane_config(int fd, t_data *data)
@@ -94,6 +131,6 @@ void		ft_get_plane_config(int fd, t_data *data)
 		else
 			ft_error_management(data, 3, (void **)&line, fd);
 	}
-	plane->normal = ft_vec4_normalize(plane->normal);
+	ft_plane_val_correction(&plane, data, fd);
 	ft_lstadd(&(data->scene), ft_lstnew((void *)plane, PLANE));
 }

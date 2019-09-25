@@ -118,7 +118,6 @@ static t_vec4	ft_get_sphere_normal(t_ray *ray, t_sphere *sp)
 			ft_vec4_scalar(ray->dir, ray->t)), sp->center)));
 }
 
-int		ft_texture_sphere(int id, t_ray *ray, t_sphere *sp);
 
 int	ft_sphere_shader(t_data *data, t_ray *ray, t_sphere *sp)
 {
@@ -142,7 +141,8 @@ int	ft_sphere_shader(t_data *data, t_ray *ray, t_sphere *sp)
 	if (sp->ref.w == 2)
 		c = ft_refracted_ray(data, sp_nor, ray, sp->ref);
 	sh_x = ft_ray_inter_lights(data, sp_nor, ray, ds);
-	return (ft_compute_shader(ft_texture_sphere(0, ray, sp), &sh_x));
+	if (sp->texture.id > -1)
+		return (ft_compute_shader(ft_texture_sphere(ray, sp), &sh_x));
 
 	/*t_vec4 p = ft_vec4_add(ray->origin, ft_vec4_scalar(ray->dir, ray->t));
 	// double t = 1 + (sin(20 * p.y) / 2);

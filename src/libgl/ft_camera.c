@@ -17,16 +17,23 @@ static double	ft_map(int x_or_y, double size, int width_or_height)
 	return (x_or_y * size / width_or_height - (size / 2));
 }
 
-void			ft_get_camera_ray(t_ray *ray, t_camera *cam, int x, int y)
+static float aa_jitter[4 * 2] = {
+    -1.0/4.0,  3.0/4.0,
+     3.0/4.0,  1.0/4.0,
+    -3.0/4.0, -1.0/4.0,
+     1.0/4.0, -3.0/4.0,
+};
+
+void			ft_get_camera_ray(t_ray *ray, t_camera *cam, int *xy, int jitter)
 {
 	t_vec4 new_left;
 	t_vec4 new_up;
 	t_vec4 new_forw;
 	t_vec4 left_up;
 
-	new_left = ft_vec4_scalar(cam->left, ft_map(x - ((WIDTH - HEIGHT) / 2), cam->bigl,
+	new_left = ft_vec4_scalar(cam->left, ft_map(xy[0] + aa_jitter[2 * jitter] - ((WIDTH - HEIGHT) / 2), cam->bigl,
 				(double)(WIDTH * ASPECT_RATIO)));
-	new_up = ft_vec4_scalar(cam->up, ft_map(y, cam->l, HEIGHT));
+	new_up = ft_vec4_scalar(cam->up, ft_map(xy[1] + aa_jitter[2 * jitter + 1], cam->l, HEIGHT));
 	new_forw = ft_vec4_scalar(cam->forward, cam->focal_length);
 	left_up = ft_vec4_add(new_up, new_left);
 	ray->dir = ft_vec4_normalize(ft_vec4_add(left_up, new_forw));

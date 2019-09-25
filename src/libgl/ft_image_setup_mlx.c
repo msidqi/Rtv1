@@ -42,7 +42,7 @@ void	ft_image_fill(t_data *data, int x, int y, int color)
 	if (y <= data->winheight && x <= data->winwidth)
 		data->image[y * data->winwidth + x] = color;
 	else
-		ft_putstr_fd("Error : out of buffer\n", 2);
+		ft_putstr_fd("Error : buffer overflow\n", 2);
 }
 
 int		ft_window_setup(t_data *data, char *win_name,

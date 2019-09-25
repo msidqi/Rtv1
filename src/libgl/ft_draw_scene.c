@@ -23,10 +23,11 @@ const t_obj_function g_t_obj_ft2[5] =
 
 void		ft_draw_scene(t_data *data)
 {
-	int	xy[2];
+	int				xy[2];
 	t_list			*s;
 	t_ray			ray;
-	unsigned int	i;
+	unsigned int	ij[2];
+	int				colors[4];
 
 	xy[1] = -1;
 	while (++xy[1] < data->winheight)
@@ -34,43 +35,25 @@ void		ft_draw_scene(t_data *data)
 		xy[0] = -1;
 		while (++xy[0] < data->winwidth)
 		{
-			ft_get_camera_ray(&ray, &data->cam, xy[0], xy[1]);
-			s = data->scene;
-			while (s != NULL)
+			ij[1] = -1;
+			while (++ij[1] < 4)		// rays_number
 			{
-				if ( xy[0] == 0 && xy[1] == 0)
+				ft_get_camera_ray(&ray, &data->cam, xy, ij[1]);
+				s = data->scene;
+				colors[ij[1]] = 0;
+				while (s != NULL)
 				{
-					if (s->content_size == SPHERE) {
-						int bpp, size_l, endian;
-						t_sphere *sp = (t_sphere *)s->content;
-						sp->texture.img = mlx_xpm_file_to_image(data->mlx, "textures/large_arezouk.xpm", &sp->texture.width, &sp->texture.height);
-						if(!sp->texture.img)
-						{
-							printf("Error while loading the image\n");
-							exit(1);
-						}
-						sp->texture.buff = (int *)mlx_get_data_addr(sp->texture.img, &bpp, &size_l, &endian);
-					}
-					if (s->content_size == PLANE) {
-						int bpp, size_l, endian;
-						t_plane *pl = (t_plane *)s->content;
-						pl->texture.img = mlx_xpm_file_to_image(data->mlx, "textures/plane.xpm", &pl->texture.width, &pl->texture.height);
-						if(!pl->texture.img)
-						{
-							printf("Error while loading the image\n");
-							exit(1);
-						}
-						pl->texture.buff = (int *)mlx_get_data_addr(pl->texture.img, &bpp, &size_l, &endian);
-					}
+					ij[0] = -1;
+					while (++ij[0] < (unsigned int)STATIC_ARRAY_SIZE(g_t_obj_ft2))
+						if (g_t_obj_ft2[ij[0]].type == s->content_size
+								&& g_t_obj_ft2[ij[0]].call(&ray, s->content))
+							colors[ij[1]] = ft_filters_aa(data, xy[0], xy[1],
+									g_t_obj_ft2[ij[0]].call2(data, &ray, s->content));
+					s = s->next;
 				}
-				i = -1;
-				while (++i < (unsigned int)STATIC_ARRAY_SIZE(g_t_obj_ft2))
-					if (g_t_obj_ft2[i].type == s->content_size
-							&& g_t_obj_ft2[i].call(&ray, s->content))
-						ft_image_fill(data, xy[0], xy[1],
-								g_t_obj_ft2[i].call2(data, &ray, s->content));
-				s = s->next;
 			}
+			ft_image_fill(data, xy[0], xy[1], ft_color_avg(colors));
+			// ft_image_fill(data, xy[0], xy[1], ft_color_avg2(colors[0], colors[1], colors[2], colors[3], colors[4], colors[5], colors[6], colors[7], colors[8], colors[9], colors[10], colors[11], colors[12], colors[13], colors[14], colors[15]));
 		}
 	}
 }

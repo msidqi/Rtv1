@@ -12,49 +12,75 @@
 
 #include "libft.h"
 
-static int		ft_wc(char *s, char c)
+static size_t    ft_calc(char const *s, char c)
 {
-	unsigned int w;
-	unsigned int i;
+    size_t    words;
+    int        i;
 
-	w = 0;
-	i = 0;
-	while (s[i])
-	{
-		if ((s[i] == c && s[i + 1] != c && s[i + 1] != '\0'))
-			w++;
-		i++;
-	}
-	if (s[0] != c)
-		w++;
-	return (w);
+    i = 0;
+    words = 0;
+    while (s[i])
+    {
+        if (s[i] != c && (s[i + 1] == c || s[i + 1] == '\0'))
+            words++;
+        i++;
+    }
+    return (words);
 }
 
-char			**ft_strsplit(char const *s, char c)
+static size_t    ft_len(char const *s, char c, int tl)
 {
-	char			**t;
-	size_t			sublen;
-	unsigned int	i;
-	int				j;
+    size_t    len;
 
-	if (!s || !(t = (char **)malloc(sizeof(char*) * (ft_wc((char *)s, c) + 1))))
-		return (NULL);
-	i = 0;
-	j = 0;
-	while (s[i] != '\0' && j < ft_wc((char *)s, c))
-	{
-		sublen = 0;
-		while (s[i] == c && s[i])
-			i++;
-		while (s[i] != c && s[i])
-		{
-			i++;
-			sublen++;
-		}
-		t[j++] = ft_strsub(s, i - sublen, sublen);
-		while (s[i] != c && s[i])
-			i++;
-	}
-	t[ft_wc((char *)s, c)] = NULL;
-	return (t);
+    len = 0;
+    while (s[tl] && s[tl] != c)
+    {
+        tl++;
+        len++;
+    }
+    return (len);
+}
+
+static void            ft_free_tab_s(char ***tab, int size)
+{
+    int    i;
+
+    i = 0;
+    while (i < size)
+    {
+        free((*tab)[i]);
+        (*tab)[i] = NULL;
+        i++;
+    }
+    free(*tab);
+    *tab = NULL;
+}
+
+char            **ft_strsplit(char const *s, char c)
+{
+    char    **new;
+    int        i;
+    int        t;
+    size_t    n;
+
+    n = 0;
+    t = 0;
+    if (!s || !(new = (char **)malloc(sizeof(char *)* (ft_calc(s, c) + 1))))
+        return (NULL);
+    while (n < ft_calc(s, c))
+    {
+        i = 0;
+        while (s[t] == c)
+            t++;
+        if (!(new[n] = (char *)malloc(sizeof(char)* (ft_len(s, c, t) + 1))))
+        {
+            ft_free_tab_s(&new, n);
+            return (NULL);
+        }
+        while (s[t] != c && s[t] != '\0')
+            new[n][i++] = s[t++];
+        new[n++][i] = '\0';
+    }
+    new[n] = NULL;
+    return (new);
 }

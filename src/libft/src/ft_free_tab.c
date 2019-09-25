@@ -16,10 +16,13 @@ void 	ft_free_tab(char ***tab)
 {
 	int i;
 
+	if (!tab)
+		return ;
 	i = -1;
 	while ((*tab)[++i])
 	{
-		ft_strdel(&(*tab)[i]);
+		if ((*tab)[i] != NULL)
+			ft_strdel(&(*tab)[i]);
 	}
 	free((*tab));
 	*tab = NULL;

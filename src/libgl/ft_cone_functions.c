@@ -90,5 +90,7 @@ int	ft_cone_shader(t_data *data, t_ray *ray, t_cone *co)
 	if (co->ref.w == 2)
 		c = ft_refracted_ray(data, co_nor, ray, co->ref);
 	sh_x = ft_ray_inter_lights(data, co_nor, ray, ds);
+	if (co->texture.id > -1)
+		return (ft_compute_shader(ft_texture_cone(ray, co), &sh_x));
 	return (ft_compute_shader(ft_color_add(co->color, c), &sh_x));
 }

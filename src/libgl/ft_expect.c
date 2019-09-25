@@ -222,3 +222,31 @@ int	ft_expect_color(char *line, char *name, int *color)
 	ft_free_tab(&tab);
 	return (1);
 }
+
+int ft_expect_texture(char *line, char *name, t_texture *t)
+{
+	char	**tab;
+	int		i;
+	char *c;
+	if (!line || !(tab = ft_strsplit(line, ' ')))
+		return (0);
+	if (ft_table_size(tab) != 5 ||
+			ft_strncmp(tab[0], name, ft_strlen(name)) != 0)
+	{
+		ft_free_tab(&tab);
+		return (0);
+	}
+	i = 0;
+	while (tab[++i])
+		if (!ft_is_numeric(tab[i]))
+		{
+			ft_free_tab(&tab);
+			return (0);
+		}
+	t->id = ft_atoi(tab[1]);
+	t->stretch_x = ft_atof(tab[2]);
+	t->stretch_y = ft_atof(tab[3]);
+	t->stretch_z = ft_atof(tab[4]);
+	ft_free_tab(&tab);
+	return (1);
+}

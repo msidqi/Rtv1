@@ -22,14 +22,15 @@ int		main(int argc, char **argv)
 		"usage : \n./RTv1 config file", 2);
 		return (1);
 	}
+	data.filter = 3;
 	data.light_list = NULL;
 	data.scene = NULL;
 	data.cam.focal_length = 2;
 	srand(time(NULL));
-	ft_get_config(argv[1], &data);
 	if (!ft_window_setup(&data, "ReTweet", HEIGHT, WIDTH)
 													|| !ft_image_setup(&data))
 		return (1);
+	ft_get_config(argv[1], &data);
 	ft_camera(&data, data.cam.pos, data.cam.to);
 	ft_draw_scene(&data);
 	mlx_put_image_to_window(data.mlx, data.win, data.img_ptr, 0, 0);

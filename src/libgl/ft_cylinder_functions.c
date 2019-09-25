@@ -115,5 +115,7 @@ int	ft_cylinder_shader(t_data *data, t_ray *ray, t_cylinder *cyl)
 	if (cyl->ref.w == 2)
 		c = ft_refracted_ray(data, cyl_nor, ray, cyl->ref);
 	sh_x = ft_ray_inter_lights(data, cyl_nor, ray, ds);
+	if (cyl->texture.id > -1)
+		return (ft_compute_shader(ft_texture_cylinder(ray, cyl), &sh_x));
 	return (ft_compute_shader(ft_color_add(cyl->color, c), &sh_x));
 }

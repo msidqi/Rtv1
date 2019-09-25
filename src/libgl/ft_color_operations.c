@@ -53,6 +53,61 @@ int				ft_color_add(int color1, int color2)
 	return ((a << 24) | (r << 16) | (g << 8) | b);
 }
 
+int				ft_color_avg(int *colors)
+{
+	int a;
+	int r;
+	int g;
+	int b;
+
+	a = 0x00;
+	r = ((colors[1] >> 16) & 0xff) + ((colors[0] >> 16) & 0xff)
+				+ ((colors[2] >> 16) & 0xff) + ((colors[3] >> 16) & 0xff);
+	g = ((colors[1] >> 8) & 0xff) + ((colors[0] >> 8) & 0xff)
+					+ ((colors[2] >> 8) & 0xff) + ((colors[3] >> 8) & 0xff);
+	b = (colors[1] & 0xff) + (colors[0] & 0xff)
+								+ (colors[2] & 0xff) + (colors[3] & 0xff);
+	r /= 4;
+	g /= 4;
+	b /= 4;
+	return ((a << 24) | (r << 16) | (g << 8) | b);
+}
+
+int				ft_color_avg2(int color1, int color2, int color3, int color4,int color5, int color6, int color7, int color8,int color9, int color10, int color11, int color12,int color13, int color14, int color15, int color16)
+{
+	int a;
+	int r;
+	int g;
+	int b;
+
+	a = 0x00;
+	r = ((color1 >> 16) & 0xff) + ((color2 >> 16) & 0xff) + ((color3 >> 16) & 0xff) + ((color4 >> 16) & 0xff);
+	r = r + ((color5 >> 16) & 0xff) + ((color6 >> 16) & 0xff) + ((color7 >> 16) & 0xff) + ((color8 >> 16) & 0xff);
+	r = r + ((color9 >> 16) & 0xff) + ((color10 >> 16) & 0xff) + ((color11 >> 16) & 0xff) + ((color12 >> 16) & 0xff);
+	r = r + ((color16 >> 16) & 0xff) + ((color13 >> 16) & 0xff) + ((color14 >> 16) & 0xff) + ((color15 >> 16) & 0xff);
+	
+	g = ((color1 >> 16) & 0xff) + ((color2 >> 16) & 0xff) + ((color3 >> 16) & 0xff) + ((color4 >> 16) & 0xff);
+	g = g + ((color5 >> 16) & 0xff) + ((color6 >> 16) & 0xff) + ((color7 >> 16) & 0xff) + ((color8 >> 16) & 0xff);
+	g = g + ((color9 >> 16) & 0xff) + ((color10 >> 16) & 0xff) + ((color11 >> 16) & 0xff) + ((color12 >> 16) & 0xff);
+	g = g + ((color16 >> 16) & 0xff) + ((color13 >> 16) & 0xff) + ((color14 >> 16) & 0xff) + ((color15 >> 16) & 0xff);
+
+	b = ((color1 >> 16) & 0xff) + ((color2 >> 16) & 0xff) + ((color3 >> 16) & 0xff) + ((color4 >> 16) & 0xff);
+	b = b + ((color5 >> 16) & 0xff) + ((color6 >> 16) & 0xff) + ((color7 >> 16) & 0xff) + ((color8 >> 16) & 0xff);
+	b = b + ((color9 >> 16) & 0xff) + ((color10 >> 16) & 0xff) + ((color11 >> 16) & 0xff) + ((color12 >> 16) & 0xff);
+	b = b + ((color16 >> 16) & 0xff) + ((color13 >> 16) & 0xff) + ((color14 >> 16) & 0xff) + ((color15 >> 16) & 0xff);
+
+	// g = ((color2 >> 8) & 0xff) + ((color1 >> 8) & 0xff) + ((color3 >> 8) & 0xff) + ((color4 >> 8) & 0xff);
+	// b = (color2 & 0xff) + (color1 & 0xff) + (color3 & 0xff) + (color4 & 0xff);
+	r /= 16;
+	g /= 16;
+	b /= 16;
+	a = a > 255 ? 255 : a;
+	r = r > 255 ? 255 : r;
+	g = g > 255 ? 255 : g;
+	b = b > 255 ? 255 : b;
+	return ((a << 24) | (r << 16) | (g << 8) | b);
+}
+
 
 int	ft_color_mix(int color1, int color2, float percent)
 {

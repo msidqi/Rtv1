@@ -30,9 +30,9 @@ static int		ft_get_t_bounds(double *t, t_vec4 vec, t_ray *ray, t_box *box)
 {
 	int	signe[3];
 
-	signe[0] = (vec.x < 0);
-	signe[1] = (vec.y < 0);
-	signe[2] = (vec.z < 0);
+	signe[0] = (vec.x < 0.00001);
+	signe[1] = (vec.y < 0.00001);
+	signe[2] = (vec.z < 0.00001);
 	t[0] = (((signe[0] ? box->bound_max.x : box->bound_min.x) - ray->origin.x) * vec.x);
 	t[1] = (((signe[0] ? box->bound_min.x : box->bound_max.x) - ray->origin.x) * vec.x);
 	t[2] = (((signe[1] ? box->bound_max.y : box->bound_min.y) - ray->origin.y) * vec.y);
@@ -102,29 +102,27 @@ static t_vec4	ft_get_box_normal(t_ray *ray, t_box *sp)
         ft_create_vec4(p.x / d.x * 1.000001, p.y / d.y * 1.000001, p.z / d.z * 1.000001, 0)));
 }
 
-int		ft_texture_sphere(int id, t_ray *ray, t_sphere *sp);
-
-int	ft_box_shader(t_data *data, t_ray *ray, t_box *sp)
+int	ft_box_shader(t_data *data, t_ray *ray, t_box *box)
 {
 	t_shader_x	sh_x;
-	t_vec4		sp_nor;
+	t_vec4		box_nor;
 	t_vec4		ds[2];
 	int			c;
 
 	c = 0x0;
-	sp_nor = ft_get_box_normal(ray, sp);
-	ds[0] = sp->diffuse;
-	ds[1] = ft_create_vec4(sp->specular, sp->specular,
-			sp->specular, sp->specular);
-	if (sp->ref.w == 1 && ray->refl_depth > 0)
+	box_nor = ft_get_box_normal(ray, box);
+	ds[0] = box->diffuse;
+	ds[1] = ft_create_vec4(box->specular, box->specular,
+			box->specular, box->specular);
+	if (box->ref.w == 1 && ray->refl_depth > 0)
 	{
 		ray->refl_depth--;
-		c = ft_reflected_ray(data, sp_nor, ray, sp->ref);
+		c = ft_reflected_ray(data, box_nor, ray, box->ref);
 		if (false) // 100% reflectant, and no shading
 			return (c);
 	}
-	if (sp->ref.w == 2)
-		c = ft_refracted_ray(data, sp_nor, ray, sp->ref);
-	sh_x = ft_ray_inter_lights(data, sp_nor, ray, ds);
-	return (ft_compute_shader(ft_color_add(sp->color, c), &sh_x));
+	if (box->ref.w == 2)
+		c = ft_refracted_ray(data, box_nor, ray, box->ref);
+	sh_x = ft_ray_inter_lights(data, box_nor, ray, ds);
+	return (ft_compute_shader(ft_color_add(box->color, c), &sh_x));
 }

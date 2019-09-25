@@ -48,6 +48,7 @@
 # define WIDTH 1280
 # define ASPECT_RATIO HEIGHT / WIDTH
 # define MAX_ITER 30
+# define PI 3.14159265358979323846
 
 typedef enum		e_event_code
 {
@@ -222,6 +223,7 @@ typedef	struct		s_data
 	char			set;
 	int				max_iter;
 
+	int				filter;
 	t_list			*light_list;
 	t_list			*scene;
 	t_camera		cam;
@@ -241,10 +243,15 @@ typedef	struct		s_data
 
 typedef struct		s_texture
 {
+	int				id;	
 	int				width;
 	int				height;
 	int 			*buff;
 	void			*img;
+
+	double			stretch_x;
+	double			stretch_y;
+	double			stretch_z;			
 }					t_texture;
 
 typedef	struct		s_sphere
@@ -265,6 +272,8 @@ typedef	struct		s_plane
 	double			specular;
 	t_vec4       	diffuse;
 	t_vec4			normal;
+	t_vec4			left;	// for applying texture
+	t_vec4			forw;  // for applying texture
 	t_vec4			point;
 	int				color;
 }					t_plane;
@@ -283,6 +292,7 @@ typedef	struct		s_triangle
 
 typedef	struct		s_box
 {
+	t_texture		texture;
 	t_vec4			ref;
 	double			specular;
 	t_vec4			diffuse;
@@ -293,10 +303,13 @@ typedef	struct		s_box
 
 typedef	struct		s_cone
 {
+	t_texture		texture;
 	t_vec4			ref;
 	double			specular;
 	t_vec4			diffuse;
 	t_vec4			axis;
+	t_vec4			left;	// for applying texture
+	t_vec4			forw;  // for applying texture
 	t_vec4			center;
 	double			half_angle;
 	int				color;
@@ -304,10 +317,13 @@ typedef	struct		s_cone
 
 typedef	struct		s_cylinder
 {
+	t_texture		texture;
 	t_vec4			ref;
 	double			specular;
 	t_vec4			diffuse;
 	t_vec4			axis;
+	t_vec4			left;	// for applying texture
+	t_vec4			forw;  // for applying texture
 	t_vec4			point;
 	double			radius;
 	int				color;
@@ -404,13 +420,15 @@ int					ft_reflected_ray(t_data *data, t_vec4 nr, t_ray *ray, t_vec4 refl);
 int					ft_refracted_ray(t_data *data, t_vec4 nr, t_ray *ray, t_vec4 refr);
 int 				ft_color_rgb_scalar(int color, double r, double g, double b);
 int					ft_color_add(int color1, int color2);
+int					ft_color_avg(int *colors);
+int					ft_color_avg2(int color1, int color2, int color3, int color4,int color5, int color6, int color7, int color8,int color9, int color10, int color11, int color12,int color13, int color14, int color15, int color16);
 int					ft_color_mix(int color1, int color2, float percent);
 int					ft_sphere_shader(t_data *data, t_ray *ray, t_sphere *sphere);
 int					ft_plane_shader(t_data *data, t_ray *ray, t_plane *plane);
 int					ft_cylinder_shader(t_data *data, t_ray *ray, t_cylinder *cylinder);
 int					ft_cone_shader(t_data *data, t_ray *ray, t_cone *cone);
-void				ft_get_camera_ray(t_ray *ray, t_camera *cam, int x, int y);
-double					ft_ray_inter_objs(t_list *list, t_ray *sh_ray,
+void				ft_get_camera_ray(t_ray *ray, t_camera *cam, int *xy, int jitter);
+double				ft_ray_inter_objs(t_list *list, t_ray *sh_ray,
 									double distance_to_light, t_light *li);
 int					ft_compute_shader(int color, t_shader_x *sh_x);
 t_shader_x			ft_ray_inter_lights(t_data *data, t_vec4 nr,
@@ -420,12 +438,18 @@ double				ft_light_intensity(t_list *scene, t_light *li,
 									t_vec4 *inter_point, t_vec4 *shadow_ray);
 double				ft_min(double val, double min);
 double				ft_max(double val, double max);
-// parser
 
 int					ft_box_inter(t_ray *ray, t_box *box);
-
-
 int					ft_box_shader(t_data *data, t_ray *ray, t_box *box);
+
+int					ft_texture_cone(t_ray *ray, t_cone *cone);
+int					ft_texture_cylinder(t_ray *ray, t_cylinder *cyl);
+int					ft_texture_plane(t_ray *ray, t_plane *pl);
+int					ft_texture_sphere(t_ray *ray, t_sphere *sp);
+int					ft_load_texture(int id, t_texture *t, t_data *data);
+
+void				ft_filters(t_data *data, int x, int y, int color);
+int					ft_filters_aa(t_data *data, int x, int y, int color);
 
 typedef struct	s_function
 {
@@ -445,6 +469,7 @@ int					ft_expect_matrix(char *line, char *str, t_vec4 *vec);
 int					ft_expect_ref(char *line, char *name, t_vec4 *vec);
 int					ft_expect_area_uv(char *line, char *name, t_vec4 *uv_dir, unsigned short *uv_nodes);
 int					ft_expect_spot_dot(char *line, char *name, float *spot_dot);
+int					ft_expect_texture(char *line, char *name, t_texture *t);
 
 int					ft_is_numeric(char *str);
 size_t				ft_table_size(char **tab);
