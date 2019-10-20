@@ -35,8 +35,20 @@ INCLUDE = include
 INC = include/libgl.h
 OBJS_DIR = .objs
 CC = gcc -Wall -Wextra -Werror 
-FLAGS = -framework OpenGl -framework Appkit -lmlx
 OBJ = $(addprefix $(OBJS_DIR)/,$(SRC:.c=.o))
+
+## Detecting Operating System...
+ifeq ($(OS),Windows_NT) 
+    detected_OS := Windows
+else
+    detected_OS := $(shell sh -c 'uname 2>/dev/null || echo Unknown')
+endif
+
+ifeq ($(detected_OS), Linux)
+	FLAGS = -L/usr/X11/lib /usr/X11/lib/libmlx.a -lXext -lX11 -lm
+else
+	FLAGS = -framework OpenGl -framework Appkit -lmlx
+endif
 
 all : $(NAME)
 
@@ -47,7 +59,7 @@ $(LIBGLL) : $(OBJ)
 	ranlib $@
 $(LIBFTL) :
 	make -C libft
-$(NAME) : $(LIBFTL) $(LIBGLL) $(SRC_PATH)/main.c
+$(NAME) : $(SRC_PATH)/main.c $(LIBGLL) $(LIBFTL) 
 	$(CC) -o $@ $< $(word 2,$^) $(word 3,$^) -I$(INCLUDE)  $(FLAGS) 
 
 clean : 
